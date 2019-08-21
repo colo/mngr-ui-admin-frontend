@@ -1,7 +1,10 @@
 <template>
 <!-- <div class="bg-primary"> -->
 <!-- <section class="content"> -->
-  <grid-view :id="id" :components="components" :grid="grid"/>
+  <!-- <grid-view :id="id" :components="components" :grid="grid"/> -->
+  <q-page :style="{height: height}">
+    <grid-view :id="'grid.'+id" :components="components" :grid="grid" v-on:height="setHeight"/>
+  </q-page>
 </template>
 
 <script>
@@ -34,6 +37,8 @@ export default {
 
   data () {
     return {
+      height: '0px',
+
       /**
       * dataSources
       **/
@@ -780,6 +785,11 @@ export default {
   },
 
   methods: {
+    setHeight: function (height) {
+      debug('setHeight', height)
+      // this.height = height + 700 + 'px'
+      this.height = height + 200 + 'px'
+    },
     // myStyle: function (offset) {
     //   // const size = `calc(100vh - ${offset}px)`
     //   const size = height(document.getElementById('logs')) + 500

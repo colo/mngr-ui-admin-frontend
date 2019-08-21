@@ -1,11 +1,17 @@
 <template>
 <!-- <div class="bg-primary"> -->
 <!-- <section class="content"> -->
-  <grid-view :id="id" :components="components" :grid="grid"/>
+  <q-page :style="{height: height}">
+    <grid-view :id="'grid.'+id" :components="components" :grid="grid" v-on:height="setHeight"/>
+  </q-page>
+
 </template>
 <script>
 /* global EventBus */
-import { EventBus } from '@libs/eventbus'
+// import { EventBus } from '@libs/eventbus'
+
+import { dom } from 'quasar'
+const { height, width } = dom
 
 import Vue from 'vue'
 
@@ -240,6 +246,8 @@ export default {
 
   data () {
     return {
+      height: '0px',
+
       /**
       * dataSources
       **/
@@ -309,6 +317,10 @@ export default {
     }
   },
   created: function () {
+    debug('created refs', this.$refs)
+
+    // this.$on('grid.' + this.id + ':height', this.setHeight.bind(this))
+
     let components
     try {
       components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
@@ -410,22 +422,15 @@ export default {
   },
 
   methods: {
-
-    // myStyle: function (offset) {
-    //   // const size = `calc(100vh - ${offset}px)`
-    //   const size = height(document.getElementById('root')) + 500
-    //   return {
-    //     minHeight: size,
-    //     height: size
-    //   }
-    // }
-    // getRange: function () {
-    //   debug('getRange', this.root)
-    //   return (this.root && this.root.range) ? this.root.range : []
-    // },
+    setHeight: function (height) {
+      debug('setHeight', height)
+      // this.height = height + 700 + 'px'
+      this.height = height + 200 + 'px'
+    },
     // getGridHeight: function () {
-    //   debug('getGridHeight', height(document.getElementById('root')))
-    //   return height(document.getElementById('root')) + 700
+    //   debug('getGridHeight', height(document.getElementById(this.id)))
+    //   // return height(document.getElementById(this.id)) + 700
+    //   return height(document.getElementById('grid.' + this.id))
     // },
 
     /**
@@ -490,7 +495,9 @@ export default {
 
   },
   mounted: function () {
-    debug('mounted')
+    debug('mounted refs', this.$refs)
+  //   // console.log('height:', height(document.getElementById('logs')))
+  //   this.height = this.getGridHeight() + 700 + 'px'
   }
 
 }

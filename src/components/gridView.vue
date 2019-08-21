@@ -1,7 +1,7 @@
 <template>
 <!-- <div class="bg-primary"> -->
 <!-- <section class="content"> -->
-  <q-page :style="{height: height}">
+  <!-- <q-page :style="{height: height}"> -->
 
     <VueResponsiveGridLayout
         @layout-update="onLayoutUpdate"
@@ -120,7 +120,7 @@
 
   <!-- </section> -->
 <!-- </div> -->
-  </q-page>
+  <!-- </q-page> -->
 </template>
 <script>
 // import { mapGetters, mapActions } from 'vuex'
@@ -224,15 +224,27 @@ export default {
       height: '0px'
     }
   },
-  updated: function () {
-    // console.log('height:', height(document.getElementById('logs')))
-    debug('updated', height(this.$refs[this.id].$el))
-  },
+  // updated: function () {
+  //   // console.log('height:', height(document.getElementById('logs')))
+  //   // debug('updated', height(this.$refs[this.id].$el))
+  //   let height = this.getGridHeight()
+  //   debug('updated %d', height)
+  //   this.height = height + 'px'
+  //   this.$emit('height', height)
+  // },
   mounted: function () {
-    debug('mounted', this.getGridHeight())
     // console.log('height:', height(document.getElementById('logs')))
-    this.height = this.getGridHeight() + 700 + 'px'
+    // debug('updated', height(this.$refs[this.id].$el))
+    let height = this.getGridHeight()
+    debug('updated %d', height)
+    this.height = height + 'px'
+    this.$emit('height', height)
   },
+  // mounted: function () {
+  //   debug('mounted', this.getGridHeight())
+  //   // console.log('height:', height(document.getElementById('logs')))
+  //   this.height = this.getGridHeight() + 700 + 'px'
+  // },
   created: function () {
     debug('created', this.id)
     let id = this.id
