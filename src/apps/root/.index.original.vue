@@ -30,6 +30,7 @@ import RootPipeline from './pipelines/root'
 
 // import { dom } from 'quasar'
 // const { height, width } = dom
+let moment = require('moment')
 
 export default {
   mixins: [AdminLteMixin, DataSourcesMixin],
@@ -44,15 +45,46 @@ export default {
     layouts: {
       'lg': [
         { x: 0, y: 0, w: 12, h: 3, i: 'rethinkdb_table' },
-        { x: 0, y: 1, w: 12, h: 1, i: 'separator' }
+        { x: 0, y: 1, w: 3, h: 7, i: 'count' },
+        { x: 3, y: 1, w: 3, h: 7, i: 'range' },
+        { x: 6, y: 1, w: 3, h: 7, i: 'tags' },
+        { x: 9, y: 1, w: 3, h: 7, i: 'hosts' },
+        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
+        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
+        // second row
+        // { x: 1, y: 1, w: 10, h: 2, i: '6' },
+        { x: 0, y: 2, w: 12, h: 16, i: 'chart' }
+        // { x: 0, y: 3, w: 12, h: 30, i: '8' }
+        // { x: 0, y: 4, w: 12, h: 2, i: '9' }
       ],
       'md': [
         { x: 0, y: 0, w: 8, h: 3, i: 'rethinkdb_table' },
-        { x: 0, y: 1, w: 8, h: 1, i: 'separator' }
+        { x: 0, y: 1, w: 2, h: 7, i: 'count' },
+        { x: 2, y: 1, w: 2, h: 7, i: 'range' },
+        { x: 4, y: 1, w: 2, h: 7, i: 'tags' },
+        { x: 6, y: 1, w: 2, h: 7, i: 'hosts' },
+        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
+        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
+        // second row
+        // { x: 1, y: 1, w: 6, h: 2, i: '6' },
+        { x: 0, y: 2, w: 8, h: 16, i: 'chart' }
+        // { x: 0, y: 3, w: 8, h: 20, i: '8' }
+        // { x: 0, y: 4, w: 8, h: 2, i: '9' }
+
       ],
       'sm': [
         { x: 0, y: 0, w: 6, h: 3, i: 'rethinkdb_table' },
-        { x: 0, y: 1, w: 6, h: 1, i: 'separator' }
+        { x: 0, y: 1, w: 3, h: 7, i: 'count' },
+        { x: 3, y: 1, w: 3, h: 7, i: 'range' },
+        { x: 0, y: 2, w: 3, h: 7, i: 'tags' },
+        { x: 3, y: 2, w: 3, h: 7, i: 'hosts' },
+        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
+        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
+        // second row
+        // { x: 1, y: 2, w: 4, h: 2, i: '6' },
+        { x: 0, y: 3, w: 6, h: 16, i: 'chart' }
+        // { x: 0, y: 4, w: 6, h: 20, i: '8' }
+        // { x: 0, y: 5, w: 6, h: 2, i: '9' }
       ]
 
     }
@@ -60,12 +92,155 @@ export default {
   },
 
   components_template: {
-    rethinkdb_table: [{
-      component: 'TableBox',
+    'count': [{
+      component: 'admin-lte-small-box',
       props: {
-        table: undefined,
-        data: undefined
+        bg: 'bg-positive',
+        inner: {
+          header: 'Count',
+          text: ''
+          // text: this.logs.count
+        }, // this.counter.inner
+        icon: 'fa fa-chart-bar'
+      },
+      source: {
+        requests: {
+          once: [{
+            params: {
+              path: 'all',
+              query: {
+                from: undefined,
+                register: 'periodical',
+                'transformation': [
+                  { 'orderBy': { 'index': 'r.asc(timestamp)' } },
+                  'limit:30000'
+                ]
+              }
+
+            },
+            callback: function (val, metadata, key) {
+              debug('Count', val, key)
+              let count = 0
+              Array.each(val, function (table) {
+                Array.each(table, function (data) {
+                  debug('Count table data', data.count)
+                  count += data.count
+                })
+              })
+
+              this.props.inner.text = count
+            }
+          }]
+        }
       }
+
+    }],
+    'chart': [{
+      component: 'MyChart',
+      props: {
+        id: 'chart',
+        data: {
+          labels: [],
+          datasets: []
+        }
+      },
+      events: {
+        updated: 'proxyEvent'
+      },
+      current: {
+        // range: [0, 0],
+        max_data: 5,
+        keys: {},
+        data: {
+          labels: [],
+          datasets: []
+        }
+      },
+      source: {
+        requests: {
+          once: [
+            {
+              params: {
+                path: 'all',
+                query: {
+                  from: undefined,
+                  register: 'periodical',
+                  'transformation': [
+                    { 'orderBy': { 'index': 'r.asc(timestamp)' } },
+                    'limit:30000'
+                  ]
+                }
+
+              },
+              callback: function (table, metadata, key, vm) {
+                if (table) {
+                  vm.$once('chart.' + metadata.from + ':updated', function (data) {
+                    debug('chart.' + metadata.from + ':updated %o', data)
+                    this.current.data = data
+                  }.bind(this))
+
+                  let label = moment(metadata.timestamp).format('DD/MM/YYYY, h:mm:ss a')
+
+                  if (!this.current.data.labels.contains(label)) { this.current.data.labels.push(label) }
+
+                  let index_of_value = this.current.data.labels.indexOf(label)
+
+                  debug('MyChart TABLE ', table, metadata, key)
+
+                  Array.each(table, function (data) {
+                    Array.each(data, function (val) {
+                      debug('MyChart cb ', val, metadata, label, index_of_value, table)
+
+                      let name = val.path
+                      if (name.indexOf(metadata.from) > -1) {
+                        name = name.substring(name.indexOf(metadata.from + '.') + metadata.from.length + 1)
+                        name = (name === '') ? metadata.from : name
+                      }
+
+                      let dataset = { name: name, chartType: 'bar', values: [], _key: val.path }
+                      for (let index = 0; index < this.current.data.datasets.length; index++) {
+                        if (this.current.data.datasets[index].name === dataset.name) { dataset = this.current.data.datasets[index] }
+                      }
+                      Array.each(this.current.data.datasets, function (_dataset, index) {
+                        if (_dataset.name === dataset.name) { dataset = _dataset }
+                      })
+
+                      dataset.values[index_of_value] = val.count * 1
+
+                      let found = false
+                      Array.each(this.current.data.datasets, function (_dataset, index) {
+                        for (let index = 0; index < this.current.data.datasets.length; index++) {
+                          let _dataset = this.current.data.datasets[index]
+                          if (_dataset.name === dataset.name) {
+                            found = true
+
+                            this.current.data.datasets[index] = dataset
+                          }
+                        }
+                      }.bind(this))
+
+                      if (!found) {
+                        this.current.data.datasets.push(dataset)
+                        debug('MyChart cb NOT FOUND', dataset.name)
+                      }
+                    }.bind(this))
+                  }.bind(this))
+
+                  debug('MyChart cb UPDATING2', this.current.data.datasets, this.current.keys)
+
+                  let data = JSON.parse(JSON.stringify(this.current.data))
+                  debug('MyChart cb UPDATING3', data)
+
+                  this.props.data = data
+                }
+              }
+            }
+
+          ]
+
+        }
+      }
+
     }]
   },
 
@@ -200,12 +375,9 @@ export default {
                     debug('All component %s %o', id, cloned_component)
                     id += '.' + rt_tb
                     Array.each(cloned_component, function (widget, index) {
-                      widget.props.table = rt_tb
-                      widget.props.data = data
-                      widget.props.pipeline = 'root/pipelines/root'
-                      // if (widget.props.id) widget.props.id += '.' + rt_tb
+                      if (widget.props.id) widget.props.id += '.' + rt_tb
 
-                      // widget.source.requests.once[0].params.query.from = rt_tb
+                      widget.source.requests.once[0].params.query.from = rt_tb
                     })
 
                     components[id] = cloned_component

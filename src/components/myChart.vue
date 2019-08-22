@@ -157,7 +157,11 @@ export default {
   },
   methods: {
     create_chart: function () {
-      if (document.getElementById(this.id) && this.data && this.data.labels.length > 0 && this.data.datasets.length > 0) {
+      if (
+        document.getElementById(this.id) &&
+        this.data &&
+        this.data.labels && this.data.labels.length > 0 &&
+        this.data.datasets && this.data.datasets.length > 0) {
         this.$options.chart = new Chart(
           document.getElementById(this.id), // containing div
           Object.merge(Object.clone(this.options), { data: JSON.parse(JSON.stringify(this.normalized_data)) })

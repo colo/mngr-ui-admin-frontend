@@ -1,33 +1,433 @@
 <template>
-  <admin-lte-box>
-    <grid-view :id="id+'.'+table+'.grid'" :components="components" :grid="grid"/>
+  <admin-lte-box
+    :id="table+'.box'"
+    :title="'Table: '+table"
+    :type="type"
+    :footer="footer"
+  >
+    <grid-view :id="table+'.grid'" :components="components" :grid="grid"/>
   </admin-lte-box>
 </template>
 <script>
+
+import * as Debug from 'debug'
+const debug = Debug('components:TableBox')
+
+import GridView from '@components/gridView'
+let moment = require('moment')
+
+import DataSourcesMixin from '@components/mixins/dataSources'
+
+import Pipeline from 'js-pipeline'
+
 export default {
+  mixins: [DataSourcesMixin],
+
   name: 'TableBox',
 
+  components: { GridView },
+
+  grid_template: {
+
+    layouts: {
+      'lg': [
+
+        { x: 0, y: 0, w: 3, h: 7, i: 'count' },
+        { x: 3, y: 0, w: 3, h: 7, i: 'range' },
+        { x: 6, y: 0, w: 3, h: 7, i: 'tags' },
+        { x: 9, y: 0, w: 3, h: 7, i: 'hosts' },
+        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
+        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
+        // second row
+        // { x: 1, y: 1, w: 10, h: 2, i: '6' },
+        { x: 0, y: 1, w: 12, h: 16, i: 'chart' }
+        // { x: 0, y: 3, w: 12, h: 30, i: '8' }
+        // { x: 0, y: 4, w: 12, h: 2, i: '9' }
+      ],
+      'md': [
+        { x: 0, y: 0, w: 2, h: 7, i: 'count' },
+        { x: 2, y: 0, w: 2, h: 7, i: 'range' },
+        { x: 4, y: 0, w: 2, h: 7, i: 'tags' },
+        { x: 6, y: 0, w: 2, h: 7, i: 'hosts' },
+        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
+        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
+        // second row
+        // { x: 1, y: 1, w: 6, h: 2, i: '6' },
+        { x: 0, y: 1, w: 8, h: 16, i: 'chart' }
+        // { x: 0, y: 3, w: 8, h: 20, i: '8' }
+        // { x: 0, y: 4, w: 8, h: 2, i: '9' }
+
+      ],
+      'sm': [
+        { x: 0, y: 0, w: 3, h: 7, i: 'count' },
+        { x: 3, y: 0, w: 3, h: 7, i: 'range' },
+        { x: 0, y: 1, w: 3, h: 7, i: 'tags' },
+        { x: 3, y: 1, w: 3, h: 7, i: 'hosts' },
+        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
+        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
+        // second row
+        // { x: 1, y: 2, w: 4, h: 2, i: '6' },
+        { x: 0, y: 2, w: 6, h: 16, i: 'chart' }
+        // { x: 0, y: 4, w: 6, h: 20, i: '8' }
+        // { x: 0, y: 5, w: 6, h: 2, i: '9' }
+      ]
+
+    }
+
+  },
+
+  components_template: {
+    'count': [{
+      component: 'admin-lte-small-box',
+      props: {
+        bg: 'bg-positive',
+        inner: {
+          header: 'Count',
+          text: ''
+          // text: this.logs.count
+        }, // this.counter.inner
+        icon: 'fa fa-chart-bar'
+      },
+      source: {
+        requests: {
+          once: [{
+            params: {
+              path: 'all',
+              query: {
+                from: undefined,
+                register: 'periodical',
+                'transformation': [
+                  { 'orderBy': { 'index': 'r.asc(timestamp)' } },
+                  'limit:30000'
+                ]
+              }
+
+            },
+            callback: function (val, metadata, key) {
+              debug('Count', val, this)
+              let count = 0
+              Array.each(val, function (table) {
+                Array.each(table, function (data) {
+                  debug('Count table data', data)
+                  count += data.count
+                })
+              })
+
+              this.props.inner.text = count
+            }
+          }]
+        }
+      }
+
+    }],
+    'chart': [{
+      component: 'MyChart',
+      props: {
+        id: 'chart',
+        data: {
+          labels: [],
+          datasets: []
+        }
+      },
+      events: {
+        updated: 'proxyEvent'
+      },
+      current: {
+        // range: [0, 0],
+        max_data: 5,
+        keys: {},
+        data: {
+          labels: [],
+          datasets: []
+        }
+      },
+      source: {
+        requests: {
+          once: [
+            {
+              params: {
+                path: 'all',
+                query: {
+                  from: undefined,
+                  register: 'periodical',
+                  'transformation': [
+                    { 'orderBy': { 'index': 'r.asc(timestamp)' } },
+                    'limit:30000'
+                  ]
+                }
+
+              },
+              callback: function (table, metadata, key, vm) {
+                if (table) {
+                  vm.$once('chart.' + metadata.from + ':updated', function (data) {
+                    debug('chart.' + metadata.from + ':updated %o', data)
+                    this.current.data = data
+                  }.bind(this))
+
+                  let label = moment(metadata.timestamp).format('DD/MM/YYYY, h:mm:ss a')
+
+                  if (!this.current.data.labels.contains(label)) { this.current.data.labels.push(label) }
+
+                  let index_of_value = this.current.data.labels.indexOf(label)
+
+                  debug('MyChart TABLE ', table, metadata, key)
+
+                  Array.each(table, function (data) {
+                    Array.each(data, function (val) {
+                      debug('MyChart cb ', val, metadata, label, index_of_value, table)
+
+                      let name = val.path
+                      if (name.indexOf(metadata.from) > -1) {
+                        name = name.substring(name.indexOf(metadata.from + '.') + metadata.from.length + 1)
+                        name = (name === '') ? metadata.from : name
+                      }
+
+                      let dataset = { name: name, chartType: 'bar', values: [], _key: val.path }
+                      for (let index = 0; index < this.current.data.datasets.length; index++) {
+                        if (this.current.data.datasets[index].name === dataset.name) { dataset = this.current.data.datasets[index] }
+                      }
+                      Array.each(this.current.data.datasets, function (_dataset, index) {
+                        if (_dataset.name === dataset.name) { dataset = _dataset }
+                      })
+
+                      dataset.values[index_of_value] = val.count * 1
+
+                      let found = false
+                      Array.each(this.current.data.datasets, function (_dataset, index) {
+                        for (let index = 0; index < this.current.data.datasets.length; index++) {
+                          let _dataset = this.current.data.datasets[index]
+                          if (_dataset.name === dataset.name) {
+                            found = true
+
+                            this.current.data.datasets[index] = dataset
+                          }
+                        }
+                      }.bind(this))
+
+                      if (!found) {
+                        this.current.data.datasets.push(dataset)
+                        debug('MyChart cb NOT FOUND', dataset.name)
+                      }
+                    }.bind(this))
+                  }.bind(this))
+
+                  debug('MyChart cb UPDATING2', this.current.data.datasets, this.current.keys)
+
+                  let data = JSON.parse(JSON.stringify(this.current.data))
+                  debug('MyChart cb UPDATING3', data)
+
+                  this.props.data = data
+                }
+              }
+            }
+
+          ]
+
+        }
+      }
+
+    }]
+  },
+
   props: {
-    grid: {
-      type: [Object],
-      default: function () { return undefined }
-    },
-    components: {
-      type: [Object],
-      default: function () { return undefined }
+    table: {
+      type: [String],
+      default: ''
     },
     data: {
       type: [Array],
       default: function () {
-        return []
+        return undefined
+      }
+    },
+    pipeline: {
+      type: [String],
+      default: undefined
+    }
+
+  },
+  // computed: {
+  //   id: function () {
+  //     return this.table + '.box'
+  //   }
+  // },
+  data () {
+    return {
+      id: 'all',
+
+      type: 'box-success',
+      footer: false,
+
+      grid: {
+        layouts: {
+          'lg': [
+          ],
+          'md': [
+          ],
+          'sm': [
+
+          ]
+
+        },
+        breakpoint: 'lg',
+        // slots: [
+        //   '<q-btn round />'
+        // ],
+
+        cols: 12,
+        // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
+        colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
+        // rowHeight: 400,
+        isDraggable: true,
+        isResizable: true,
+        preview: false
+      },
+
+      components: {}
+    }
+  },
+  mounted: function () {
+    debug('mounted %o', this.data)
+
+    debug('All callback', this.data, this.$options.grid_template)
+    let grid = JSON.parse(JSON.stringify(this.grid))
+    let grid_template = Object.clone(this.$options.grid_template)
+
+    let last_component_row = 0
+    // Object.each(this.data, function (data, rt_tb) {
+    debug('All %s', this.table)
+    Object.each(grid_template.layouts, function (layout, layout_name) {
+      debug('All layout_name %s', layout_name)
+      Array.each(layout, function (component, index) {
+        let cloned_component = Object.clone(component)
+        cloned_component.i = cloned_component.i + '.' + this.table
+        cloned_component.y = cloned_component.y + last_component_row
+
+        if (!grid.layouts[layout_name]) grid.layouts[layout_name] = []
+        grid.layouts[layout_name].push(cloned_component)
+      }.bind(this))
+      last_component_row++
+    }.bind(this))
+    // })
+
+    let components = JSON.parse(JSON.stringify(this.components))
+    let components_template = Object.clone(this.$options.components_template)
+    // Object.each(this.data, function (data, rt_tb) {
+    debug('All table %s', this.table, components_template)
+    Object.each(components_template, function (component, id) {
+      let cloned_component = Array.clone(component)
+
+      debug('All component %s %o', id, cloned_component)
+      id += '.' + this.table
+      Array.each(cloned_component, function (widget, index) {
+        // widget.props.table = rt_tb
+        // widget.props.data = data
+        if (widget.props.id) widget.props.id += '.' + this.table
+
+        widget.source.requests.once[0].params.query.from = this.table
+      }.bind(this))
+
+      components[id] = cloned_component
+    }.bind(this))
+    // })
+
+    // this.grid = grid
+    debug('All grid / components %o', grid, components)
+
+    for (const key in grid) {
+      this.$set(this.grid, key, grid[key])
+    }
+    // this.components = components
+    for (const key in components) {
+      this.$set(this.components, key, components[key])
+    }
+
+    // this.props.inner.text = val[0][0].count
+  },
+  watch: {
+    components: {
+      // immediate: true,
+      // deep: true,
+      handler: function (components) {
+        debug('watch components', components)
+        // Object.each(this.$options.pipelines, function (pipe, id) {
+        //   debug('watch components pipe %s %o', id, pipe)
+        //   Array.each(pipe.inputs, function (input, index) {
+        //     debug('watch components pipe input %o', input)
+        //     let options = Object.clone(input.options)
+        //
+        //   })
+        // })
+        // components = JSON.parse(JSON.stringify(components))
+        // // for (const index in components) {
+        // //   for (const i in components[index]) {
+        // //     this.resolveComponent(components[index][i])
+        // //   }
+        // // }
+        // components.id = this.id
+        // this.viewComponents = components
+        this.destroy_pipelines()
+        this.create_pipelines()
       }
     }
   },
-  data () {
-    return {
+  methods: {
+    create_pipelines: function (next) {
+      let pipeline = require('../apps/' + this.pipeline).default
+      debug('create_pipelines %o', pipeline)
+      // if (root && Array.isArray(root)) {
+      //   Array.each(root, function (log) {
+      //     if (log) {
+      //       let template = Object.clone(LogPipeline)
+      //
+      //       template.input[0].poll.conn[0].stat_log = log
+      //
+      //       template.input[0].poll.id += '-' + log
+      //       template.input[0].poll.conn[0].id = template.input[0].poll.id
+      //       let pipeline_id = template.input[0].poll.id
+      //
+      //       // template.input[0].poll.conn[0].id = template.input[0].poll.suspended = true
+      //
+      //       if (!this.$options.pipelines[pipeline_id]) {
+      //         let pipe = new Pipeline(template)
+      //
+      //         this.$options.pipelines[pipeline_id] = pipe
+      //       }
+      //     }
+      //   }.bind(this))
+      // }
 
+      if (pipeline) {
+        let template = pipeline
+
+        let pipeline_id = template.input[0].poll.id
+        // debug('RootPipeline ', template.input[0].poll.conn[0])
+
+        // template.input[0].poll.conn[0].requests = this.__components_sources_to_requests(JSON.parse(JSON.stringify(this.components)))
+        template.input[0].poll.conn[0].requests = this.__components_sources_to_requests(this.components)
+        // template.input[0].poll.conn[0].queries = this.__components_sources_to_requests(JSON.parse(JSON.stringify(this.components)))
+
+        // debug('RootPipeline ', template.input[0].poll.conn[0].requests)
+
+        // if (!this.$options.pipelines[pipeline_id]) {
+        let pipe = new Pipeline(template)
+
+        this.$options.pipelines[pipeline_id] = pipe
+
+        // debug('RootPipeline ', this.$options.pipelines[pipeline_id].inputs[0])
+        // this.$options.pipelines[pipeline_id].inputs[0].addEvent('onConnect', this.$options.pipelines[pipeline_id].fireEvent('onOnce'))
+
+        // this.$options.pipelines[pipeline_id].fireEvent('onResume')
+        // } else if (this.$options.pipelines[pipeline_id].inputs[0].options.suspended !== false) {
+        //   debug('RootPipeline suspended', this.$options.pipelines[pipeline_id].inputs[0].options.suspended)
+        //   this.$options.pipelines[pipeline_id].fireEvent('onResume')
+        // }
+
+        if (next) { next() }
+      }
     }
   }
+
 }
 
 </script>
