@@ -43,16 +43,16 @@ export default {
 
     layouts: {
       'lg': [
-        { x: 0, y: 0, w: 12, h: 3, i: 'rethinkdb_table' },
-        { x: 0, y: 1, w: 12, h: 1, i: 'separator' }
+        { x: 0, y: 0, w: 12, h: 27, i: 'rethinkdb_table' }
+        // { x: 0, y: 1, w: 12, h: 2, i: 'separator' }
       ],
       'md': [
-        { x: 0, y: 0, w: 8, h: 3, i: 'rethinkdb_table' },
-        { x: 0, y: 1, w: 8, h: 1, i: 'separator' }
+        { x: 0, y: 0, w: 8, h: 27, i: 'rethinkdb_table' }
+        // { x: 0, y: 1, w: 8, h: 2, i: 'separator' }
       ],
       'sm': [
-        { x: 0, y: 0, w: 6, h: 3, i: 'rethinkdb_table' },
-        { x: 0, y: 1, w: 6, h: 1, i: 'separator' }
+        { x: 0, y: 0, w: 6, h: 27, i: 'rethinkdb_table' }
+        // { x: 0, y: 1, w: 6, h: 2, i: 'separator' }
       ]
 
     }
@@ -105,9 +105,9 @@ export default {
         // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
         colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
         // rowHeight: 400,
-        isDraggable: true,
-        isResizable: true,
-        preview: false
+        isDraggable: false,
+        isResizable: false,
+        preview: true
       },
 
       components: {}

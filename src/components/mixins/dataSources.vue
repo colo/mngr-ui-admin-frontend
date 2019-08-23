@@ -120,7 +120,7 @@ export default {
       }
     },
     __update_component_data: function (component, key, payload) {
-      debug('__update_component_data', component, key)
+      debug('__update_component_data', component, key, JSON.parse(JSON.stringify(payload)))
       let callback = this.__get_source_callback_from_key(component.source, key)
 
       // debug('__update_component_data', callback)
@@ -250,7 +250,7 @@ export default {
       } else {
         let key = payload.id
         // convert to array of array so it can be pass as parameter
-        if (Array.isArray(payload.data)) payload.data = [payload.data]
+        // if (Array.isArray(payload.data)) payload.data = [payload.data]
 
         for (const prop in this.components) {
           let components = this.components[prop]

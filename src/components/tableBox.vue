@@ -1,12 +1,18 @@
 <template>
+  <!-- <div style="height: '50px'"> -->
   <admin-lte-box
     :id="table+'.box'"
     :title="'Table: '+table"
     :type="type"
     :footer="footer"
+    :body="{class: 'bg-primary'}"
   >
-    <grid-view :id="table+'.grid'" :components="components" :grid="grid"/>
+  <!-- :body="{class: 'bg-secondary'}" -->
+    <div style="height: 460px">
+      <grid-view :id="table+'.grid'" :components="components" :grid="grid" v-on:height="setHeight" :className="''"/>
+    </div>
   </admin-lte-box>
+  <!-- </div> -->
 </template>
 <script>
 
@@ -104,13 +110,13 @@ export default {
 
             },
             callback: function (val, metadata, key) {
-              debug('Count', val, this)
+              debug('Count', JSON.parse(JSON.stringify(val)), this)
               let count = 0
               Array.each(val, function (table) {
-                Array.each(table, function (data) {
-                  debug('Count table data', data)
-                  count += data.count
-                })
+                // Array.each(table, function (data) {
+                debug('Count table data', table)
+                count += table.count
+                // })
               })
 
               this.props.inner.text = count
@@ -253,6 +259,8 @@ export default {
   // },
   data () {
     return {
+      height: '0px',
+
       id: 'all',
 
       type: 'box-success',
@@ -278,9 +286,9 @@ export default {
         // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
         colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
         // rowHeight: 400,
-        isDraggable: true,
-        isResizable: true,
-        preview: false
+        isDraggable: false,
+        isResizable: false,
+        preview: true
       },
 
       components: {}
@@ -372,6 +380,12 @@ export default {
     }
   },
   methods: {
+    setHeight: function (height) {
+      debug('setHeight', height)
+      // this.height = height + 700 + 'px'
+      this.height = height + 20 + 'px'
+    },
+
     create_pipelines: function (next) {
       let pipeline = require('../apps/' + this.pipeline).default
       debug('create_pipelines %o', pipeline)

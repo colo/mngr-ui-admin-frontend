@@ -18,8 +18,9 @@
         :useCSSTransforms="true"
         :breakpoints="viewGrid.breakpoints"
         :colsAll="viewGrid.colsAll"
-        class="absolute-full"
+        :class="className"
     >
+    <!-- class="absolute-full" -->
       <template slot-scope="props">
 
         <VueGridItem :key="index" v-for="(item, index) in props.layout"
@@ -147,6 +148,10 @@ export default {
   components: { VueResponsiveGridLayout, VueGridItem, draggable },
 
   props: {
+    className: {
+      type: [String],
+      default: 'absolute-full'
+    },
     id: {
       type: [String],
       default: undefined
@@ -232,11 +237,11 @@ export default {
   //   this.height = height + 'px'
   //   this.$emit('height', height)
   // },
-  mounted: function () {
+  updated: function () {
     // console.log('height:', height(document.getElementById('logs')))
     // debug('updated', height(this.$refs[this.id].$el))
     let height = this.getGridHeight()
-    debug('updated %d', height)
+    debug('mounted height %d', height)
     this.height = height + 'px'
     this.$emit('height', height)
   },
@@ -479,7 +484,7 @@ export default {
       debug('addComponent', evt, evt.to.id, evt.item.id, from, old_index, new_index)
       let components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
 
-      debug('addComponent components', components)
+      debug('addComponent components', this.id, components, evt.to.id)
       components[evt.to.id] = (components[evt.to.id]) ? components[evt.to.id] : []
       components[evt.to.id].splice(new_index, 0, components[from][old_index])
       // this.viewComponents = components
@@ -652,6 +657,7 @@ body {
   background: #ddd; border: 2px dashed #aaa;
 } */
 
+/* .vue-responsive-grid-layout */
 .vue-grid-layout {
   width: 100%;
   display:block;
