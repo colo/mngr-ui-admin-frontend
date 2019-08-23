@@ -148,6 +148,10 @@ export default {
   components: { VueResponsiveGridLayout, VueGridItem, draggable },
 
   props: {
+    swap_components: {
+      type: [Boolean],
+      default: false
+    },
     className: {
       type: [String],
       default: 'absolute-full'
@@ -486,23 +490,38 @@ export default {
 
       debug('addComponent components', this.id, components, evt.to.id)
       components[evt.to.id] = (components[evt.to.id]) ? components[evt.to.id] : []
-      components[evt.to.id].splice(new_index, 0, components[from][old_index])
+      // let swap_components = true
+      if (this.swap_components) {
+        let _swap_component = Object.clone(components[evt.to.id][new_index])
+        components[evt.to.id][new_index] = components[from][old_index]
+        components[evt.from.id][new_index] = _swap_component
+        // components[evt.to.id].splice(new_index, 0, components[from][old_index])
+      } else {
+        components[evt.to.id].splice(new_index, 0, components[from][old_index])
+      }
       // this.viewComponents = components
+      debug('addComponent components', this.id, components, evt.to.id, evt.from.id)
+
       components.id = this.id
-      this.$store.commit('components/setComponents', components)
+      // this.$store.commit('components/setComponents', components)
+      this.viewComponents = components
     },
     removeComponent: function (evt) {
-      let from = evt.item.id.split('.')[0]
-      let old_index = evt.item.id.split('.')[1]
-      let new_index = evt.newIndex
-      debug('removeComponent', evt, evt.to.id, evt.item.id, from, old_index, new_index)
-      let components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
+      // let swap_components = true
+      if (this.swap_components === false) {
+        let from = evt.item.id.split('.')[0]
+        let old_index = evt.item.id.split('.')[1]
+        let new_index = evt.newIndex
+        debug('removeComponent', evt, evt.to.id, evt.item.id, from, old_index, new_index)
+        let components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
 
-      debug('removeComponent components', components)
-      components[evt.from.id].splice(old_index, 1)
-      // this.viewComponents = components
-      components.id = this.id
-      this.$store.commit('components/setComponents', components)
+        debug('removeComponent components', components)
+        components[evt.from.id].splice(old_index, 1)
+        // this.viewComponents = components
+        components.id = this.id
+        // this.$store.commit('components/setComponents', components)
+        this.viewComponents = components
+      }
     },
     disableGrid: function () {
       debug('disableGrid')

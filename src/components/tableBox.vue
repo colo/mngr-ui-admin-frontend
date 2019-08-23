@@ -1,5 +1,5 @@
 <template>
-  <!-- <div style="height: '50px'"> -->
+  <!-- <div> -->
   <admin-lte-box
     :id="table+'.box'"
     :title="'Table: '+table"

@@ -2,7 +2,7 @@
 <!-- <div class="bg-primary"> -->
 <!-- <section class="content"> -->
   <q-page :style="{height: height}">
-    <grid-view :id="'grid.'+id" :components="components" :grid="grid" v-on:height="setHeight"/>
+    <grid-view :swap_components="true" :id="'grid.'+id" :components="components" :grid="grid" v-on:height="setHeight"/>
   </q-page>
 
 </template>
@@ -180,7 +180,7 @@ export default {
                     debug('All layout_name %s', layout_name)
                     Array.each(layout, function (component, index) {
                       let cloned_component = Object.clone(component)
-                      cloned_component.i = cloned_component.i + '.' + rt_tb
+                      cloned_component.i = cloned_component.i + '_' + rt_tb
                       cloned_component.y = cloned_component.y + last_component_row
 
                       if (!grid.layouts[layout_name]) grid.layouts[layout_name] = []
@@ -198,7 +198,7 @@ export default {
                     let cloned_component = Array.clone(component)
 
                     debug('All component %s %o', id, cloned_component)
-                    id += '.' + rt_tb
+                    id += '_' + rt_tb
                     Array.each(cloned_component, function (widget, index) {
                       widget.props.table = rt_tb
                       widget.props.data = data
