@@ -65,6 +65,10 @@ export default {
       props: {
         table: undefined,
         data: undefined
+      },
+      events: {
+        hide: 'hide',
+        show: 'show'
       }
     }]
   },
@@ -250,6 +254,32 @@ export default {
   },
 
   methods: {
+    hide: function (table, event, vnode) {
+      debug('hide', table, this.grid)
+      for (const layout in this.grid.layouts) {
+        for (let i = 0; i < this.grid.layouts[layout].length; i++) {
+          let row = this.grid.layouts[layout][i]
+          if (row.i === 'rethinkdb_table_' + table) {
+            this.$set(this.grid.layouts[layout][i], 'h', 2)
+          }
+        }
+      }
+
+      debug('hiden', table, this.grid)
+    },
+    show: function (table, event, vnode) {
+      debug('show', table, this.grid)
+      for (const layout in this.grid.layouts) {
+        for (let i = 0; i < this.grid.layouts[layout].length; i++) {
+          let row = this.grid.layouts[layout][i]
+          if (row.i === 'rethinkdb_table_' + table) {
+            this.$set(this.grid.layouts[layout][i], 'h', 27)
+          }
+        }
+      }
+
+      debug('shown', table, this.grid)
+    },
     setHeight: function (height) {
       debug('setHeight', height)
       // this.height = height + 700 + 'px'

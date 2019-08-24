@@ -162,9 +162,17 @@ export default {
                   }
 
                 },
-                callback: function (val) {
-                  debug('Count', val)
-                  this.props.inner.text = val[0][0].count
+                callback: function (val, metadata, key) {
+                  debug('Count', JSON.parse(JSON.stringify(val)), this)
+                  let count = 0
+                  Array.each(val, function (table) {
+                    // Array.each(table, function (data) {
+                    debug('Count table data', table)
+                    count += table.count
+                    // })
+                  })
+
+                  this.props.inner.text = count
                 }
               }]
             }
@@ -197,7 +205,18 @@ export default {
 
                 },
                 callback: function (val) {
-                  this.props.inner.text = val[0][0].range
+                  // this.props.inner.text = val[0][0].range
+                  debug('Range', JSON.parse(JSON.stringify(val)), this)
+                  let range = [0, 0]
+                  Array.each(val, function (table) {
+                    // Array.each(table, function (data) {
+                    debug('Range table data', table)
+                    range[0] = (table.range[0] < range[0] || range[0] === 0) ? table.range[0] : range[0]
+                    range[1] = (table.range[1] > range[1]) ? table.range[1] : range[1]
+                    // })
+                  })
+
+                  this.props.inner.text = range
                 }
               }]
             }
@@ -229,7 +248,17 @@ export default {
 
                 },
                 callback: function (val) {
-                  this.props.inner.text = val[0][0].tags
+                  // this.props.inner.text = val[0][0].range
+                  debug('Tags', JSON.parse(JSON.stringify(val)), this)
+                  let tags = []
+                  Array.each(val, function (table) {
+                    // Array.each(table, function (data) {
+                    debug('Tags table data', table)
+                    tags = tags.combine(table.tags)
+                    // })
+                  })
+
+                  this.props.inner.text = tags
                 }
               }]
             }
@@ -261,7 +290,17 @@ export default {
 
                 },
                 callback: function (val) {
-                  this.props.inner.text = val[0][0].hosts
+                  // this.props.inner.text = val[0][0].range
+                  debug('Hosts', JSON.parse(JSON.stringify(val)), this)
+                  let hosts = []
+                  Array.each(val, function (table) {
+                    // Array.each(table, function (data) {
+                    debug('Hosts table data', table)
+                    hosts = hosts.combine(table.hosts)
+                    // })
+                  })
+
+                  this.props.inner.text = hosts
                 }
               }]
             }
@@ -271,7 +310,7 @@ export default {
           component: 'MyRange',
           props: {
             // range: this.$store.state[this.id + '_sources']['logs?register=periodical&transformation=limit%3A30000']['range']
-            range: []
+            range: [0, 0]
             // range: this.MyRange
             // ref: 'MyRange'
           },
@@ -290,8 +329,19 @@ export default {
 
                 },
                 callback: function (val) {
+                  debug('Range selector', JSON.parse(JSON.stringify(val)), this)
                   let range = JSON.parse(JSON.stringify(this.props.range))
-                  if (range[0] !== val[0][0].range[0] && range[1] !== val[0][0].range[1]) { this.props.range = val[0][0].range }
+
+                  Array.each(val, function (table) {
+                    // Array.each(table, function (data) {
+                    debug('Range table data', table)
+                    range[0] = (table.range[0] < range[0] || range[0] === 0) ? table.range[0] : range[0]
+                    range[1] = (table.range[1] > range[1]) ? table.range[1] : range[1]
+                    // })
+                  })
+
+                  this.props.range = range
+                  // if (range[0] !== val[0][0].range[0] && range[1] !== val[0][0].range[1]) { this.props.range = val[0][0].range }
                 }
               }]
             }
@@ -350,8 +400,20 @@ export default {
                     if (val) {
                       const MINUTE = 60000
                       debug('MyChart RANGE', val, this.prev)
-                      this.prev.range = val[0][0].range
-                      this.prev.range[0] = val[0][0].range[1] - (5 * MINUTE)
+                      // this.prev.range = val[0][0].range
+                      // this.prev.range[0] = val[0][0].range[1] - (5 * MINUTE)
+
+                      let range = JSON.parse(JSON.stringify(this.prev.range))
+                      Array.each(val, function (table) {
+                        // Array.each(table, function (data) {
+                        debug('Range table data', table)
+                        // range[0] = (table.range[0] < range[0] || range[0] === 0) ? table.range[0] : range[0]
+                        range[1] = (table.range[1] > range[1]) ? table.range[1] : range[1]
+                        range[0] = range[1] - (5 * MINUTE)
+                        // })
+                      })
+
+                      this.prev.range = range
                       // this.prev.range[0] = val.range[1] - MINUTE
 
                       // Vue.$set(this.prev.range, 1, val.range[1])
@@ -368,7 +430,7 @@ export default {
                 {
                   params: function (_key) {
                     // debug('MyChart ', this.prev, this.current, _key)
-                    debug('MyChart periodical', _key)
+                    debug('MyChart periodical', _key, this.prev.range)
 
                     const MINUTE = 60000 // 60 secs
                     // const KEYS = [
@@ -611,9 +673,9 @@ export default {
                     val = JSON.parse(JSON.stringify(val[0]))
                     debug('MyTable', val)
 
-                    if (Array.isArray(val)) val = val[0] // wtf?
-
-                    if (!Array.isArray(val)) val = [val]
+                    // if (Array.isArray(val)) val = val[0] // wtf?
+                    //
+                    // if (!Array.isArray(val)) val = [val]
 
                     val.sort(function (a, b) {
                       if (a.metadata.timestamp > b.metadata.timestamp) {

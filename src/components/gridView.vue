@@ -142,6 +142,8 @@ import { mapState, mapGetters } from 'vuex'
 import { dom } from 'quasar'
 const { height, width } = dom
 
+import VueQuery from 'vuequery'
+
 export default {
   name: 'GridView',
   // components: { GridLayout, GridItem, TextWidget, TextAreaWidget, ImageWidget },
@@ -190,7 +192,21 @@ export default {
           vnode.componentInstance.$on(event, (eventData) => {
             const targetEvent = allEvents[event]
             // if(Array.isArray(eventData))
-            vnode.context[targetEvent](eventData, event, vnode.componentInstance)
+            debug('DynamicEvents', vnode.context)
+            if (vnode.context[targetEvent]) {
+              vnode.context[targetEvent](eventData, event, vnode.componentInstance)
+            } else {
+              const parents = VueQuery(vnode.context).parents()
+              for (let i = 0; i < parents.length; i++) {
+                if (parents[i].vm[targetEvent]) {
+                  debug('DynamicEvents found', parents[i])
+                  parents[i].vm.$vnode.componentInstance[targetEvent](eventData, event, vnode.componentInstance)
+                  i = parents.length// to exit loop
+                }
+              }
+
+              // vnode.context.$parent[targetEvent](eventData, event, vnode.componentInstance)
+            }
           })
         })
       },

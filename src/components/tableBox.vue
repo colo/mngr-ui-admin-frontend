@@ -6,10 +6,14 @@
     :type="type"
     :footer="footer"
     :body="{class: 'bg-primary'}"
+    v-on:hide="hide"
+    v-on:show="show"
+    :tools="false"
   >
   <!-- :body="{class: 'bg-secondary'}" -->
-    <div style="height: 460px">
-      <grid-view :id="table+'.grid'" :components="components" :grid="grid" v-on:height="setHeight" :className="''"/>
+    <div :style="{height: grid_container_height}">
+      <grid-view :id="table+'.grid'" :components="components" :grid="grid" :className="''"/>
+      <!-- v-on:height="setHeight" -->
     </div>
   </admin-lte-box>
   <!-- </div> -->
@@ -126,6 +130,136 @@ export default {
       }
 
     }],
+    'range': [{
+      component: 'admin-lte-small-box',
+      props: {
+        bg: 'bg-info',
+        inner: {
+          header: 'Range',
+          // text: '26/07/2019 - 27/07/2019'
+          text: ''
+        },
+        icon: 'fa fa-calendar'
+      },
+      source: {
+        requests: {
+          once: [{
+            params: {
+              path: 'all',
+              query: {
+                from: undefined,
+                register: 'periodical',
+                'transformation': [
+                  { 'orderBy': { 'index': 'r.asc(timestamp)' } },
+                  'limit:30000'
+                ]
+              }
+
+            },
+            callback: function (val) {
+              // this.props.inner.text = val[0][0].range
+              debug('Range', JSON.parse(JSON.stringify(val)), this)
+              let range = [0, 0]
+              Array.each(val, function (table) {
+                // Array.each(table, function (data) {
+                debug('Range table data', table)
+                range[0] = (table.range[0] < range[0] || range[0] === 0) ? table.range[0] : range[0]
+                range[1] = (table.range[1] > range[1]) ? table.range[1] : range[1]
+                // })
+              })
+
+              this.props.inner.text = range
+            }
+          }]
+        }
+      }
+    }],
+    'tags': [{
+      component: 'admin-lte-small-box',
+      props: {
+        bg: 'bg-info',
+        inner: {
+          header: 'Tags',
+          // text: 'nginx - web - apache - stdin'
+          text: ''
+        },
+        icon: 'fa fa-tags'
+      },
+      source: {
+        requests: {
+          once: [{
+            params: {
+              path: 'all',
+              query: {
+                from: undefined,
+                register: 'periodical',
+                'transformation': [
+                  { 'orderBy': { 'index': 'r.asc(timestamp)' } },
+                  'limit:30000'
+                ]
+              }
+
+            },
+            callback: function (val) {
+              // this.props.inner.text = val[0][0].range
+              debug('Tags', JSON.parse(JSON.stringify(val)), this)
+              let tags = []
+              Array.each(val, function (table) {
+                // Array.each(table, function (data) {
+                debug('Tags table data', table)
+                tags = tags.combine(table.tags)
+                // })
+              })
+
+              this.props.inner.text = tags
+            }
+          }]
+        }
+      }
+    }],
+    'hosts': [{
+      component: 'admin-lte-small-box',
+      props: {
+        bg: 'bg-info',
+        inner: {
+          header: 'Hosts',
+          // text: 'colo'
+          text: ''
+        },
+        icon: 'fa fa-server'
+      },
+      source: {
+        requests: {
+          once: [{
+            params: {
+              path: 'all',
+              query: {
+                from: undefined,
+                register: 'periodical',
+                'transformation': [
+                  { 'orderBy': { 'index': 'r.asc(timestamp)' } },
+                  'limit:30000'
+                ]
+              }
+
+            },
+            callback: function (val) {
+              // this.props.inner.text = val[0][0].range
+              debug('Hosts', JSON.parse(JSON.stringify(val)), this)
+              let hosts = []
+              Array.each(val, function (table) {
+                // Array.each(table, function (data) {
+                debug('Hosts table data', table)
+                hosts = hosts.combine(table.hosts)
+                // })
+              })
+
+              this.props.inner.text = hosts
+            }
+          }]
+        }
+      }
+    }],
     'chart': [{
       component: 'MyChart',
       props: {
@@ -178,43 +312,43 @@ export default {
 
                   debug('MyChart TABLE ', table, metadata, key)
 
-                  Array.each(table, function (data) {
-                    Array.each(data, function (val) {
-                      debug('MyChart cb ', val, metadata, label, index_of_value, table)
+                  Array.each(table, function (val) {
+                    // Array.each(data, function (val) {
+                    debug('MyChart cb ', val, metadata, label, index_of_value, table)
 
-                      let name = val.path
-                      if (name.indexOf(metadata.from) > -1) {
-                        name = name.substring(name.indexOf(metadata.from + '.') + metadata.from.length + 1)
-                        name = (name === '') ? metadata.from : name
-                      }
+                    let name = val.path
+                    if (name.indexOf(metadata.from) > -1) {
+                      name = name.substring(name.indexOf(metadata.from + '.') + metadata.from.length + 1)
+                      name = (name === '') ? metadata.from : name
+                    }
 
-                      let dataset = { name: name, chartType: 'bar', values: [], _key: val.path }
+                    let dataset = { name: name, chartType: 'bar', values: [], _key: val.path }
+                    for (let index = 0; index < this.current.data.datasets.length; index++) {
+                      if (this.current.data.datasets[index].name === dataset.name) { dataset = this.current.data.datasets[index] }
+                    }
+                    Array.each(this.current.data.datasets, function (_dataset, index) {
+                      if (_dataset.name === dataset.name) { dataset = _dataset }
+                    })
+
+                    dataset.values[index_of_value] = val.count * 1
+
+                    let found = false
+                    Array.each(this.current.data.datasets, function (_dataset, index) {
                       for (let index = 0; index < this.current.data.datasets.length; index++) {
-                        if (this.current.data.datasets[index].name === dataset.name) { dataset = this.current.data.datasets[index] }
-                      }
-                      Array.each(this.current.data.datasets, function (_dataset, index) {
-                        if (_dataset.name === dataset.name) { dataset = _dataset }
-                      })
+                        let _dataset = this.current.data.datasets[index]
+                        if (_dataset.name === dataset.name) {
+                          found = true
 
-                      dataset.values[index_of_value] = val.count * 1
-
-                      let found = false
-                      Array.each(this.current.data.datasets, function (_dataset, index) {
-                        for (let index = 0; index < this.current.data.datasets.length; index++) {
-                          let _dataset = this.current.data.datasets[index]
-                          if (_dataset.name === dataset.name) {
-                            found = true
-
-                            this.current.data.datasets[index] = dataset
-                          }
+                          this.current.data.datasets[index] = dataset
                         }
-                      }.bind(this))
-
-                      if (!found) {
-                        this.current.data.datasets.push(dataset)
-                        debug('MyChart cb NOT FOUND', dataset.name)
                       }
                     }.bind(this))
+
+                    if (!found) {
+                      this.current.data.datasets.push(dataset)
+                      debug('MyChart cb NOT FOUND', dataset.name)
+                    }
+                    // }.bind(this))
                   }.bind(this))
 
                   debug('MyChart cb UPDATING2', this.current.data.datasets, this.current.keys)
@@ -259,6 +393,7 @@ export default {
   // },
   data () {
     return {
+      grid_container_height: '460px',
       height: '0px',
 
       id: 'all',
@@ -380,12 +515,25 @@ export default {
     }
   },
   methods: {
-    setHeight: function (height) {
-      debug('setHeight', height)
+    // setHeight: function (height) {
+    //   debug('setHeight', height)
+    //   // this.height = height + 700 + 'px'
+    //   this.height = height + 20 + 'px'
+    // },
+    hide: function (el) {
+      debug('hide', el)
+      this.$emit('hide', this.table)
+      // this.grid_container_height = '0px'
       // this.height = height + 700 + 'px'
-      this.height = height + 20 + 'px'
+      // this.height = height + 20 + 'px'
     },
-
+    show: function (el) {
+      debug('show', el)
+      this.$emit('show', this.table)
+      // this.grid_container_height = '0px'
+      // this.height = height + 700 + 'px'
+      // this.height = height + 20 + 'px'
+    },
     create_pipelines: function (next) {
       let pipeline = require('../apps/' + this.pipeline).default
       debug('create_pipelines %o', pipeline)

@@ -75,6 +75,9 @@
 <script>
 /* global $ */
 
+import * as Debug from 'debug'
+const debug = Debug('components:adminlte:box')
+
 export default {
   name: 'admin-lte-box',
 
@@ -139,6 +142,7 @@ export default {
   mounted: function () {
   //
     let self = this
+    debug('mounted', this.$el)
     //   //console.log('this.$el', this.$el)
     $(this.$el).on('expanded.boxwidget', function () {
       self.$emit('show', self.$el)
@@ -148,7 +152,7 @@ export default {
 
     $(this.$el).on('collapsed.boxwidget', function () {
       self.$emit('hide', self.$el)
-      // console.log('collapsed')
+      debug('collapsed')
       // this.hideCollapsible(this.$el)
     })
 
