@@ -250,7 +250,7 @@ export default {
     }
   },
   // updated: function () {
-  //   // console.log('height:', height(document.getElementById('logs')))
+  //   // // console.log('height:', height(document.getElementById('logs')))
   //   // debug('updated', height(this.$refs[this.id].$el))
   //   let height = this.getGridHeight()
   //   debug('updated %d', height)
@@ -258,7 +258,7 @@ export default {
   //   this.$emit('height', height)
   // },
   updated: function () {
-    // console.log('height:', height(document.getElementById('logs')))
+    // // console.log('height:', height(document.getElementById('logs')))
     // debug('updated', height(this.$refs[this.id].$el))
     let height = this.getGridHeight()
     debug('mounted height %d', height)
@@ -267,7 +267,7 @@ export default {
   },
   // mounted: function () {
   //   debug('mounted', this.getGridHeight())
-  //   // console.log('height:', height(document.getElementById('logs')))
+  //   // // console.log('height:', height(document.getElementById('logs')))
   //   this.height = this.getGridHeight() + 700 + 'px'
   // },
   created: function () {
@@ -363,7 +363,7 @@ export default {
   },
   watch: {
     components: {
-      // immediate: true,
+      immediate: true,
       deep: true,
       handler: function (components) {
         debug('watch components', components)
@@ -373,17 +373,17 @@ export default {
         //     this.resolveComponent(components[index][i])
         //   }
         // }
-        components.id = this.id
+        // components.id = this.id
         this.viewComponents = components
       }
     },
     grid: {
-      // immediate: true,
+      immediate: true,
       deep: true,
       handler: function (grid) {
         debug('watch grid', grid)
         grid = JSON.parse(JSON.stringify(grid))
-        grid.id = this.id
+        // grid.id = this.id
         this.viewGrid = grid
       }
     }
@@ -467,7 +467,7 @@ export default {
               )
             )
             // Globally register the component
-            // console.log('componentName')
+            // // console.log('componentName')
 
             if (componentName === component) {
               debug('resolver', component, fileName, componentName)
@@ -619,7 +619,8 @@ export default {
       this.viewGrid = grid
     },
     log: function (evt) {
-      window.console.log(evt)
+      // window.console.log(evt)
+      debug('log %o', evt)
     }
     // gridMode () {
     //   debug('gridMode')

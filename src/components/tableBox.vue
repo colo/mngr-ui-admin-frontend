@@ -12,7 +12,9 @@
   >
   <!-- :body="{class: 'bg-secondary'}" -->
     <div :style="{height: grid_container_height}">
-      <grid-view :id="table+'.grid'" :components="components" :grid="grid" :className="''"/>
+      <!-- <grid-view :id="table+'.grid'" :components="components" :grid="grid" :className="''"/> -->
+      <grid-view :swap_components="true" :id="id+'_'+table" :components="components" :grid="grid" :className="''"/>
+      <!--   -->
       <!-- v-on:height="setHeight" -->
     </div>
   </admin-lte-box>
@@ -37,54 +39,54 @@ export default {
 
   components: { GridView },
 
-  grid_template: {
-
-    layouts: {
-      'lg': [
-
-        { x: 0, y: 0, w: 3, h: 7, i: 'count' },
-        { x: 3, y: 0, w: 3, h: 7, i: 'range' },
-        { x: 6, y: 0, w: 3, h: 7, i: 'tags' },
-        { x: 9, y: 0, w: 3, h: 7, i: 'hosts' },
-        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
-        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
-        // second row
-        // { x: 1, y: 1, w: 10, h: 2, i: '6' },
-        { x: 0, y: 1, w: 12, h: 16, i: 'chart' }
-        // { x: 0, y: 3, w: 12, h: 30, i: '8' }
-        // { x: 0, y: 4, w: 12, h: 2, i: '9' }
-      ],
-      'md': [
-        { x: 0, y: 0, w: 2, h: 7, i: 'count' },
-        { x: 2, y: 0, w: 2, h: 7, i: 'range' },
-        { x: 4, y: 0, w: 2, h: 7, i: 'tags' },
-        { x: 6, y: 0, w: 2, h: 7, i: 'hosts' },
-        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
-        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
-        // second row
-        // { x: 1, y: 1, w: 6, h: 2, i: '6' },
-        { x: 0, y: 1, w: 8, h: 16, i: 'chart' }
-        // { x: 0, y: 3, w: 8, h: 20, i: '8' }
-        // { x: 0, y: 4, w: 8, h: 2, i: '9' }
-
-      ],
-      'sm': [
-        { x: 0, y: 0, w: 3, h: 7, i: 'count' },
-        { x: 3, y: 0, w: 3, h: 7, i: 'range' },
-        { x: 0, y: 1, w: 3, h: 7, i: 'tags' },
-        { x: 3, y: 1, w: 3, h: 7, i: 'hosts' },
-        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
-        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
-        // second row
-        // { x: 1, y: 2, w: 4, h: 2, i: '6' },
-        { x: 0, y: 2, w: 6, h: 16, i: 'chart' }
-        // { x: 0, y: 4, w: 6, h: 20, i: '8' }
-        // { x: 0, y: 5, w: 6, h: 2, i: '9' }
-      ]
-
-    }
-
-  },
+  // grid_template: {
+  //
+  //   layouts: {
+  //     'lg': [
+  //
+  //       { x: 0, y: 0, w: 3, h: 7, i: 'count' },
+  //       { x: 3, y: 0, w: 3, h: 7, i: 'range' },
+  //       { x: 6, y: 0, w: 3, h: 7, i: 'tags' },
+  //       { x: 9, y: 0, w: 3, h: 7, i: 'hosts' },
+  //       // { x: 8, y: 0, w: 2, h: 7, i: '4' },
+  //       // { x: 10, y: 0, w: 2, h: 7, i: '5' },
+  //       // second row
+  //       // { x: 1, y: 1, w: 10, h: 2, i: '6' },
+  //       { x: 0, y: 1, w: 12, h: 16, i: 'chart' }
+  //       // { x: 0, y: 3, w: 12, h: 30, i: '8' }
+  //       // { x: 0, y: 4, w: 12, h: 2, i: '9' }
+  //     ],
+  //     'md': [
+  //       { x: 0, y: 0, w: 2, h: 7, i: 'count' },
+  //       { x: 2, y: 0, w: 2, h: 7, i: 'range' },
+  //       { x: 4, y: 0, w: 2, h: 7, i: 'tags' },
+  //       { x: 6, y: 0, w: 2, h: 7, i: 'hosts' },
+  //       // { x: 8, y: 0, w: 2, h: 7, i: '4' },
+  //       // { x: 10, y: 0, w: 2, h: 7, i: '5' },
+  //       // second row
+  //       // { x: 1, y: 1, w: 6, h: 2, i: '6' },
+  //       { x: 0, y: 1, w: 8, h: 16, i: 'chart' }
+  //       // { x: 0, y: 3, w: 8, h: 20, i: '8' }
+  //       // { x: 0, y: 4, w: 8, h: 2, i: '9' }
+  //
+  //     ],
+  //     'sm': [
+  //       { x: 0, y: 0, w: 3, h: 7, i: 'count' },
+  //       { x: 3, y: 0, w: 3, h: 7, i: 'range' },
+  //       { x: 0, y: 1, w: 3, h: 7, i: 'tags' },
+  //       { x: 3, y: 1, w: 3, h: 7, i: 'hosts' },
+  //       // { x: 8, y: 0, w: 2, h: 7, i: '4' },
+  //       // { x: 10, y: 0, w: 2, h: 7, i: '5' },
+  //       // second row
+  //       // { x: 1, y: 2, w: 4, h: 2, i: '6' },
+  //       { x: 0, y: 2, w: 6, h: 16, i: 'chart' }
+  //       // { x: 0, y: 4, w: 6, h: 20, i: '8' }
+  //       // { x: 0, y: 5, w: 6, h: 2, i: '9' }
+  //     ]
+  //
+  //   }
+  //
+  // },
 
   components_template: {
     'count': [{
@@ -404,11 +406,45 @@ export default {
       grid: {
         layouts: {
           'lg': [
+
+            { x: 0, y: 0, w: 3, h: 7, i: 'count' },
+            { x: 3, y: 0, w: 3, h: 7, i: 'range' },
+            { x: 6, y: 0, w: 3, h: 7, i: 'tags' },
+            { x: 9, y: 0, w: 3, h: 7, i: 'hosts' },
+            // { x: 8, y: 0, w: 2, h: 7, i: '4' },
+            // { x: 10, y: 0, w: 2, h: 7, i: '5' },
+            // second row
+            // { x: 1, y: 1, w: 10, h: 2, i: '6' },
+            { x: 0, y: 1, w: 12, h: 16, i: 'chart' }
+            // { x: 0, y: 3, w: 12, h: 30, i: '8', immobile: true }
+            // { x: 0, y: 4, w: 12, h: 2, i: '9', immobile: true }
           ],
           'md': [
+            { x: 0, y: 0, w: 2, h: 7, i: 'count' },
+            { x: 2, y: 0, w: 2, h: 7, i: 'range' },
+            { x: 4, y: 0, w: 2, h: 7, i: 'tags' },
+            { x: 6, y: 0, w: 2, h: 7, i: 'hosts' },
+            // { x: 8, y: 0, w: 2, h: 7, i: '4' },
+            // { x: 10, y: 0, w: 2, h: 7, i: '5' },
+            // second row
+            // { x: 1, y: 1, w: 6, h: 2, i: '6' },
+            { x: 0, y: 1, w: 8, h: 16, i: 'chart' }
+            // { x: 0, y: 3, w: 8, h: 20, i: '8' }
+            // { x: 0, y: 4, w: 8, h: 2, i: '9' }
+
           ],
           'sm': [
-
+            { x: 0, y: 0, w: 3, h: 7, i: 'count' },
+            { x: 3, y: 0, w: 3, h: 7, i: 'range' },
+            { x: 0, y: 1, w: 3, h: 7, i: 'tags' },
+            { x: 3, y: 1, w: 3, h: 7, i: 'hosts' },
+            // { x: 8, y: 0, w: 2, h: 7, i: '4' },
+            // { x: 10, y: 0, w: 2, h: 7, i: '5' },
+            // second row
+            // { x: 1, y: 2, w: 4, h: 2, i: '6' },
+            { x: 0, y: 2, w: 6, h: 16, i: 'chart' }
+            // { x: 0, y: 4, w: 6, h: 20, i: '8' }
+            // { x: 0, y: 5, w: 6, h: 2, i: '9' }
           ]
 
         },
@@ -432,28 +468,37 @@ export default {
   mounted: function () {
     debug('mounted %o', this.data)
 
-    debug('All callback', this.data, this.$options.grid_template)
-    let grid = JSON.parse(JSON.stringify(this.grid))
-    let grid_template = Object.clone(this.$options.grid_template)
+    // debug('All callback', this.data, this.$options.grid_template)
+    // let grid = JSON.parse(JSON.stringify(this.grid))
+    // let grid_template = Object.clone(this.$options.grid_template)
+    //
+    // let last_component_row = 0
+    // // Object.each(this.data, function (data, rt_tb) {
+    // debug('All %s', this.table)
+    // Object.each(grid_template.layouts, function (layout, layout_name) {
+    //   debug('All layout_name %s', layout_name)
+    //   Array.each(layout, function (component, index) {
+    //     let cloned_component = Object.clone(component)
+    //     cloned_component.i = cloned_component.i + '.' + this.table
+    //     cloned_component.y = cloned_component.y + last_component_row
+    //
+    //     if (!grid.layouts[layout_name]) grid.layouts[layout_name] = []
+    //     grid.layouts[layout_name].push(cloned_component)
+    //   }.bind(this))
+    //   last_component_row++
+    // }.bind(this))
+    // // })
+    try {
+      let grid = Object.clone(this.$store.getters['grids/getGrid'](this.id + '_' + this.table))
+      for (const key in grid) {
+        this.$set(this.grid, key, Object.merge(grid[key], this.grid[key]))
+      }
+    } catch (e) {
 
-    let last_component_row = 0
-    // Object.each(this.data, function (data, rt_tb) {
-    debug('All %s', this.table)
-    Object.each(grid_template.layouts, function (layout, layout_name) {
-      debug('All layout_name %s', layout_name)
-      Array.each(layout, function (component, index) {
-        let cloned_component = Object.clone(component)
-        cloned_component.i = cloned_component.i + '.' + this.table
-        cloned_component.y = cloned_component.y + last_component_row
+    }
 
-        if (!grid.layouts[layout_name]) grid.layouts[layout_name] = []
-        grid.layouts[layout_name].push(cloned_component)
-      }.bind(this))
-      last_component_row++
-    }.bind(this))
-    // })
-
-    let components = JSON.parse(JSON.stringify(this.components))
+    // let components = JSON.parse(JSON.stringify(this.components))
+    let components = {}
     let components_template = Object.clone(this.$options.components_template)
     // Object.each(this.data, function (data, rt_tb) {
     debug('All table %s', this.table, components_template)
@@ -461,7 +506,7 @@ export default {
       let cloned_component = Array.clone(component)
 
       debug('All component %s %o', id, cloned_component)
-      id += '.' + this.table
+      // id += '.' + this.table
       Array.each(cloned_component, function (widget, index) {
         // widget.props.table = rt_tb
         // widget.props.data = data
@@ -475,11 +520,11 @@ export default {
     // })
 
     // this.grid = grid
-    debug('All grid / components %o', grid, components)
+    debug('All grid / components %o', components)
 
-    for (const key in grid) {
-      this.$set(this.grid, key, grid[key])
-    }
+    // for (const key in grid) {
+    //   this.$set(this.grid, key, grid[key])
+    // }
     // this.components = components
     for (const key in components) {
       this.$set(this.components, key, components[key])
