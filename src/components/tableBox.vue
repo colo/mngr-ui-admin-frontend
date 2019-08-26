@@ -2,18 +2,19 @@
   <!-- <div> -->
   <admin-lte-box
     :id="table+'.box'"
-    :title="'Table: '+table"
+    :key="table+'.box'"
     :type="type"
     :footer="footer"
     :body="{class: 'bg-primary'}"
     v-on:hide="hide"
     v-on:show="show"
-    :tools="false"
+    :header="{tools: false, component: {type: 'router-link', props: {to: table}, text: 'Table: '+table}}"
   >
+  <!-- :header="{ title: 'Table: <a href=/'+table+'>'+table+'</a>', tools: false }" -->
   <!-- :body="{class: 'bg-secondary'}" -->
-    <div :style="{height: grid_container_height}">
+    <div :style="{height: grid_container_height}" :key="table+'.grid.container'">
       <!-- <grid-view :id="table+'.grid'" :components="components" :grid="grid" :className="''"/> -->
-      <grid-view :swap_components="true" :id="id+'_'+table" :components="components" :grid="grid" :className="''"/>
+      <grid-view v-if="grid.layouts && Object.getLength(components) > 0" :swap_components="true" :id="id+'_'+table" :key="id+'_'+table" :components="components" :grid="grid" :className="''"/>
       <!--   -->
       <!-- v-on:height="setHeight" -->
     </div>
@@ -488,14 +489,15 @@ export default {
     //   last_component_row++
     // }.bind(this))
     // // })
-    try {
-      let grid = Object.clone(this.$store.getters['grids/getGrid'](this.id + '_' + this.table))
-      for (const key in grid) {
-        this.$set(this.grid, key, Object.merge(grid[key], this.grid[key]))
-      }
-    } catch (e) {
 
-    }
+    // try {
+    //   let grid = Object.clone(this.$store.getters['grids/getGrid'](this.id + '_' + this.table))
+    //   for (const key in grid) {
+    //     this.$set(this.grid, key, Object.merge(grid[key], this.grid[key]))
+    //   }
+    // } catch (e) {
+    //
+    // }
 
     // let components = JSON.parse(JSON.stringify(this.components))
     let components = {}
@@ -530,35 +532,39 @@ export default {
       this.$set(this.components, key, components[key])
     }
 
+    this.destroy_pipelines()
+    this.__bind_components_to_sources(this.components)
+    this.create_pipelines()
+
     // this.props.inner.text = val[0][0].count
   },
-  watch: {
-    components: {
-      // immediate: true,
-      // deep: true,
-      handler: function (components) {
-        debug('watch components', components)
-        // Object.each(this.$options.pipelines, function (pipe, id) {
-        //   debug('watch components pipe %s %o', id, pipe)
-        //   Array.each(pipe.inputs, function (input, index) {
-        //     debug('watch components pipe input %o', input)
-        //     let options = Object.clone(input.options)
-        //
-        //   })
-        // })
-        // components = JSON.parse(JSON.stringify(components))
-        // // for (const index in components) {
-        // //   for (const i in components[index]) {
-        // //     this.resolveComponent(components[index][i])
-        // //   }
-        // // }
-        // components.id = this.id
-        // this.viewComponents = components
-        this.destroy_pipelines()
-        this.create_pipelines()
-      }
-    }
-  },
+  // watch: {
+  //   components: {
+  //     // immediate: true,
+  //     // deep: true,
+  //     handler: function (components) {
+  //       debug('watch components', components)
+  //       // Object.each(this.$options.pipelines, function (pipe, id) {
+  //       //   debug('watch components pipe %s %o', id, pipe)
+  //       //   Array.each(pipe.inputs, function (input, index) {
+  //       //     debug('watch components pipe input %o', input)
+  //       //     let options = Object.clone(input.options)
+  //       //
+  //       //   })
+  //       // })
+  //       // components = JSON.parse(JSON.stringify(components))
+  //       // // for (const index in components) {
+  //       // //   for (const i in components[index]) {
+  //       // //     this.resolveComponent(components[index][i])
+  //       // //   }
+  //       // // }
+  //       // components.id = this.id
+  //       // this.viewComponents = components
+  //       this.destroy_pipelines()
+  //       this.create_pipelines()
+  //     }
+  //   }
+  // },
   methods: {
     // setHeight: function (height) {
     //   debug('setHeight', height)

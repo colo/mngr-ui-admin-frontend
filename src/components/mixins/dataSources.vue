@@ -53,9 +53,10 @@ export default {
     this.__bind_components_to_sources(this.components)
     this.create_pipelines()
   },
-  updated: function () {
-  },
+  // updated: function () {
+  // },
   destroy: function () {
+    this.destroy_pipelines()
     this.__unregister_store_module(this.id)
   },
 
@@ -120,10 +121,10 @@ export default {
       }
     },
     __update_component_data: function (component, key, payload) {
-      debug('__update_component_data', component, key, JSON.parse(JSON.stringify(payload)))
+      debug('__update_component_data', component, key, Object.clone(payload))
       let callback = this.__get_source_callback_from_key(component.source, key)
 
-      // debug('__update_component_data', callback)
+      debug('__update_component_data', callback)
 
       if (callback && typeof callback === 'function') {
         callback.attempt([payload.data, payload.metadata, key, this], component)
@@ -145,7 +146,7 @@ export default {
             // }
             // else
             if (_key === key || (Array.isArray(_key) && _key.indexOf(key) > -1)) {
-              debug('__get_source_callback_from_key', reqs)
+              debug('__get_source_callback_from_key', reqs[i])
               callback = reqs[i].callback
             }
           }

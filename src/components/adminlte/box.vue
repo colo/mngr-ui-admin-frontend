@@ -4,9 +4,17 @@
     <div v-if="header" class="box-header" :class="(header.border) ? 'with-border' : ''">
       <i :class="header.icon"></i>
 
-      <h3 v-if="title != ''" class="box-title">{{title}}</h3>
+      <h3 v-if="header.title && header.title != ''" class="box-title" v-html="header.title"></h3>
+      <component
+        v-else-if="header.component"
+        :is="header.component.type"
+        v-bind="header.component.props"
+        v-dynamic-events="(header.component.events) ? header.component.events : {}"
+      >
+        {{header.component.text}}
+      </component>
 
-      <div v-if="tools == true" class="box-tools pull-right">
+      <div v-if="header.tools == true" class="box-tools pull-right">
         <button type="button" class="btn bg-white btn-sm" data-widget="collapse"><i class="fa fa-minus"></i>
         </button>
         <button type="button" class="btn bg-white btn-sm" data-widget="remove"><i class="fa fa-times"></i>
@@ -17,7 +25,7 @@
       <component
         v-if="body.component"
         :is="body.component.type"
-        v-bind="body.component.options"
+        v-bind="body.component.props"
         v-dynamic-events="(body.component.events) ? body.component.events : {}"
       >
       </component>
@@ -31,7 +39,7 @@
       <component
         v-if="footer.component"
         :is="footer.component.type"
-        v-bind="footer.component.options"
+        v-bind="footer.component.props"
         v-dynamic-events="(footer.component.events) ? footer.component.events : {}"
       >
       </component>
@@ -78,8 +86,11 @@
 import * as Debug from 'debug'
 const debug = Debug('components:adminlte:box')
 
+import DynamicEvents from '@components/mixins/dynamicEvents'
+
 export default {
   name: 'admin-lte-box',
+  mixins: [DynamicEvents],
 
   props: {
     id: {
@@ -94,18 +105,20 @@ export default {
       **/
       default: 'box-default box-solid'
     },
-    title: {
-      type: [String],
-      default: ''
-    },
-    tools: {
-      type: [Boolean],
-      default: true
-    },
+    // title: {
+    //   type: [String],
+    //   default: ''
+    // },
+    // tools: {
+    //   type: [Boolean],
+    //   default: true
+    // },
     header: {
       type: [Object, Boolean],
       default: function () {
         return {
+          title: '',
+          tools: true,
           border: true,
           icon: 'fa fa-th'
         }

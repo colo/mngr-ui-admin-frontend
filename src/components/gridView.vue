@@ -15,6 +15,7 @@
         :cols="viewGrid.cols"
         :ref="id"
         :id="id"
+        :key="id"
         :useCSSTransforms="true"
         :breakpoints="viewGrid.breakpoints"
         :colsAll="viewGrid.colsAll"
@@ -47,6 +48,7 @@
             v-if="!item.immobile"
             class="list-group"
             :id="item.i"
+            :key="item.i"
             :list="viewComponents[item.i]" group="components"
             @add="addComponent"
             @remove="removeComponent"
@@ -58,16 +60,17 @@
               :key="item.i+'.'+wIndex"
               :id="item.i+'.'+wIndex"
             >
-
+              <!-- {{widget.component}} -->
               <component
                 v-if="widget.component"
                 :is="resolveComponent(widget.component)"
                 v-bind="widget.props"
+                :key="(widget.id) ? widget.id : item.i+'.'+wIndex+'.component'"
                 v-dynamic-events="(widget.events) ? widget.events : {}"
               />
               <!-- v-dynamic-options="(widget.options) ? widget.options : {}" -->
 
-              <template v-else-if="widget.slot" >
+              <template v-else-if="widget.slot">
                 {{widget.slot}}
               </template>
             </div>
@@ -83,10 +86,11 @@
              v-if="widget.component"
              :is="widget.component"
              v-bind="widget.props"
+             :key="(widget.id) ? widget.id : item.i+'.'+wIndex+'.component'"
              v-dynamic-events="(widget.events) ? widget.events : {}"
            />
             <!-- v-dynamic-options="(widget.options) ? widget.options : {}" -->
-           <template v-else-if="widget.slot" >
+           <template v-else-if="widget.slot">
              {{widget.slot}}
            </template>
          </div>
@@ -142,10 +146,11 @@ import { mapState, mapGetters } from 'vuex'
 import { dom } from 'quasar'
 const { height, width } = dom
 
-import VueQuery from 'vuequery'
+import DynamicEvents from '@components/mixins/dynamicEvents'
 
 export default {
   name: 'GridView',
+  mixins: [DynamicEvents],
   // components: { GridLayout, GridItem, TextWidget, TextAreaWidget, ImageWidget },
   components: { VueResponsiveGridLayout, VueGridItem, draggable },
 
@@ -181,69 +186,6 @@ export default {
     // EventBus: undefined
   },
 
-  // https://forum.vuejs.org/t/dynamic-props-and-custom-event-emit-in-dynamic-component/10932
-  directives: {
-    DynamicEvents: {
-      bind: (el, binding, vnode) => {
-        // debug('DynamicEvents.bind', el, binding, vnode)
-        const allEvents = binding.value
-        Object.keys(allEvents).forEach((event) => {
-          // register handler in the dynamic component
-          vnode.componentInstance.$on(event, (eventData) => {
-            const targetEvent = allEvents[event]
-            // if(Array.isArray(eventData))
-            debug('DynamicEvents', vnode.context)
-            if (vnode.context[targetEvent]) {
-              vnode.context[targetEvent](eventData, event, vnode.componentInstance)
-            } else {
-              const parents = VueQuery(vnode.context).parents()
-              for (let i = 0; i < parents.length; i++) {
-                if (parents[i].vm[targetEvent]) {
-                  debug('DynamicEvents found', parents[i])
-                  parents[i].vm.$vnode.componentInstance[targetEvent](eventData, event, vnode.componentInstance)
-                  i = parents.length// to exit loop
-                }
-              }
-
-              // vnode.context.$parent[targetEvent](eventData, event, vnode.componentInstance)
-            }
-          })
-        })
-      },
-      unbind: function (el, binding, vnode) {
-        vnode.componentInstance.$off()
-      }
-    }
-    // DynamicOptions: {
-    //   bind: (el, binding, vnode) => {
-    //     // debug('DynamicOptions.bind', el, binding, vnode, this)
-    //     const allOptions = binding.value
-    //     Object.keys(allOptions).forEach((opt) => {
-    //       if (vnode.context[opt]) {
-    //         debug('DynamicOptions.bind', vnode, opt, vnode.context[opt])
-    //         Vue.set(vnode.componentInstance, opt, vnode.context[opt])
-    //       } else {
-    //         // Vue.set(vnode.componentInstance, opt, allOptions[opt])
-    //         vnode.componentInstance._props[opt] = allOptions[opt]
-    //         // vnode.componentInstance[opt](allOptions[opt])
-    //         // vnode.componentOptions.Ctor.extendOptions.props[opt] = allOptions[opt]
-    //       }
-    //       // register handler in the dynamic component
-    //       // vnode.componentInstance.$on(event, (eventData) => {
-    //       //   const targetEvent = allEvents[event]
-    //       //   vnode.context[targetEvent](eventData)
-    //       // })
-    //     })
-    //   },
-    //   // update: (el, binding, vnode) => {
-    //   //   debug('DynamicOptions.inserted', this)
-    //   // },
-    //   unbind: function (el, binding, vnode) {
-    //     // vnode.componentInstance.$off()
-    //   }
-    // }
-  },
-
   data: function () {
     return {
       height: '0px'
@@ -261,14 +203,15 @@ export default {
     // // console.log('height:', height(document.getElementById('logs')))
     // debug('updated', height(this.$refs[this.id].$el))
     let height = this.getGridHeight()
-    debug('mounted height %d', height)
+    debug('updated height %d', height)
     this.height = height + 'px'
     this.$emit('height', height)
   },
   // mounted: function () {
-  //   debug('mounted', this.getGridHeight())
-  //   // // console.log('height:', height(document.getElementById('logs')))
-  //   this.height = this.getGridHeight() + 700 + 'px'
+  // //   debug('mounted', this.getGridHeight())
+  // //   // // console.log('height:', height(document.getElementById('logs')))
+  // //   this.height = this.getGridHeight() + 700 + 'px'
+  //   this.$forceUpdate()
   // },
   created: function () {
     debug('created', this.id)
@@ -277,7 +220,7 @@ export default {
 
     let grid = {}
     if (this.grid) {
-      grid = JSON.parse(JSON.stringify(this.grid))
+      grid = Object.clone(this.grid)
       grid.id = this.id
       this.viewGrid = grid
     } else {
@@ -287,7 +230,7 @@ export default {
 
     let components = {}
     if (this.components) {
-      components = JSON.parse(JSON.stringify(this.components))
+      components = Object.clone(this.components)
       components.id = this.id
       this.viewComponents = components
     } else {
@@ -318,6 +261,8 @@ export default {
     // this.EventBus.$on('sortable', function (e, ui) {
     //   debug('$on sortable', e, ui)
     // })
+
+    // this.$forceUpdate()
   },
   // watch: {
   //   components: function (val, oldVal) {
@@ -335,22 +280,23 @@ export default {
         // return JSON.parse(JSON.stringify(this.$store.state['grid_' + this.id].layout))
         // return JSON.parse(JSON.stringify(this.$store.getters['grids/getLayout'](this.id)))
         // return this.$store.state.grids[this.id]
-        return JSON.parse(JSON.stringify(this.$store.getters['grids/getGrid'](this.id)))
+        return Object.clone(this.$store.getters['grids/getGrid'](this.id))
       },
       set (grid) {
         debug('set viewGrid', this.id, grid)
         grid.id = this.id
         this.$store.commit('grids/setGrid', grid)
+        // this.$forceUpdate()
         // this.$store.state.grids[this.id].layout = JSON.parse(JSON.stringify(layout))
       }
     },
     viewComponents: {
       get () {
-        debug('get viewComponents', this.id)
+        debug('get viewComponents', this.id, Object.clone(this.$store.getters['components/getComponents'](this.id)))
         // let grid = JSON.parse(JSON.stringify(this.$store.getters['grids/getGrid'](this.id)))
         // let components = this.$store.state.grids.components
         // return components[this.id]
-        return JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
+        return Object.clone(this.$store.getters['components/getComponents'](this.id))
       },
       set (components) {
         debug('set viewComponents', this.id, components)
@@ -358,16 +304,18 @@ export default {
         // components = JSON.parse(JSON.stringify(components))
         // // grid.components = components
         this.$store.commit('components/setComponents', components)
+        // this.$forceUpdate()
       }
     }
   },
   watch: {
     components: {
-      immediate: true,
+      // immediate: true,
       deep: true,
       handler: function (components) {
         debug('watch components', components)
-        components = JSON.parse(JSON.stringify(components))
+        // components = JSON.parse(JSON.stringify(components))
+        components = Object.clone(components)
         // for (const index in components) {
         //   for (const i in components[index]) {
         //     this.resolveComponent(components[index][i])
@@ -378,11 +326,12 @@ export default {
       }
     },
     grid: {
-      immediate: true,
+      // immediate: true,
       deep: true,
       handler: function (grid) {
         debug('watch grid', grid)
-        grid = JSON.parse(JSON.stringify(grid))
+        // grid = JSON.parse(JSON.stringify(grid))
+        grid = Object.clone(grid)
         // grid.id = this.id
         this.viewGrid = grid
       }
@@ -451,6 +400,7 @@ export default {
         )
 
         let resolver = function (component) {
+          debug('resolver', component)
           // For each matching file name...
           requireComponent.keys().forEach((fileName) => {
             // Get the component config
@@ -470,8 +420,9 @@ export default {
             // // console.log('componentName')
 
             if (componentName === component) {
-              debug('resolver', component, fileName, componentName)
+              debug('resolver add', component, fileName, componentName)
               Vue.component(componentName, componentConfig.default || componentConfig)
+              return component
             }
           // Vue.component(component, function (resolve) {
           //   // This special require syntax will instruct Webpack to
@@ -488,11 +439,12 @@ export default {
         //     resolver(component, this.componentsDir[i])
         //   }
         // } else {
-        resolver(component)
+        return resolver(component)
         // }
 
         // return require('@components/' + this.componentsDir + '/' + component + '.vue')
       } else {
+        debug('resolve exist', component)
         return component
       }
     },
@@ -502,7 +454,7 @@ export default {
       let old_index = evt.item.id.split('.')[1]
       let new_index = evt.newIndex
       debug('addComponent', evt, evt.to.id, evt.item.id, from, old_index, new_index)
-      let components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
+      let components = Object.clone(this.$store.getters['components/getComponents'](this.id))
 
       debug('addComponent components', this.id, components, evt.to.id)
       components[evt.to.id] = (components[evt.to.id]) ? components[evt.to.id] : []
@@ -529,7 +481,7 @@ export default {
         let old_index = evt.item.id.split('.')[1]
         let new_index = evt.newIndex
         debug('removeComponent', evt, evt.to.id, evt.item.id, from, old_index, new_index)
-        let components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
+        let components = Object.clone(this.$store.getters['components/getComponents'](this.id))
 
         debug('removeComponent components', components)
         components[evt.from.id].splice(old_index, 1)
@@ -576,7 +528,7 @@ export default {
       }
     },
     onLayoutUpdate (layout, layouts, last) {
-      debug('onLayoutUpdate', layout, layouts, last)
+      debug('grid event onLayoutUpdate', this.id, layout, layouts, last)
       // this.$set(this.layouts, this.breakpoint, layout)
       let grid = this.viewGrid
       grid.layouts[grid.breakpoint] = layout
@@ -584,7 +536,7 @@ export default {
     },
 
     onLayoutChange (layout, layouts, breakpoint) {
-      debug('onLayoutChange', layout, layouts, breakpoint)
+      debug('grid event onLayoutChange', this.id, layout, layouts, breakpoint)
       // this.$set(this.layouts, breakpoint, layout)
       let grid = this.viewGrid
       grid.layouts[breakpoint] = layout
@@ -592,7 +544,7 @@ export default {
     },
 
     onLayoutInit (layout, layouts, cols, breakpoint) {
-      debug('onLayoutInit', layout, layouts, cols, breakpoint)
+      debug('grid event onLayoutInit', this.id, layout, layouts, cols, breakpoint, JSON.parse(JSON.stringify(this.viewComponents)))
       // this.cols = cols
       // this.breakpoint = breakpoint
       // this.$set(this.layouts, breakpoint, layout)
@@ -601,10 +553,11 @@ export default {
       grid.breakpoint = breakpoint
       grid.layouts[grid.breakpoint] = layout
       this.viewGrid = grid
+      this.$forceUpdate()
     },
 
     onBreakpointChange (breakpoint) {
-      debug('onBreakpointChange', breakpoint)
+      debug('grid event onBreakpointChange', this.id, breakpoint)
       // this.breakpoint = breakpoint
       let grid = this.viewGrid
       grid.breakpoint = breakpoint
@@ -612,7 +565,7 @@ export default {
     },
 
     onWidthChange (width, cols) {
-      debug('onWidthChange', width, cols)
+      debug('grid event onWidthChange', this.id, width, cols)
       // this.cols = cols
       let grid = this.viewGrid
       grid.cols = cols

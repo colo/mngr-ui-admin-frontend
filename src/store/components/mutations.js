@@ -15,7 +15,8 @@ export function setComponents (state, grid) {
   //   let newGrid = extend(true, state[id], grid)
   //   state[id] = newGrid
   // }
-  state[id] = grid
+  // state[id] = grid
+  Vue.set(state, id, grid)
 }
 
 export function addComponents (state, grid) {
@@ -24,7 +25,8 @@ export function addComponents (state, grid) {
   if (!state[id]) {
     let newGrid = extend(true, state._default, grid)
     // if (!grid.layout) { grid.layout = [] }
-    state[id] = newGrid
+    // state[id] = newGrid
+    Vue.set(state, id, newGrid)
   }
   // else {
   //   state[id] = grid

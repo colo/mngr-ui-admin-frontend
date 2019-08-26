@@ -3,7 +3,7 @@
 <!-- <section class="content"> -->
   <q-page :style="{height: height}">
     <!-- <grid-view :swap_components="true" :id="'grid.'+id" :components="components" :grid="grid" v-on:height="setHeight"/> -->
-    <grid-view :swap_components="true" :id="id" :components="components" :grid="grid" v-on:height="setHeight"/>
+    <grid-view v-if="grid.layouts && Object.getLength(components) > 1" :swap_components="true" :id="id" :components="components" :grid="grid" v-on:height="setHeight"/>
   </q-page>
 
 </template>
@@ -74,6 +74,89 @@ export default {
     }]
   },
 
+  // default_components: {
+  //   'all': [{
+  //     source: {
+  //       requests: {
+  //         once: [{
+  //           params: {
+  //             path: 'all'
+  //           },
+  //           callback: function (tables, metadata, key, vm) {
+  //             debug('All callback', tables, vm.$options.grid_template)
+  //             // let grid = JSON.parse(JSON.stringify(vm.grid))
+  //             let grid_template = Object.clone(vm.$options.grid_template)
+  //
+  //             let last_component_row = 0
+  //             Object.each(tables, function (data, rt_tb) {
+  //               debug('All %s', rt_tb)
+  //               Object.each(grid_template.layouts, function (layout, layout_name) {
+  //                 debug('All layout_name %s', layout_name)
+  //                 Array.each(layout, function (component, index) {
+  //                   let cloned_component = Object.clone(component)
+  //                   cloned_component.i = cloned_component.i + '_' + rt_tb
+  //                   cloned_component.y = cloned_component.y + last_component_row
+  //
+  //                   // if (!grid.layouts[layout_name]) grid.layouts[layout_name] = []
+  //                   if (!vm.grid.layouts[layout_name]) vm.$set(vm.grid.layouts, layout_name, [])
+  //
+  //                   if (vm.grid.layouts[layout_name].every(function (item) { return item.i !== cloned_component.i })) {
+  //                     vm.grid.layouts[layout_name].push(cloned_component)
+  //                   }
+  //                 })
+  //                 last_component_row++
+  //               })
+  //             })
+  //
+  //             // let components = JSON.parse(JSON.stringify(vm.components))
+  //             // let components = {}
+  //             let components_template = Object.clone(vm.$options.components_template)
+  //             Object.each(tables, function (data, rt_tb) {
+  //               debug('All table %s', rt_tb, components_template)
+  //               Object.each(components_template, function (component, id) {
+  //                 let cloned_component = Array.clone(component)
+  //
+  //                 debug('All component %s %o', id, cloned_component)
+  //                 id += '_' + rt_tb
+  //                 Array.each(cloned_component, function (widget, index) {
+  //                   widget.props.table = rt_tb
+  //                   widget.props.data = data
+  //                   widget.props.pipeline = 'root/pipelines/root'
+  //                   // if (widget.props.id) widget.props.id += '.' + rt_tb
+  //
+  //                   // widget.source.requests.once[0].params.query.from = rt_tb
+  //                 })
+  //
+  //                 // components[id] = cloned_component
+  //                 // vm.$set(vm.components, id, cloned_component)
+  //                 if (!vm.components[key]) { vm.$set(vm.components, id, cloned_component) }
+  //               })
+  //             })
+  //
+  //             // vm.grid = grid
+  //             // debug('All grid / components %o', grid, components)
+  //
+  //             // for (const key in grid) {
+  //             //   vm.$set(vm.grid, key, grid[key])
+  //             // }
+  //
+  //             // for (const key in components) {
+  //             //   if (!vm.components[key]) {
+  //             //     vm.$set(vm.components, key, components[key])
+  //             //   }
+  //             // }
+  //
+  //             // vm.__bind_components_to_sources(vm.components)
+  //             // vm.destroy_pipelines()
+  //             // vm.create_pipelines()
+  //             // this.props.inner.text = val[0][0].count
+  //           }
+  //         }]
+  //       }
+  //     }
+  //   }]
+  // },
+
   data () {
     return {
       height: '0px',
@@ -91,16 +174,16 @@ export default {
       id: 'all',
 
       grid: {
-        layouts: {
-          'lg': [
-          ],
-          'md': [
-          ],
-          'sm': [
-
-          ]
-
-        },
+        // layouts: {
+        //   'lg': [
+        //   ],
+        //   'md': [
+        //   ],
+        //   'sm': [
+        //
+        //   ]
+        //
+        // },
         breakpoint: 'lg',
         // slots: [
         //   '<q-btn round />'
@@ -125,7 +208,7 @@ export default {
                 },
                 callback: function (tables, metadata, key, vm) {
                   debug('All callback', tables, vm.$options.grid_template)
-                  let grid = JSON.parse(JSON.stringify(vm.grid))
+                  // let grid = JSON.parse(JSON.stringify(vm.grid))
                   let grid_template = Object.clone(vm.$options.grid_template)
 
                   let last_component_row = 0
@@ -138,15 +221,22 @@ export default {
                         cloned_component.i = cloned_component.i + '_' + rt_tb
                         cloned_component.y = cloned_component.y + last_component_row
 
-                        if (!grid.layouts[layout_name]) grid.layouts[layout_name] = []
-                        grid.layouts[layout_name].push(cloned_component)
+                        // if (!grid.layouts[layout_name]) grid.layouts[layout_name] = []
+                        if (!vm.grid.layouts) vm.$set(vm.grid, 'layouts', {})
+                        if (!vm.grid.layouts[layout_name]) vm.$set(vm.grid.layouts, layout_name, [])
+
+                        if (vm.grid.layouts[layout_name].every(function (item) { return item.i !== cloned_component.i })) {
+                          vm.grid.layouts[layout_name].push(cloned_component)
+                        }
                       })
                       last_component_row++
                     })
                   })
 
-                  let components = JSON.parse(JSON.stringify(vm.components))
+                  // let components = JSON.parse(JSON.stringify(vm.components))
+                  // let components = {}
                   let components_template = Object.clone(vm.$options.components_template)
+                  let modified = false
                   Object.each(tables, function (data, rt_tb) {
                     debug('All table %s', rt_tb, components_template)
                     Object.each(components_template, function (component, id) {
@@ -163,24 +253,33 @@ export default {
                         // widget.source.requests.once[0].params.query.from = rt_tb
                       })
 
-                      components[id] = cloned_component
+                      // components[id] = cloned_component
+                      // vm.$set(vm.components, id, cloned_component)
+                      if (!vm.components[key]) {
+                        vm.$set(vm.components, id, cloned_component)
+                        modified = true
+                      }
                     })
                   })
 
                   // vm.grid = grid
-                  debug('All grid / components %o', grid, components)
+                  // debug('All grid / components %o', grid, components)
 
-                  for (const key in grid) {
-                    vm.$set(vm.grid, key, grid[key])
-                  }
-                  // vm.components = components
-                  for (const key in components) {
-                    vm.$set(vm.components, key, components[key])
-                  }
+                  // for (const key in grid) {
+                  //   vm.$set(vm.grid, key, grid[key])
+                  // }
+
+                  // for (const key in components) {
+                  //   if (!vm.components[key]) {
+                  //     vm.$set(vm.components, key, components[key])
+                  //   }
+                  // }
 
                   // vm.__bind_components_to_sources(vm.components)
-                  // vm.destroy_pipelines()
-                  // vm.create_pipelines()
+                  // if (modified === true) {
+                  //   vm.destroy_pipelines()
+                  //   vm.create_pipelines()
+                  // }
                   // this.props.inner.text = val[0][0].count
                 }
               }]
@@ -191,55 +290,60 @@ export default {
     }
   },
 
-  watch: {
-    components: {
-      immediate: true,
-      deep: true,
-      handler: function (components) {
-        debug('watch components', components)
-        // Object.each(this.$options.pipelines, function (pipe, id) {
-        //   debug('watch components pipe %s %o', id, pipe)
-        //   Array.each(pipe.inputs, function (input, index) {
-        //     debug('watch components pipe input %o', input)
-        //     let options = Object.clone(input.options)
-        //
-        //   })
-        // })
-        // components = JSON.parse(JSON.stringify(components))
-        // // for (const index in components) {
-        // //   for (const i in components[index]) {
-        // //     this.resolveComponent(components[index][i])
-        // //   }
-        // // }
-        // components.id = this.id
-        // this.viewComponents = components
-        this.destroy_pipelines()
-        this.create_pipelines()
-      }
-    }
-  },
-  mounted: function () {
+  // watch: {
+  //   components: {
+  //     // immediate: true,
+  //     deep: true,
+  //     handler: function (components) {
+  //       debug('watch components', components)
+  //       // Object.each(this.$options.pipelines, function (pipe, id) {
+  //       //   debug('watch components pipe %s %o', id, pipe)
+  //       //   Array.each(pipe.inputs, function (input, index) {
+  //       //     debug('watch components pipe input %o', input)
+  //       //     let options = Object.clone(input.options)
+  //       //
+  //       //   })
+  //       // })
+  //       // components = JSON.parse(JSON.stringify(components))
+  //       // // for (const index in components) {
+  //       // //   for (const i in components[index]) {
+  //       // //     this.resolveComponent(components[index][i])
+  //       // //   }
+  //       // // }
+  //       // components.id = this.id
+  //       // this.viewComponents = components
+  //       // this.$nextTick(function () {
+  //       // this.destroy_pipelines()
+  //       // this.create_pipelines()
+  //       // }.bind(this))
+  //     }
+  //   }
+  // },
+  created: function () {
     debug('created refs', this.$refs)
 
     // this.$on('grid.' + this.id + ':height', this.setHeight.bind(this))
 
-    try {
-      let components = Object.clone(this.$store.getters['components/getComponents'](this.id))
-      for (const key in components) {
-        this.$set(this.components, key, Object.merge(components[key], this.components[key]))
-      }
-    } catch (e) {
-      debug('Err %o', e)
-    }
+    // try {
+    //   let components = Object.clone(this.$store.getters['components/getComponents'](this.id))
+    //   // let default_components = this.$options.default_components
+    //
+    //   for (const key in components) {
+    //     // let component = (components[key]) ? Object.merge(components[key], default_components[key]) : default_components[key]
+    //     this.$set(this.components, key, Object.merge(components[key], this.components[key]))
+    //   }
+    // } catch (e) {
+    //   debug('Err %o', e)
+    // }
 
-    try {
-      let grid = Object.clone(this.$store.getters['grids/getGrid'](this.id))
-      for (const key in grid) {
-        this.$set(this.grid, key, Object.merge(grid[key], this.grid[key]))
-      }
-    } catch (e) {
-      debug('Err %o', e)
-    }
+    // try {
+    //   let grid = Object.clone(this.$store.getters['grids/getGrid'](this.id))
+    //   for (const key in grid) {
+    //     this.$set(this.grid, key, Object.merge(grid[key], this.grid[key]))
+    //   }
+    // } catch (e) {
+    //   debug('Err %o', e)
+    // }
 
     // debug('created', components)
     // if (!components || Object.keys(components).length === 0) {
@@ -331,7 +435,10 @@ export default {
     // EventBus.$on('root', this.__process_dashboard_root.bind(this))
     // this.create_pipelines()
   },
-
+  // updated: function () {
+  //   this.destroy_pipelines()
+  //   this.create_pipelines()
+  // },
   methods: {
     hide: function (table, event, vnode) {
       debug('hide', table, this.grid)
