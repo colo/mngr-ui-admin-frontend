@@ -359,15 +359,15 @@ export default {
           events: {
             updated: 'proxyEvent'
           },
-          KEYS: [
-            // '.count',
-            '.tags.nginx',
-            '.tags.apache',
-            '.tags.web',
-            '.tags.frontail',
-            '.tags.stdio'
-          ],
-          // KEYS: [],
+          // KEYS: [
+          //   // '.count',
+          //   '.tags.nginx',
+          //   '.tags.apache',
+          //   '.tags.web',
+          //   '.tags.frontail',
+          //   '.tags.stdio'
+          // ],
+          KEYS: [],
           prev: {
             // counter: 0
             range: [0, 0]
@@ -424,19 +424,24 @@ export default {
                         range[1] = (table.range[1] > range[1]) ? table.range[1] : range[1]
                         range[0] = range[1] - (5 * MINUTE)
                         // })
-                        // Array.each(table.tags, function (tag) {
-                        //   if (!this.KEYS.contains('.tags.' + tag)) {
-                        //     this.KEYS.push('.tags.' + tag)
-                        //   }
-                        // }.bind(this))
-                      })
+                        Array.each(table.tags, function (tag) {
+                          if (!this.KEYS.contains('.tags.' + tag)) {
+                            this.KEYS.push('.tags.' + tag)
+                          }
+                        }.bind(this))
+                      }.bind(this))
 
                       this.prev.range = range
 
                       // vm.destroy_pipelines()
                       // vm.create_pipelines()
 
-                      debug('MyChart RANGE 2', this.prev.range, this.KEYS, vm)
+                      debug('MyChart RANGE 2', this.prev.range, this.KEYS, vm.$options.pipelines['input.logs'])
+                      debug('MyChart RANGE 3', vm.__components_sources_to_requests(vm.components))
+                      let periodicals = vm.__components_sources_to_requests(vm.components)['periodical']
+                      vm.$options.pipelines['input.logs'].inputs[0].conn_pollers[0].options.requests.periodical = periodicals
+                      vm.$options.pipelines['input.logs'].inputs[0].conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
+
                       // this.prev.range[0] = val.range[1] - MINUTE
 
                       // Vue.$set(this.prev.range, 1, val.range[1])
@@ -447,41 +452,6 @@ export default {
                     }
                   }
                 }
-                // {
-                //   params: {
-                //     path: 'logs',
-                //     params: { prop: 'tags' }
-                //
-                //   },
-                //   callback: function (val) {
-                //     debug('MyChart TAGS', val)
-                //     // if (val) {
-                //     //   const MINUTE = 60000
-                //     //   debug('MyChart RANGE', val, this.prev)
-                //     //   // this.prev.range = val[0][0].range
-                //     //   // this.prev.range[0] = val[0][0].range[1] - (5 * MINUTE)
-                //     //
-                //     //   let range = JSON.parse(JSON.stringify(this.prev.range))
-                //     //   Array.each(val, function (table) {
-                //     //     // Array.each(table, function (data) {
-                //     //     debug('Range table data', table)
-                //     //     // range[0] = (table.range[0] < range[0] || range[0] === 0) ? table.range[0] : range[0]
-                //     //     range[1] = (table.range[1] > range[1]) ? table.range[1] : range[1]
-                //     //     range[0] = range[1] - (5 * MINUTE)
-                //     //     // })
-                //     //   })
-                //     //
-                //     //   this.prev.range = range
-                //     //   // this.prev.range[0] = val.range[1] - MINUTE
-                //     //
-                //     //   // Vue.$set(this.prev.range, 1, val.range[1])
-                //     //   // Vue.$set(this.prev.range, 0, val.range[1] - 5 * MINUTE)
-                //     //   // const PERIODICAL = 5 * 1000 // 5 secs
-                //     //   // this.prev.range[0] = val.range[0]
-                //     //   // this.prev.range[1] = val.range[0] + PERIODICAL
-                //     // }
-                //   }
-                // }
 
               ],
               periodical: [
@@ -507,7 +477,7 @@ export default {
                     let source
                     let key
 
-                    if (!_key) {
+                    if (!_key && this.KEYS.length > 0) {
                       key = []
                       for (let i = 0; i < this.KEYS.length; i++) {
                         key.push(this.component + this.KEYS[i])
