@@ -367,6 +367,7 @@ export default {
             '.tags.frontail',
             '.tags.stdio'
           ],
+          // KEYS: [],
           prev: {
             // counter: 0
             range: [0, 0]
@@ -384,19 +385,31 @@ export default {
             requests: {
               once: [
                 {
+                  // params: {
+                  //   path: 'logs',
+                  //   params: { prop: 'range' }
+                  //   // query: {
+                  //   //   // register: 'periodical',
+                  //   //   'transformation': [
+                  //   //     { 'orderBy': { 'index': 'r.asc(timestamp)' } },
+                  //   //     'limit:30000'
+                  //   //   ]
+                  //   // }
+                  //
+                  // },
                   params: {
                     path: 'logs',
-                    params: { prop: 'range' }
-                    // query: {
-                    //   // register: 'periodical',
-                    //   'transformation': [
-                    //     { 'orderBy': { 'index': 'r.asc(timestamp)' } },
-                    //     'limit:30000'
-                    //   ]
-                    // }
+                    query: {
+                      register: 'periodical',
+                      'transformation': [
+                        { 'orderBy': { 'index': 'r.asc(timestamp)' } },
+                        'limit:30000'
+                      ]
+                    }
 
                   },
-                  callback: function (val) {
+                  callback: function (val, metadata, key, vm) {
+                    debug('MyChart RANGE', val)
                     if (val) {
                       const MINUTE = 60000
                       debug('MyChart RANGE', val, this.prev)
@@ -411,9 +424,19 @@ export default {
                         range[1] = (table.range[1] > range[1]) ? table.range[1] : range[1]
                         range[0] = range[1] - (5 * MINUTE)
                         // })
+                        // Array.each(table.tags, function (tag) {
+                        //   if (!this.KEYS.contains('.tags.' + tag)) {
+                        //     this.KEYS.push('.tags.' + tag)
+                        //   }
+                        // }.bind(this))
                       })
 
                       this.prev.range = range
+
+                      // vm.destroy_pipelines()
+                      // vm.create_pipelines()
+
+                      debug('MyChart RANGE 2', this.prev.range, this.KEYS, vm)
                       // this.prev.range[0] = val.range[1] - MINUTE
 
                       // Vue.$set(this.prev.range, 1, val.range[1])
@@ -424,13 +447,48 @@ export default {
                     }
                   }
                 }
+                // {
+                //   params: {
+                //     path: 'logs',
+                //     params: { prop: 'tags' }
+                //
+                //   },
+                //   callback: function (val) {
+                //     debug('MyChart TAGS', val)
+                //     // if (val) {
+                //     //   const MINUTE = 60000
+                //     //   debug('MyChart RANGE', val, this.prev)
+                //     //   // this.prev.range = val[0][0].range
+                //     //   // this.prev.range[0] = val[0][0].range[1] - (5 * MINUTE)
+                //     //
+                //     //   let range = JSON.parse(JSON.stringify(this.prev.range))
+                //     //   Array.each(val, function (table) {
+                //     //     // Array.each(table, function (data) {
+                //     //     debug('Range table data', table)
+                //     //     // range[0] = (table.range[0] < range[0] || range[0] === 0) ? table.range[0] : range[0]
+                //     //     range[1] = (table.range[1] > range[1]) ? table.range[1] : range[1]
+                //     //     range[0] = range[1] - (5 * MINUTE)
+                //     //     // })
+                //     //   })
+                //     //
+                //     //   this.prev.range = range
+                //     //   // this.prev.range[0] = val.range[1] - MINUTE
+                //     //
+                //     //   // Vue.$set(this.prev.range, 1, val.range[1])
+                //     //   // Vue.$set(this.prev.range, 0, val.range[1] - 5 * MINUTE)
+                //     //   // const PERIODICAL = 5 * 1000 // 5 secs
+                //     //   // this.prev.range[0] = val.range[0]
+                //     //   // this.prev.range[1] = val.range[0] + PERIODICAL
+                //     // }
+                //   }
+                // }
 
               ],
               periodical: [
                 {
                   params: function (_key) {
                     // debug('MyChart ', this.prev, this.current, _key)
-                    debug('MyChart periodical', _key, this.prev.range)
+                    debug('MyChart periodical', _key, this.prev.range, this.KEYS)
 
                     const MINUTE = 60000 // 60 secs
                     // const KEYS = [
