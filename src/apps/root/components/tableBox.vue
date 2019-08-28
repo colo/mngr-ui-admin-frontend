@@ -105,7 +105,7 @@ export default {
         requests: {
           once: [{
             params: {
-              path: 'all',
+              path: undefined,
               query: {
                 from: undefined,
                 register: 'periodical',
@@ -148,7 +148,7 @@ export default {
         requests: {
           once: [{
             params: {
-              path: 'all',
+              path: undefined,
               query: {
                 from: undefined,
                 register: 'periodical',
@@ -192,7 +192,7 @@ export default {
         requests: {
           once: [{
             params: {
-              path: 'all',
+              path: undefined,
               query: {
                 from: undefined,
                 register: 'periodical',
@@ -235,7 +235,7 @@ export default {
         requests: {
           once: [{
             params: {
-              path: 'all',
+              path: undefined,
               query: {
                 from: undefined,
                 register: 'periodical',
@@ -289,7 +289,7 @@ export default {
           once: [
             {
               params: {
-                path: 'all',
+                path: undefined,
                 query: {
                   from: undefined,
                   register: 'periodical',
@@ -373,6 +373,10 @@ export default {
   },
 
   props: {
+    path: {
+      type: [String],
+      default: undefined
+    },
     table: {
       type: [String],
       default: ''
@@ -389,17 +393,20 @@ export default {
     }
 
   },
-  // computed: {
-  //   id: function () {
-  //     return this.table + '.box'
-  //   }
+  computed: {
+    id: function () {
+      return this.path
+    }
+  },
+  // created: function () {
+  //   this.id = this.path
   // },
   data () {
     return {
       grid_container_height: '460px',
       height: '0px',
 
-      id: 'all',
+      // id: 'all',
 
       type: 'box-success',
       footer: false,
@@ -514,6 +521,7 @@ export default {
         // widget.props.data = data
         if (widget.props.id) widget.props.id += '.' + this.table
 
+        widget.source.requests.once[0].params.path = this.id
         widget.source.requests.once[0].params.query.from = this.table
       }.bind(this))
 
@@ -586,7 +594,7 @@ export default {
       // this.height = height + 20 + 'px'
     },
     create_pipelines: function (next) {
-      let pipeline = require('../apps/' + this.pipeline).default
+      let pipeline = require('@apps/' + this.pipeline).default
       debug('create_pipelines %o', pipeline)
       // if (root && Array.isArray(root)) {
       //   Array.each(root, function (log) {

@@ -29,7 +29,7 @@ export default {
 
   data () {
     return {
-      id: undefined,
+      // id: undefined,
       store: false
 
     }
@@ -38,14 +38,14 @@ export default {
   watch: {
     store: function (val) {
       debug('watch store', val)
-      if (val) this.__register_store_module(this.id, sourceStore)
+      if (val) this.__register_store_module(this.path, sourceStore)
     }
   },
   created: function () {
     debug('created')
-    EventBus.$on(this.id, this.__process_data.bind(this))
+    EventBus.$on(this.path, this.__process_data.bind(this))
 
-    if (this.store) this.__register_store_module(this.id, sourceStore)
+    if (this.store) this.__register_store_module(this.path, sourceStore)
   },
 
   mounted: function () {
@@ -57,14 +57,14 @@ export default {
   // },
   destroy: function () {
     this.destroy_pipelines()
-    this.__unregister_store_module(this.id)
+    this.__unregister_store_module(this.path)
   },
 
   // computed: mapState({
   //
   //   'periodical?register=periodical&transformation=limit%3A30000.range' (state) {
-  //     debug('computed', state[this.id + '_sources']['periodical?register=periodical&transformation=limit%3A30000'])
-  //     return (state[this.id + '_sources']['periodical?register=periodical&transformation=limit%3A30000']) ? state[this.id + '_sources']['periodical?register=periodical&transformation=limit%3A30000'].range : undefined
+  //     debug('computed', state[this.path + '_sources']['periodical?register=periodical&transformation=limit%3A30000'])
+  //     return (state[this.path + '_sources']['periodical?register=periodical&transformation=limit%3A30000']) ? state[this.path + '_sources']['periodical?register=periodical&transformation=limit%3A30000'].range : undefined
   //   }
   // }),
   // computed: {
@@ -186,7 +186,7 @@ export default {
         return query
       } else {
         let _query = Object.merge(query.query, query.body)
-        debug('__query_to_string', this.id + '?' + qs.stringify(_query))
+        debug('__query_to_string', query.path + '?' + qs.stringify(_query))
         return query.path + '?' + qs.stringify(_query)
       }
     },
@@ -247,7 +247,7 @@ export default {
       //   this.$store.commit(this.id + '_sources/append', { id: payload.id, key: key, data: payload.data[key] })
       // }
       if (this.store) {
-        this.$store.commit(this.id + '_sources/add', payload)
+        this.$store.commit(this.path + '_sources/add', payload)
       } else {
         let key = payload.id
         // convert to array of array so it can be pass as parameter

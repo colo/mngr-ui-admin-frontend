@@ -8,11 +8,27 @@ const routes = [
     },
     children: [
       {
+        // path: ':table?',
         path: '',
         component: () => import('@apps/root/index'),
         meta: {
-          breadcrumb: { label: 'Index', icon: 'widgets' }
+          breadcrumb: { label: 'Index', icon: 'widgets', app: 'root' }
         }
+
+        // children: [
+        //   {
+        //     path: ':table',
+        //     name: 'Table',
+        //     component: () => import('@apps/root/table'),
+        //     meta: {
+        //       breadcrumb: { label: 'Table', icon: 'widgets' }
+        //     }
+        //   }
+        //   // {
+        //   //   path: 'profile',
+        //   //   component: () => import('pages/user-profile')
+        //   // }
+        // ]
       },
 
       // {

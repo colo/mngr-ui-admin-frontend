@@ -1,7 +1,7 @@
 <template>
 <!-- <div class="bg-primary"> -->
 <!-- <section class="content"> -->
-  <q-page v-if="!$route.params.table" :style="{height: height}">
+  <q-page :style="{height: height}">
     <!-- <grid-view :swap_components="true" :id="'grid.'+id" :components="components" :grid="grid" v-on:height="setHeight"/> -->
     <grid-view v-if="grid.layouts && Object.getLength(components) > 1" :swap_components="true" :id="id" :components="components" :grid="grid" v-on:height="setHeight"/>
   </q-page>
@@ -27,7 +27,7 @@ import GridView from '@components/gridView'
 // import Test from '@components/test/test.vue'
 
 import Pipeline from 'js-pipeline'
-import RootPipeline from './pipelines/root'
+import RootPipeline from '../pipelines/root'
 
 // import { dom } from 'quasar'
 // const { height, width } = dom
@@ -39,7 +39,7 @@ export default {
   mixins: [AdminLteMixin, DataSourcesMixin],
 
   components: { GridView },
-  name: 'root',
+  name: 'TablesPage',
   // components: { GridView },
 
   // pipelines: {},
@@ -175,7 +175,6 @@ export default {
       range: [0, 1],
 
       id: 'all',
-      path: 'all',
 
       grid: {
         // layouts: {
@@ -252,7 +251,7 @@ export default {
                         widget.props.table = rt_tb
                         widget.props.data = data
                         widget.props.pipeline = 'root/pipelines/root'
-                        widget.props.path = vm.path
+                        widget.props.path = vm.id
                         // if (widget.props.id) widget.props.id += '.' + rt_tb
 
                         // widget.source.requests.once[0].params.query.from = rt_tb

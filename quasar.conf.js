@@ -11,7 +11,7 @@ module.exports = function (ctx) {
     boot: [
       'adminlte',
       'i18n',
-      'axios'
+      'axios',
     ],
 
     css: [

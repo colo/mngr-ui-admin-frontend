@@ -3,7 +3,7 @@
 <!-- <section class="content"> -->
   <!-- <grid-view :id="id" :components="components" :grid="grid"/> -->
   <q-page :style="{height: height}">
-    <grid-view :id="'grid.'+id" :components="components" :grid="grid" v-on:height="setHeight"/>
+    <grid-view :id="'grid_'+table" :components="components" :grid="grid" v-on:height="setHeight"/>
   </q-page>
 </template>
 
@@ -11,7 +11,7 @@
 import Vue from 'vue'
 
 import * as Debug from 'debug'
-const debug = Debug('pages:Logs')
+const debug = Debug('apps:root:table')
 
 import AdminLteMixin from '@components/mixins/adminlte'
 import DataSourcesMixin from '@components/mixins/dataSources'
@@ -21,20 +21,27 @@ import GridView from '@components/gridView'
 // import Test from '@components/test/test.vue'
 
 import Pipeline from 'js-pipeline'
-import LogsPipeline from './pipelines/logs'
+import RootPipeline from '../pipelines/root'
 
-// import { dom } from 'quasar'
-// const { height, width } = dom
+import upperFirst from 'lodash/upperFirst'
+import camelCase from 'lodash/camelCase'
+
 let moment = require('moment')
 
 export default {
   mixins: [AdminLteMixin, DataSourcesMixin],
 
-  name: 'Logs',
+  name: 'TablePage',
   components: { GridView },
 
   // pipelines: {},
 
+  props: {
+    table: {
+      type: String,
+      default: undefined
+    }
+  },
   data () {
     return {
       height: '0px',
@@ -56,8 +63,7 @@ export default {
       // },
 
       // height: '0px',
-      id: 'logs',
-      path: 'logs',
+      id: 'all',
 
       grid: {
         layouts: {
@@ -154,8 +160,9 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: 'logs',
+                  path: 'all',
                   query: {
+                    from: 'logs',
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -196,8 +203,9 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: 'logs',
+                  path: 'all',
                   query: {
+                    from: 'logs',
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -239,8 +247,9 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: 'logs',
+                  path: 'all',
                   query: {
+                    from: 'logs',
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -281,8 +290,9 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: 'logs',
+                  path: 'all',
                   query: {
+                    from: 'logs',
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -320,8 +330,9 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: 'logs',
+                  path: 'all',
                   query: {
+                    from: 'logs',
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -388,7 +399,7 @@ export default {
               once: [
                 {
                   // params: {
-                  //   path: 'logs',
+                  //   path: 'all',
                   //   params: { prop: 'range' }
                   //   // query: {
                   //   //   // register: 'periodical',
@@ -400,8 +411,9 @@ export default {
                   //
                   // },
                   params: {
-                    path: 'logs',
+                    path: 'all',
                     query: {
+                      from: 'logs',
                       register: 'periodical',
                       'transformation': [
                         { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -509,7 +521,10 @@ export default {
                         let source_tmp = {
 
                           params: { id: _key },
-                          query: { 'aggregation': 'count' },
+                          query: {
+                            from: 'logs',
+                            'aggregation': 'count'
+                          },
                           range: 'posix ' + this.current.keys[_key].range[0] + '-' + (this.current.keys[_key].range[0] + MINUTE) + '/*'
                           // query: {
                           //   // register: 'periodical',
@@ -682,8 +697,9 @@ export default {
               once: [
                 {
                   params: {
-                    path: 'logs',
+                    path: 'all',
                     query: {
+                      from: 'logs',
                       // register: 'periodical',
                       'q': [
                         { 'data': ['log'] },
@@ -730,8 +746,9 @@ export default {
                 },
                 {
                   params: {
-                    path: 'logs',
+                    path: 'all',
                     query: {
+                      from: 'logs',
                       register: 'changes',
                       'q': [
                         { 'data': ['log'] },
@@ -927,7 +944,7 @@ export default {
       //   }.bind(this))
       // }
 
-      let template = Object.clone(LogsPipeline)
+      let template = Object.clone(RootPipeline)
 
       let pipeline_id = template.input[0].poll.id
       // debug('LogsPipeline ', template.input[0].poll.conn[0])
