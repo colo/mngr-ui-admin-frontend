@@ -309,7 +309,7 @@ export default {
                 } else if (typeof source === 'function') {
                   // source = source.bind(components[index])
                   // let _result = source.attempt(undefined, components[index])
-                  let _result = source.attempt(undefined)
+                  let _result = source.attempt([undefined, this])
                   debug('__components_sources_to_requests RESULT', _result, components[index])
                   key = _result.key
                   // source = { bind: components[index], function: source }
@@ -335,6 +335,7 @@ export default {
       }
 
       debug('__components_sources_to_requests', sources)
+      let self = this
       for (const req_type in sources) {
         if (!requests[req_type]) requests[req_type] = []
 
@@ -346,7 +347,8 @@ export default {
               debug('INIT %s %o', key, query)
               let _query = query
               // if (typeof query === 'function') { _query = query.pass(key)().source }
-              if (typeof query === 'function') { _query = query.attempt(key).source }
+              if (typeof query === 'function') { _query = query.attempt([key, self]).source }// don't use "this" as is the pipeline.input context
+
               // if (query.bind && query.function) { _query = query.function.attempt(key, query.bind).source }
 
               if (_query !== undefined) {

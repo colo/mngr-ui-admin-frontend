@@ -51,10 +51,10 @@ export default {
       **/
       store: false,
 
-      logs: {
-        count: undefined
-      },
-      range: [0, 1],
+      // logs: {
+      //   count: undefined
+      // },
+      // range: [0, 1],
       // counter: {
       //   inner: {
       //     header: 'Count',
@@ -63,7 +63,8 @@ export default {
       // },
 
       // height: '0px',
-      id: 'all',
+      id: 'table',
+      path: 'all',
 
       grid: {
         layouts: {
@@ -162,7 +163,7 @@ export default {
                 params: {
                   path: 'all',
                   query: {
-                    from: 'logs',
+                    from: this.table,
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -205,7 +206,7 @@ export default {
                 params: {
                   path: 'all',
                   query: {
-                    from: 'logs',
+                    from: this.table,
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -249,7 +250,7 @@ export default {
                 params: {
                   path: 'all',
                   query: {
-                    from: 'logs',
+                    from: this.table,
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -292,7 +293,7 @@ export default {
                 params: {
                   path: 'all',
                   query: {
-                    from: 'logs',
+                    from: this.table,
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -332,7 +333,7 @@ export default {
                 params: {
                   path: 'all',
                   query: {
-                    from: 'logs',
+                    from: this.table,
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -413,7 +414,7 @@ export default {
                   params: {
                     path: 'all',
                     query: {
-                      from: 'logs',
+                      from: this.table,
                       register: 'periodical',
                       'transformation': [
                         { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -453,8 +454,8 @@ export default {
                       debug('MyChart RANGE 2', this.prev.range, this.KEYS, vm.$options.pipelines['input.logs'])
                       debug('MyChart RANGE 3', vm.__components_sources_to_requests(vm.components))
                       let periodicals = vm.__components_sources_to_requests(vm.components)['periodical']
-                      vm.$options.pipelines['input.logs'].inputs[0].conn_pollers[0].options.requests.periodical = periodicals
-                      vm.$options.pipelines['input.logs'].inputs[0].conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
+                      vm.$options.pipelines['input.root'].inputs[0].conn_pollers[0].options.requests.periodical = periodicals
+                      vm.$options.pipelines['input.root'].inputs[0].conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
 
                       // this.prev.range[0] = val.range[1] - MINUTE
 
@@ -470,9 +471,9 @@ export default {
               ],
               periodical: [
                 {
-                  params: function (_key) {
+                  params: function (_key, vm) {
                     // debug('MyChart ', this.prev, this.current, _key)
-                    debug('MyChart periodical', _key, this.prev.range, this.KEYS)
+                    debug('MyChart periodical', _key, vm, this.prev.range, this.KEYS)
 
                     const MINUTE = 60000 // 60 secs
                     // const KEYS = [
@@ -522,7 +523,7 @@ export default {
 
                           params: { id: _key },
                           query: {
-                            from: 'logs',
+                            from: vm.table,
                             'aggregation': 'count'
                           },
                           range: 'posix ' + this.current.keys[_key].range[0] + '-' + (this.current.keys[_key].range[0] + MINUTE) + '/*'
@@ -699,7 +700,7 @@ export default {
                   params: {
                     path: 'all',
                     query: {
-                      from: 'logs',
+                      from: this.table,
                       // register: 'periodical',
                       'q': [
                         { 'data': ['log'] },
@@ -748,7 +749,7 @@ export default {
                   params: {
                     path: 'all',
                     query: {
-                      from: 'logs',
+                      from: this.table,
                       register: 'changes',
                       'q': [
                         { 'data': ['log'] },

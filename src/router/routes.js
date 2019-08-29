@@ -8,8 +8,8 @@ const routes = [
     },
     children: [
       {
-        // path: ':table?',
-        path: '',
+        path: ':table?',
+        // path: '',
         component: () => import('@apps/root/index'),
         meta: {
           breadcrumb: { label: 'Index', icon: 'widgets', app: 'root' }
@@ -29,7 +29,7 @@ const routes = [
         //   //   component: () => import('pages/user-profile')
         //   // }
         // ]
-      },
+      }
 
       // {
       //   path: 'hosts',
@@ -59,34 +59,34 @@ const routes = [
       //     // }
       //   ]
       // },
-      {
-        path: '/logs',
-        name: 'logs',
-        component: () => import('@apps/logs/index'),
-        meta: {
-          breadcrumb: { label: 'Logs', icon: 'fas fa-tachometer-alt' }
-        }
-
-        // Now we define the sub-routes.
-        // These are getting injected into
-        // layout (from above) automatically
-        // by using <router-view> placeholder
-        // (need to specify it in layout)
-        // children: [
-        //   {
-        //     path: ':host',
-        //     name: 'host',
-        //     component: () => import('pages/dashboards/host'),
-        //     meta: {
-        //       breadcrumb: { label: 'Host', icon: 'widgets' }
-        //     }
-        //   }
-        //   // {
-        //   //   path: 'profile',
-        //   //   component: () => import('pages/user-profile')
-        //   // }
-        // ]
-      }
+      // {
+      //   path: '/logs',
+      //   name: 'logs',
+      //   component: () => import('@apps/logs/index'),
+      //   meta: {
+      //     breadcrumb: { label: 'Logs', icon: 'fas fa-tachometer-alt' }
+      //   }
+      //
+      //   // Now we define the sub-routes.
+      //   // These are getting injected into
+      //   // layout (from above) automatically
+      //   // by using <router-view> placeholder
+      //   // (need to specify it in layout)
+      //   // children: [
+      //   //   {
+      //   //     path: ':host',
+      //   //     name: 'host',
+      //   //     component: () => import('pages/dashboards/host'),
+      //   //     meta: {
+      //   //       breadcrumb: { label: 'Host', icon: 'widgets' }
+      //   //     }
+      //   //   }
+      //   //   // {
+      //   //   //   path: 'profile',
+      //   //   //   component: () => import('pages/user-profile')
+      //   //   // }
+      //   // ]
+      // }
     ]
   }
 ]

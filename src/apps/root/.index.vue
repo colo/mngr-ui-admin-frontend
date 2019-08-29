@@ -1,7 +1,7 @@
 <template>
 <!-- <div class="bg-primary"> -->
 <!-- <section class="content"> -->
-  <q-page :style="{height: height}">
+  <q-page v-if="!$route.params.table" :style="{height: height}">
     <!-- <grid-view :swap_components="true" :id="'grid.'+id" :components="components" :grid="grid" v-on:height="setHeight"/> -->
     <grid-view v-if="grid.layouts && Object.getLength(components) > 1" :swap_components="true" :id="id" :components="components" :grid="grid" v-on:height="setHeight"/>
   </q-page>
@@ -27,7 +27,7 @@ import GridView from '@components/gridView'
 // import Test from '@components/test/test.vue'
 
 import Pipeline from 'js-pipeline'
-import RootPipeline from '../pipelines/root'
+import RootPipeline from './pipelines/root'
 
 // import { dom } from 'quasar'
 // const { height, width } = dom
@@ -39,7 +39,7 @@ export default {
   mixins: [AdminLteMixin, DataSourcesMixin],
 
   components: { GridView },
-  name: 'TablesPage',
+  name: 'root',
   // components: { GridView },
 
   // pipelines: {},
