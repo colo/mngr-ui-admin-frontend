@@ -1,8 +1,19 @@
 <template>
-  <div
-    :ref="id"
-    :id="id"
-  />
+  <!-- <div>
+<q-toolbar class="bg-primary text-white shadow-2 absolute " >
+<q-space />
+<q-separator dark vertical />
+<q-btn stretch flat label="Link" />
+</q-toolbar> -->
+    <div
+      :ref="id"
+      :id="id"
+    >
+      <q-inner-loading :showing="visible">
+        <q-spinner-gears size="50px" color="primary" />
+      </q-inner-loading>
+    </div>
+  <!-- </div> -->
 
 </template>
 <script>
@@ -108,6 +119,8 @@ export default {
   },
   data () {
     return {
+      visible: true, // QInnerLoading
+
       // chart: undefined,
       // normalized_data: {},
       options: {
@@ -162,6 +175,7 @@ export default {
         this.data &&
         this.data.labels && this.data.labels.length > 0 &&
         this.data.datasets && this.data.datasets.length > 0) {
+        this.visible = false
         this.$options.chart = new Chart(
           document.getElementById(this.id), // containing div
           Object.merge(Object.clone(this.options), { data: JSON.parse(JSON.stringify(this.normalized_data)) })

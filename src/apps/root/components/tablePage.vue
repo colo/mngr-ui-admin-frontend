@@ -364,7 +364,7 @@ export default {
         'chart': [{
           component: 'MyChart',
           props: {
-            id: 'chart.logs',
+            id: 'chart',
             data: {
               labels: [],
               datasets: []
@@ -440,10 +440,14 @@ export default {
                         range[0] = range[1] - (5 * MINUTE)
                         // })
                         Array.each(table.tags, function (tag) {
-                          if (!this.KEYS.contains('.tags.' + tag)) {
-                            this.KEYS.push('.tags.' + tag)
+                          if (!this.KEYS.contains('?tags=' + tag)) {
+                            this.KEYS.push('?tags=' + tag)
                           }
                         }.bind(this))
+
+                        if (!this.KEYS.contains('?path=' + table.path)) {
+                          this.KEYS.push('?path=' + table.path)
+                        }
                       }.bind(this))
 
                       this.prev.range = range
@@ -451,7 +455,7 @@ export default {
                       // vm.destroy_pipelines()
                       // vm.create_pipelines()
 
-                      debug('MyChart RANGE 2', this.prev.range, this.KEYS, vm.$options.pipelines['input.logs'])
+                      debug('MyChart RANGE 2', this.prev.range, this.KEYS, vm.$options.pipelines['input.root'])
                       debug('MyChart RANGE 3', vm.__components_sources_to_requests(vm.components))
                       let periodicals = vm.__components_sources_to_requests(vm.components)['periodical']
                       vm.$options.pipelines['input.root'].inputs[0].conn_pollers[0].options.requests.periodical = periodicals
@@ -536,12 +540,15 @@ export default {
                           // }
                         }
 
-                        if (_key.split('.').length > 2) {
-                          let prop = _key.split('.')[1]
-                          let value = _key.split('.')[2]
+                        // if (_key.split('.').length > 2) {
+                        if (_key.indexOf('?') > -1) {
+                          let prop = _key.substring(_key.indexOf('?') + 1, _key.indexOf('='))
+                          let value = _key.substring(_key.indexOf('=') + 1)
                           source_tmp.params.prop = prop
                           source_tmp.params.value = value
                         }
+
+                        debug('MyChart periodical SOURCE_TMP ', source_tmp)
 
                         source.push(source_tmp)
                         this.current.keys[_key].range[0] += MINUTE
@@ -573,9 +580,12 @@ export default {
                     debug('MyChart cb ', key, val, metadata, label, index_of_value)
 
                     let name = key
-                    if (name.split('.').length > 2) {
-                      // let prop = _key.split('.')[1]
-                      name = name.split('.')[2]
+                    // if (name.split('.').length > 2) {
+                    //   // let prop = _key.split('.')[1]
+                    //   name = name.split('.')[2]
+                    // }
+                    if (name.indexOf('?') > -1) {
+                      name = name.substring(name.indexOf('?') + 1)
                     }
 
                     let dataset = { name: name, chartType: 'bar', values: [], _key: key }
@@ -587,7 +597,7 @@ export default {
                     // })
 
                     // dataset.values.push(val)
-                    dataset.values[index_of_value] = val * 1
+                    dataset.values[index_of_value] = val[metadata.from] * 1
 
                     // if (dataset.values.length > this.current.max_data) { dataset.values = dataset.values.slice(Math.max(dataset.values.length - this.current.max_data, 1)) }
 

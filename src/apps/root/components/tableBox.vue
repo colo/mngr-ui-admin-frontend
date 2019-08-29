@@ -477,7 +477,7 @@ export default {
     debug('mounted %o', this.data)
 
     // debug('All callback', this.data, this.$options.grid_template)
-    // let grid = JSON.parse(JSON.stringify(this.grid))
+    // let grid = { layouts: {} }
     // let grid_template = Object.clone(this.$options.grid_template)
     //
     // let last_component_row = 0
@@ -490,21 +490,14 @@ export default {
     //     cloned_component.i = cloned_component.i + '.' + this.table
     //     cloned_component.y = cloned_component.y + last_component_row
     //
+    //
+    //     if (!grid.layouts[layout_name]) grid.layouts[layout_name] = []
     //     if (!grid.layouts[layout_name]) grid.layouts[layout_name] = []
     //     grid.layouts[layout_name].push(cloned_component)
     //   }.bind(this))
     //   last_component_row++
     // }.bind(this))
     // // })
-
-    // try {
-    //   let grid = Object.clone(this.$store.getters['grids/getGrid'](this.id + '_' + this.table))
-    //   for (const key in grid) {
-    //     this.$set(this.grid, key, Object.merge(grid[key], this.grid[key]))
-    //   }
-    // } catch (e) {
-    //
-    // }
 
     // let components = JSON.parse(JSON.stringify(this.components))
     let components = {}

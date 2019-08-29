@@ -42,7 +42,7 @@ module.exports = function (ctx) {
         // 'QDrawer',
         'QPageContainer',
         'QPage',
-        // 'QToolbar',
+        'QToolbar',
         // 'QToolbarTitle',
         'QBtn',
         'QIcon',
@@ -56,7 +56,11 @@ module.exports = function (ctx) {
         'QTh',
         'QTr',
         'QTd',
-        'QRange'
+        'QRange',
+        'QInnerLoading',
+        'QSpinnerGears',
+        'QSeparator',
+        'QBtn'
       ],
 
       directives: [

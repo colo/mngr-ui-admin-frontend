@@ -456,10 +456,25 @@ export default {
       debug('addComponent', evt, evt.to.id, evt.item.id, from, old_index, new_index)
       let components = Object.clone(this.$store.getters['components/getComponents'](this.id))
 
-      debug('addComponent components', this.id, components, evt.to.id)
+      debug('addComponent components', this.id, components, evt.to.id, evt.from.id, Object.clone(this.$store.getters['grids/getGrid'](this.id)))
       components[evt.to.id] = (components[evt.to.id]) ? components[evt.to.id] : []
       // let swap_components = true
       if (this.swap_components) {
+        let grid = Object.clone(this.$store.getters['grids/getGrid'](this.id))
+        Object.each(grid.layouts, function (layout) {
+          let from, to
+          Array.each(layout, function (component, index) {
+            if (component.i === evt.to.id) { to = index }
+
+            if (component.i === evt.from.id) { from = index }
+          })
+          let tmp_to = Object.clone(layout[to])
+          layout[to] = layout[from]
+          layout[from] = tmp_to
+        })
+
+        this.viewGrid = grid
+
         let _swap_component = Object.clone(components[evt.to.id][new_index])
         components[evt.to.id][new_index] = components[from][old_index]
         components[evt.from.id][new_index] = _swap_component
