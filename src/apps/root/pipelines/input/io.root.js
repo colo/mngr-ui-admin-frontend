@@ -184,7 +184,7 @@ export default new Class({
       debug('initialize socket.onConnect', this.options.requests)
       // setTimeout(this.fireEvent.bind(this), 1000, 'onResume');
       // this.fireEvent('onOnce')
-      setTimeout(this.fireEvent.bind(this), 100, 'onOnce');
+      setTimeout(this.fireEvent.bind(this), 1000, 'onOnce');
       //
       // setTimeout(function(){
       //   if(this.options.queries, this.options.queries.once)
