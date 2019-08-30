@@ -41,15 +41,15 @@
           :maxRows="props.maxRows"
           :class="'bg-secondary col-'+viewGrid.breakpoint+'-'+viewGrid.colsAll[viewGrid.breakpoint]"
         >
-          <!-- <div v-if="viewGrid.components[item.i]" class="connectedSortable"> -->
-          <!-- <section :class="'col-'+viewGrid.breakpoint+' connectedSortable'" :id="item.i" v-if="viewGrid.components[item.i]"> -->
+        <!-- :heightFromChildren="false" -->
 
            <draggable
             v-if="!item.immobile"
             class="list-group"
             :id="item.i"
             :key="item.i"
-            :list="viewComponents[item.i]" group="components"
+            :list="viewComponents[item.i]"
+            group="components"
             @add="addComponent"
             @remove="removeComponent"
             @change="log"
@@ -75,7 +75,7 @@
               </template>
             </div>
           </draggable>
-          <!--  not draggables (inmobile)-->
+          <!--  not draggables (immobile)-->
           <div
            v-else
            v-for="(widget, wIndex) in viewComponents[item.i]"
@@ -84,12 +84,11 @@
          >
            <component
              v-if="widget.component"
-             :is="widget.component"
+             :is="resolveComponent(widget.component)"
              v-bind="widget.props"
              :key="(widget.id) ? widget.id : item.i+'.'+wIndex+'.component'"
              v-dynamic-events="(widget.events) ? widget.events : {}"
            />
-            <!-- v-dynamic-options="(widget.options) ? widget.options : {}" -->
            <template v-else-if="widget.slot">
              {{widget.slot}}
            </template>

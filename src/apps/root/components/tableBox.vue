@@ -423,7 +423,7 @@ export default {
             // { x: 10, y: 0, w: 2, h: 7, i: '5' },
             // second row
             // { x: 1, y: 1, w: 10, h: 2, i: '6' },
-            { x: 0, y: 1, w: 12, h: 16, i: 'chart' }
+            { x: 0, y: 1, w: 12, h: 16, i: 'chart', immobile: true }
             // { x: 0, y: 3, w: 12, h: 30, i: '8', immobile: true }
             // { x: 0, y: 4, w: 12, h: 2, i: '9', immobile: true }
           ],
@@ -436,7 +436,7 @@ export default {
             // { x: 10, y: 0, w: 2, h: 7, i: '5' },
             // second row
             // { x: 1, y: 1, w: 6, h: 2, i: '6' },
-            { x: 0, y: 1, w: 8, h: 16, i: 'chart' }
+            { x: 0, y: 1, w: 8, h: 16, i: 'chart', immobile: true }
             // { x: 0, y: 3, w: 8, h: 20, i: '8' }
             // { x: 0, y: 4, w: 8, h: 2, i: '9' }
 
@@ -450,7 +450,7 @@ export default {
             // { x: 10, y: 0, w: 2, h: 7, i: '5' },
             // second row
             // { x: 1, y: 2, w: 4, h: 2, i: '6' },
-            { x: 0, y: 2, w: 6, h: 16, i: 'chart' }
+            { x: 0, y: 2, w: 6, h: 16, i: 'chart', immobile: true }
             // { x: 0, y: 4, w: 6, h: 20, i: '8' }
             // { x: 0, y: 5, w: 6, h: 2, i: '9' }
           ]
