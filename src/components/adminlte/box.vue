@@ -1,7 +1,7 @@
 <template>
   <!-- solid sales graph -->
   <div class="box" :class="type" :id="id">
-    <div v-if="header" class="box-header" :class="(header.border) ? 'with-border' : ''">
+    <div v-if="header" class="box-header" :class="header.class">
       <i :class="header.icon"></i>
 
       <h3 v-if="header.title && header.title != ''" class="box-title" v-html="header.title"></h3>
@@ -117,6 +117,7 @@ export default {
       type: [Object, Boolean],
       default: function () {
         return {
+          class: 'with-border',
           title: '',
           tools: true,
           border: true,

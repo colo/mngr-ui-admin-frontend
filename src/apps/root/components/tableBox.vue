@@ -3,12 +3,12 @@
   <admin-lte-box
     :id="table+'.box'"
     :key="table+'.box'"
-    :type="type"
-    :footer="footer"
-    :body="{class: 'bg-primary'}"
+    :type="'box-default box-solid'"
+    :footer="false"
+    :body="{class: 'bg-secondary'}"
     v-on:hide="hide"
     v-on:show="show"
-    :header="{tools: false, component: {type: 'router-link', props: {to: table}, text: 'Table: '+table}}"
+    :header="{tools: false, class: 'with-border', component: {type: 'router-link', props: {to: table}, text: 'Table: '+table}}"
   >
   <!-- :header="{ title: 'Table: <a href=/'+table+'>'+table+'</a>', tools: false }" -->
   <!-- :body="{class: 'bg-secondary'}" -->
@@ -408,8 +408,8 @@ export default {
 
       // id: 'all',
 
-      type: 'box-success',
-      footer: false,
+      // type: 'box-success',
+      // footer: false,
 
       grid: {
         layouts: {

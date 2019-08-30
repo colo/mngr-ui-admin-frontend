@@ -13,7 +13,7 @@ export default {
 
   created: function () {
     debug('created')
-    this.$store.commit('app/setTheme', 'slate')
+    this.$store.commit('app/setTheme', 'white')
   }
 }
 </script>
