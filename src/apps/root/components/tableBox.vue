@@ -214,6 +214,8 @@ export default {
                 // })
               })
 
+              if (tags.length > 5) { tags = tags.slice(Math.max(tags.length - 5, 1)) }
+
               this.props.inner.text = tags
             }
           }]
@@ -256,6 +258,8 @@ export default {
                 hosts = hosts.combine(table.hosts)
                 // })
               })
+
+              if (hosts.length > 5) { hosts = hosts.slice(Math.max(hosts.length - 5, 1)) }
 
               this.props.inner.text = hosts
             }
