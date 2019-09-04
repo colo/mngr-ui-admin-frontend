@@ -110,8 +110,8 @@ export default {
                 from: undefined,
                 register: 'periodical',
                 'transformation': [
-                  { 'orderBy': { 'index': 'r.asc(timestamp)' } },
-                  'limit:30000'
+                  { 'orderBy': { 'index': 'r.asc(timestamp)' } }
+                  // 'limit:30000'
                 ]
               }
 
@@ -153,8 +153,8 @@ export default {
                 from: undefined,
                 register: 'periodical',
                 'transformation': [
-                  { 'orderBy': { 'index': 'r.asc(timestamp)' } },
-                  'limit:30000'
+                  { 'orderBy': { 'index': 'r.asc(timestamp)' } }
+                  // 'limit:30000'
                 ]
               }
 
@@ -197,8 +197,8 @@ export default {
                 from: undefined,
                 register: 'periodical',
                 'transformation': [
-                  { 'orderBy': { 'index': 'r.asc(timestamp)' } },
-                  'limit:30000'
+                  { 'orderBy': { 'index': 'r.asc(timestamp)' } }
+                  // 'limit:30000'
                 ]
               }
 
@@ -242,8 +242,8 @@ export default {
                 from: undefined,
                 register: 'periodical',
                 'transformation': [
-                  { 'orderBy': { 'index': 'r.asc(timestamp)' } },
-                  'limit:30000'
+                  { 'orderBy': { 'index': 'r.asc(timestamp)' } }
+                  // 'limit:30000'
                 ]
               }
 
@@ -298,8 +298,8 @@ export default {
                   from: undefined,
                   register: 'periodical',
                   'transformation': [
-                    { 'orderBy': { 'index': 'r.asc(timestamp)' } },
-                    'limit:30000'
+                    { 'orderBy': { 'index': 'r.asc(timestamp)' } }
+                    // 'limit:30000'
                   ]
                 }
 
