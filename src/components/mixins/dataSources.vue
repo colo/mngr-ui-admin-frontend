@@ -473,7 +473,7 @@ export default {
             Array.each(pipeline.inputs, function (input, index) {
               if (cfg.connected[index] !== true) {
                 __resume[index] = function () {
-                  this.__resume_pipeline(pipeline, id)
+                  this.__resume_pipeline(pipeline, cfg, id)
                   input.conn_pollers[0].removeEvent('onConnect', __resume[index])
                 }
                 input.conn_pollers[0].addEvent('onConnect', () => __resume[index])
