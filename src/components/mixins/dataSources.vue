@@ -20,6 +20,9 @@ export default {
   },
 
   pipelines: {},
+  __pipelines_cfg: {},
+
+  ON_PIPELINE_READY: 'onPipelineReady',
 
   // sources: {
   //   data: {},
@@ -353,13 +356,18 @@ export default {
 
               if (_query !== undefined) {
                 if (!Array.isArray(_query)) {
-                  _query = [_query]
+                  _query = [Object.clone(_query)]
+                } else {
+                  _query = Array.clone(_query)
                 }
 
-                for (let i = 0; i < _query.length; i++) { app.io.emit('/', _query[i]) }
+                for (let i = 0; i < _query.length; i++) {
+                  debug('io EMIT', _query[i])
+                  app.io.emit('/', _query[i])
+                }
               }
 
-              // debug('FUNC EMIT', query, next)
+              debug('FUNC EMIT', _query)
 
               // next()
             }
@@ -421,7 +429,79 @@ export default {
       }.bind(this))
 
       debug('destroy_pipelines', this.$options.pipelines)
+    },
+    __after_connect_inputs: function (pipeline, cfg, cb) {
+      let _client_connect = function (index) {
+        debug('__after_connect_inputs %o %d', cfg.connected, index)
+
+        // cfg.connected.push(true)
+        cfg.connected[index] = true
+        if (cfg.connected.every(function (input) { return input }) && pipeline.inputs.length === cfg.connected.length) {
+          cb()
+        }
+
+        pipeline.inputs[index].removeEvent('onClientConnect', _client_connect)
+      }
+
+      Array.each(pipeline.inputs, function (input, index) {
+        debug('__after_connect_inputs INPUT', input.conn_pollers)
+        if (Object.getLength(input.conn_pollers) > 0 && Object.every(input.conn_pollers, function (poller, key) { return poller.connected })) {
+          debug('__after_connect_inputs ALREADY CONNECTED', index)
+          _client_connect(index)
+        } else {
+          input.addEvent('onClientConnect', _client_connect.pass(index))
+        }
+      })
+    },
+    /**
+    * use event === false on get_pipeline, so it won't fire the event
+    **/
+    __resume_pipeline: function (pipeline, cfg, id, cb, event) {
+      debug('__resume_pipeline', pipeline, cfg, id)
+
+      if (id) {
+        if (!cfg.ids.contains(id)) { cfg.ids.push(id) }
+
+        if (cfg.suspended === true) {
+          debug('__resume_pipeline this.pipeline.connected', cfg.connected)
+
+          if (cfg.connected.every(function (item) { return item === true })) {
+            cfg.suspended = false
+            pipeline.fireEvent('onResume')
+          } else {
+            let __resume = []
+            Array.each(pipeline.inputs, function (input, index) {
+              if (cfg.connected[index] !== true) {
+                __resume[index] = function () {
+                  this.__resume_pipeline(pipeline, id)
+                  input.conn_pollers[0].removeEvent('onConnect', __resume[index])
+                }
+                input.conn_pollers[0].addEvent('onConnect', () => __resume[index])
+              }
+            })
+          }
+        }
+      }
+
+      // this.chain(cb, this.fireEvent('ON_PIPELINE_READY', pipeline));
+
+      if (cb) {
+        // if (event === false) {
+        cb()
+        // } else {
+        //   let _chain = new Chain()
+        //   _chain.chain(
+        //     cb,
+        //     this.fireEvent.pass([this.$options.ON_PIPELINE_READY, pipeline], this)
+        //   )
+        //
+        //   while (_chain.callChain() !== false) {}
+        // }
+      } else {
+        this.fireEvent(this.$options.ON_PIPELINE_READY, pipeline)
+      }
     }
+
     /**
     * @end pipelines
     **/

@@ -559,6 +559,21 @@ export default {
       // if (!this.$options.pipelines[pipeline_id]) {
       let pipe = new Pipeline(template)
 
+      this.$options.__pipelines_cfg[pipeline_id] = {
+        ids: [],
+        connected: [],
+        suspended: pipe.inputs.every(function (input) { return input.options.suspended }, this)
+      }
+
+      this.__after_connect_inputs(
+        pipe,
+        this.$options.__pipelines_cfg[pipeline_id],
+        this.__resume_pipeline.pass([pipe, this.$options.__pipelines_cfg[pipeline_id], this.ID, function () {
+          debug('__resume_pipeline CALLBACK')
+          pipe.fireEvent('onOnce')
+        }], this)
+      )
+
       this.$options.pipelines[pipeline_id] = pipe
 
       // debug('RootPipeline ', this.$options.pipelines[pipeline_id].inputs[0])

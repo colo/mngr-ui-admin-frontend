@@ -182,8 +182,9 @@ export default new Class({
 
     this.addEvent('onConnect', function(){
       debug('initialize socket.onConnect', this.options.requests)
-      // setTimeout(this.fireEvent.bind(this), 1000, 'onResume');
-      // this.fireEvent('onOnce')
+
+      setTimeout(this.fireEvent.bind(this), 1000, 'onResume');
+      // // this.fireEvent('onOnce')
       setTimeout(this.fireEvent.bind(this), 1000, 'onOnce');
       //
       // setTimeout(function(){
