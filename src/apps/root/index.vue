@@ -394,7 +394,7 @@ export default {
         this.__resume_pipeline.pass([pipe, this.$options.__pipelines_cfg[pipeline_id], this.id, function () {
           debug('__resume_pipeline CALLBACK')
           pipe.fireEvent('onOnce')
-        }], this)
+        }, false], this)
       )
 
       this.$options.pipelines[pipeline_id] = pipe
