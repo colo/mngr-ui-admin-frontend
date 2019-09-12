@@ -8,7 +8,7 @@ const routes = [
     },
     children: [
       {
-        path: ':table?',
+        path: '',
         // path: '',
         component: () => import('@apps/root/index'),
         meta: {

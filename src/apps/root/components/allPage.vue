@@ -1,10 +1,10 @@
 <template>
 <!-- <div class="bg-primary"> -->
 <!-- <section class="content"> -->
-  <q-page :style="{height: height}">
+
     <!-- <grid-view :swap_components="true" :id="'grid.'+id" :components="components" :grid="grid" v-on:height="setHeight"/> -->
     <grid-view v-if="grid.layouts && Object.getLength(components) > 1" :swap_components="true" :id="id" :components="components" :grid="grid" v-on:height="setHeight"/>
-  </q-page>
+
   <!-- <table-page v-else :table="$route.params.table"/> -->
 </template>
 <script>
@@ -17,7 +17,7 @@ const { height, width } = dom
 import Vue from 'vue'
 
 import * as Debug from 'debug'
-const debug = Debug('pages:root')
+const debug = Debug('apps:root:components:AllPage')
 
 import AdminLteMixin from '@components/mixins/adminlte'
 import DataSourcesMixin from '@components/mixins/dataSources'
@@ -27,19 +27,19 @@ import GridView from '@components/gridView'
 // import Test from '@components/test/test.vue'
 
 import Pipeline from 'js-pipeline'
-import RootPipeline from './pipelines/root'
+import RootPipeline from '../pipelines/root'
 
 // import { dom } from 'quasar'
 // const { height, width } = dom
 
-import upperFirst from 'lodash/upperFirst'
-import camelCase from 'lodash/camelCase'
+// import upperFirst from 'lodash/upperFirst'
+// import camelCase from 'lodash/camelCase'
 
 export default {
   mixins: [AdminLteMixin, DataSourcesMixin],
 
   components: { GridView },
-  name: 'root',
+  name: 'allPage',
   // components: { GridView },
 
   // pipelines: {},
@@ -295,6 +295,11 @@ export default {
     }
   },
 
+  watch: {
+    '$route': function (val) {
+      debug('ROUTE %o', val)
+    }
+  },
   // watch: {
   //   components: {
   //     // immediate: true,
@@ -324,43 +329,9 @@ export default {
   //     }
   //   }
   // },
-  beforeCreate: function (next) {
-    // debug('beforeCreate', this)
 
-    // https://webpack.js.org/guides/dependency-management/#require-context
-    const requireComponent = require.context(
-      // Look for files in the current directory
-      '@apps/root/components/',
-      // Do not look in subdirectories
-      true,
-      // Only include "_base-" prefixed .vue files
-      /[\w-]+\.vue$/
-    )
-
-    // For each matching file name...
-    requireComponent.keys().forEach((fileName) => {
-      // Get the component config
-
-      const componentConfig = requireComponent(fileName)
-      // Get the PascalCase version of the component name
-      const componentName = upperFirst(
-        camelCase(
-          fileName
-            // Remove the "./_" from the beginning
-            // .replace(/^\.\/_/, '')
-            // Remove the file extension from the end
-            .replace(/\.\w+$/, '')
-        )
-      )
-      // Globally register the component
-      // console.log('componentName')
-      Vue.component(componentName, componentConfig.default || componentConfig)
-    })
-
-    if (next) { next() }
-  },
   created: function () {
-    debug('created ', this.$route.params)
+    // debug('created ', this.$route.params)
 
     // this.$on('grid.' + this.id + ':height', this.setHeight.bind(this))
 
@@ -568,7 +539,7 @@ export default {
       this.__after_connect_inputs(
         pipe,
         this.$options.__pipelines_cfg[pipeline_id],
-        this.__resume_pipeline.pass([pipe, this.$options.__pipelines_cfg[pipeline_id], this.ID, function () {
+        this.__resume_pipeline.pass([pipe, this.$options.__pipelines_cfg[pipeline_id], this.id, function () {
           debug('__resume_pipeline CALLBACK')
           pipe.fireEvent('onOnce')
         }], this)

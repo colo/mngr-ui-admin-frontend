@@ -2,18 +2,16 @@
 <!-- <div class="bg-primary"> -->
 <!-- <section class="content"> -->
   <!-- <grid-view :id="id" :components="components" :grid="grid"/> -->
-    <!-- <grid-view :id="'grid.'+id" :components="components" :grid="grid" v-on:height="setHeight"/> -->
-    <grid-view v-if="grid.layouts && Object.getLength(components) > 0" :swap_components="true" :id="id" :components="components" :grid="grid" v-on:height="setHeight"/>
+  <q-page :style="{height: height}">
+    <grid-view :id="'grid_'+table" :components="components" :grid="grid" v-on:height="setHeight"/>
+  </q-page>
 </template>
 
 <script>
-import { dom } from 'quasar'
-const { height, width } = dom
-
 import Vue from 'vue'
 
 import * as Debug from 'debug'
-const debug = Debug('apps:root:components:TablePage')
+const debug = Debug('apps:root:table')
 
 import AdminLteMixin from '@components/mixins/adminlte'
 import DataSourcesMixin from '@components/mixins/dataSources'
@@ -25,27 +23,25 @@ import GridView from '@components/gridView'
 import Pipeline from 'js-pipeline'
 import RootPipeline from '../pipelines/root'
 
+import upperFirst from 'lodash/upperFirst'
+import camelCase from 'lodash/camelCase'
+
 let moment = require('moment')
 
 export default {
   mixins: [AdminLteMixin, DataSourcesMixin],
 
-  name: 'tablePage',
+  name: 'TablePage',
   components: { GridView },
 
   // pipelines: {},
+
   props: {
     table: {
       type: String,
       default: undefined
     }
   },
-
-  // computed: {
-  //   path () {
-  //     return this.table
-  //   }
-  // },
   data () {
     return {
       height: '0px',
@@ -67,7 +63,7 @@ export default {
       // },
 
       // height: '0px',
-      id: 'all',
+      id: 'table',
       path: 'all',
 
       grid: {
@@ -136,9 +132,9 @@ export default {
   // },
   created: function () {
     let components
-    // try {
-    //   components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
-    // } catch (e) {}
+    try {
+      components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
+    } catch (e) {}
 
     let grid
     try {
@@ -165,7 +161,7 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: this.path,
+                  path: 'all',
                   query: {
                     from: this.table,
                     register: 'periodical',
@@ -208,7 +204,7 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: this.path,
+                  path: 'all',
                   query: {
                     from: this.table,
                     register: 'periodical',
@@ -252,7 +248,7 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: this.path,
+                  path: 'all',
                   query: {
                     from: this.table,
                     register: 'periodical',
@@ -295,7 +291,7 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: this.path,
+                  path: 'all',
                   query: {
                     from: this.table,
                     register: 'periodical',
@@ -335,7 +331,7 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: this.path,
+                  path: 'all',
                   query: {
                     from: this.table,
                     register: 'periodical',
@@ -416,7 +412,7 @@ export default {
                   //
                   // },
                   params: {
-                    path: this.path,
+                    path: 'all',
                     query: {
                       from: this.table,
                       register: 'periodical',
@@ -459,11 +455,11 @@ export default {
                       // vm.destroy_pipelines()
                       // vm.create_pipelines()
 
-                      debug('MyChart RANGE 2', this.prev.range, this.KEYS, vm.$options.pipelines['input.root.' + vm.table])
+                      debug('MyChart RANGE 2', this.prev.range, this.KEYS, vm.$options.pipelines['input.root'])
                       debug('MyChart RANGE 3', vm.__components_sources_to_requests(vm.components))
                       let periodicals = vm.__components_sources_to_requests(vm.components)['periodical']
-                      vm.$options.pipelines['input.root.' + vm.table].inputs[0].conn_pollers[0].options.requests.periodical = periodicals
-                      vm.$options.pipelines['input.root.' + vm.table].inputs[0].conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
+                      vm.$options.pipelines['input.root'].inputs[0].conn_pollers[0].options.requests.periodical = periodicals
+                      vm.$options.pipelines['input.root'].inputs[0].conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
 
                       // this.prev.range[0] = val.range[1] - MINUTE
 
@@ -581,7 +577,7 @@ export default {
                     if (!this.current.data.labels.contains(label)) { this.current.data.labels.push(label) }
 
                     let index_of_value = this.current.data.labels.indexOf(label)
-                    debug('MyChart CALLBACK ', key, val, metadata, label, index_of_value)
+                    debug('MyChart cb ', key, val, metadata, label, index_of_value)
 
                     let name = key
                     // if (name.split('.').length > 2) {
@@ -624,12 +620,12 @@ export default {
 
                     if (!found) {
                       this.current.data.datasets.push(dataset)
-                      debug('MyChart CALLBACK NOT FOUND', dataset.name)
+                      debug('MyChart cb NOT FOUND', dataset.name)
                     }
 
                     if (this.KEYS.length === this.current.data.datasets.length) {
                       // let data = JSON.parse(JSON.stringify(this.current.data))
-                      debug('MyChart CALLBACK UPDATING2', this.current.data.datasets, this.current.keys)
+                      debug('MyChart cb UPDATING2', this.current.data.datasets, this.current.keys)
                       // this.props.data = data
 
                       // debug('MyChart cb UPDATING', this.KEYS.length, this.current.data.datasets.length)
@@ -642,7 +638,7 @@ export default {
                         if (dataset.values.length !== this.current.keys[dataset._key].count) { match_length = false }
                       }
 
-                      debug('MyChart CALLBACK KEYS', this.current.data.datasets, this.current.keys)
+                      debug('MyChart cb KEYS', this.current.data.datasets, this.current.keys)
 
                       if (match_length) {
                         // this.update(datasets)
@@ -652,7 +648,7 @@ export default {
                         // }
 
                         let data = JSON.parse(JSON.stringify(this.current.data))
-                        debug('MyChart CALLBACK UPDATING2', data)
+                        debug('MyChart cb UPDATING2', data)
                         this.props.data = data
 
                         // Vue.$set(this.props, 'data', data)
@@ -700,116 +696,194 @@ export default {
             }
           }
 
-        }]
-        //
-        // 'table': [{
-        //   component: 'MyTable',
-        //   props: {
-        //     data: []
-        //   },
-        //   source: {
-        //     requests: {
-        //       once: [
-        //         {
-        //           params: {
-        //             path: this.path,
-        //             query: {
-        //               // register: 'periodical',
-        //               'q': [
-        //                 { 'data': ['log'] },
-        //                 { 'metadata': ['host', 'tag', 'timestamp'] }
-        //               ],
-        //               'transformation': [
-        //                 { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-        //                 'slice:0:10'
-        //               ]
-        //             }
-        //             // body: {
-        //             //   'transformation': 'limit:30000'
-        //             //
-        //             // }
-        //           },
-        //           callback: function (val) {
-        //             val = JSON.parse(JSON.stringify(val[0]))
-        //             debug('MyTable', val)
-        //
-        //             // if (Array.isArray(val)) val = val[0] // wtf?
-        //             //
-        //             // if (!Array.isArray(val)) val = [val]
-        //
-        //             val.sort(function (a, b) {
-        //               if (a.metadata.timestamp > b.metadata.timestamp) {
-        //                 return -1
-        //               }
-        //               if (a.metadata.timestamp < b.metadata.timestamp) {
-        //                 return 1
-        //               }
-        //               // a must be equal to b
-        //               return 0
-        //             })
-        //             debug('MyTable row', val)
-        //             for (let i = 0; i < val.length; i++) {
-        //               let row = Object.merge(val[i].data, val[i].metadata)
-        //
-        //               row.date = moment(row.timestamp).format('dddd, MMMM Do YYYY, h:mm:ss a')
-        //
-        //               debug('MyTable', row)
-        //               this.props.data.push(row)
-        //             }
-        //           }
-        //         },
-        //         {
-        //           params: {
-        //             path: this.path,
-        //             query: {
-        //               register: 'changes',
-        //               'q': [
-        //                 { 'data': ['log'] },
-        //                 { 'metadata': ['host', 'tag', 'timestamp'] }
-        //               ]
-        //               // 'transformation': [
-        //               //   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-        //               //   'slice:0:9'
-        //               // ]
-        //             }
-        //           // body: {
-        //           //   'transformation': 'limit:30000'
-        //           //
-        //           // }
-        //           },
-        //           callback: function (val) {
-        //             val = JSON.parse(JSON.stringify(val))
-        //             debug('MyTable changes', val)
-        //
-        //             if (Array.isArray(val)) val = val[0]
-        //
-        //             if (!Array.isArray(val)) val = [val]
-        //
-        //             val.sort(function (a, b) {
-        //               if (a.metadata.timestamp > b.metadata.timestamp) {
-        //                 return -1
-        //               }
-        //               if (a.metadata.timestamp < b.metadata.timestamp) {
-        //                 return 1
-        //               }
-        //               // a must be equal to b
-        //               return 0
-        //             })
-        //
-        //             for (let i = 0; i < val.length; i++) {
-        //               let row = Object.merge(val[i].data, val[i].metadata)
-        //               row.date = moment(row.timestamp).format('dddd, MMMM Do YYYY, h:mm:ss a')
-        //
-        //               debug('MyTable changes', row)
-        //               this.props.data.unshift(row)
-        //             }
-        //           }
-        //         }
-        //       ]
-        //     }
-        //   }
-        // }]
+        }],
 
+        'table': [{
+          component: 'MyTable',
+          props: {
+            data: []
+          },
+          source: {
+            requests: {
+              once: [
+                {
+                  params: {
+                    path: 'all',
+                    query: {
+                      from: this.table,
+                      // register: 'periodical',
+                      'q': [
+                        { 'data': ['log'] },
+                        { 'metadata': ['host', 'tag', 'timestamp'] }
+                      ],
+                      'transformation': [
+                        { 'orderBy': { 'index': 'r.desc(timestamp)' } },
+                        'slice:0:10'
+                      ]
+                    }
+                    // body: {
+                    //   'transformation': 'limit:30000'
+                    //
+                    // }
+                  },
+                  callback: function (val) {
+                    val = JSON.parse(JSON.stringify(val[0]))
+                    debug('MyTable', val)
+
+                    // if (Array.isArray(val)) val = val[0] // wtf?
+                    //
+                    // if (!Array.isArray(val)) val = [val]
+
+                    val.sort(function (a, b) {
+                      if (a.metadata.timestamp > b.metadata.timestamp) {
+                        return -1
+                      }
+                      if (a.metadata.timestamp < b.metadata.timestamp) {
+                        return 1
+                      }
+                      // a must be equal to b
+                      return 0
+                    })
+                    debug('MyTable row', val)
+                    for (let i = 0; i < val.length; i++) {
+                      let row = Object.merge(val[i].data, val[i].metadata)
+
+                      row.date = moment(row.timestamp).format('dddd, MMMM Do YYYY, h:mm:ss a')
+
+                      debug('MyTable', row)
+                      this.props.data.push(row)
+                    }
+                  }
+                },
+                {
+                  params: {
+                    path: 'all',
+                    query: {
+                      from: this.table,
+                      register: 'changes',
+                      'q': [
+                        { 'data': ['log'] },
+                        { 'metadata': ['host', 'tag', 'timestamp'] }
+                      ]
+                      // 'transformation': [
+                      //   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
+                      //   'slice:0:9'
+                      // ]
+                    }
+                  // body: {
+                  //   'transformation': 'limit:30000'
+                  //
+                  // }
+                  },
+                  callback: function (val) {
+                    val = JSON.parse(JSON.stringify(val))
+                    debug('MyTable changes', val)
+
+                    if (Array.isArray(val)) val = val[0]
+
+                    if (!Array.isArray(val)) val = [val]
+
+                    val.sort(function (a, b) {
+                      if (a.metadata.timestamp > b.metadata.timestamp) {
+                        return -1
+                      }
+                      if (a.metadata.timestamp < b.metadata.timestamp) {
+                        return 1
+                      }
+                      // a must be equal to b
+                      return 0
+                    })
+
+                    for (let i = 0; i < val.length; i++) {
+                      let row = Object.merge(val[i].data, val[i].metadata)
+                      row.date = moment(row.timestamp).format('dddd, MMMM Do YYYY, h:mm:ss a')
+
+                      debug('MyTable changes', row)
+                      this.props.data.unshift(row)
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }]
+        // '9': [{
+        //   component: 'MyRange'
+        // }]
+        // '9': [{
+        //   component: 'q-btn'
+        // }],
+        // '1': [{
+        //   id: 1,
+        //   component: 'admin-lte-events'
+        // }],
+        // '2': [{
+        //   id: 2,
+        //   component: 'admin-lte-fullcalendar'
+        // }]
+        // '1': [{
+        //   id: 0,
+        //   component: 'admin-lte-box',
+        //   props: {
+        //     type: 'box-success',
+        //     title: 'MyBox',
+        //     body: {
+        //       text: 'box content'
+        //     },
+        //     footer: false
+        //   }
+        //   // defaultSize: 2
+        // }],
+        // '2': [
+        //   {
+        //     id: 2,
+        //     component: 'admin-lte-small-box',
+        //     // props: {
+        //     //   bg: 'bg-primary'
+        //     // },
+        //     defaultSize: 2
+        //   }
+        // ],
+        // '4': [],
+        // '9': [
+        //   {
+        //     component: 'q-btn',
+        //     // defaultSize: 2,
+        //     props: {
+        //       // round: true,
+        //       label: 'edit/preview'
+        //       // style: 'position: relative'
+        //       // '@click': "$emit('disableGrid')"
+        //     },
+        //     events: {
+        //       click: 'disableGrid'
+        //     }
+        //     // componentProps: "round color: 'primary'"
+        //   },
+        //   {
+        //     component: 'q-btn',
+        //     // defaultSize: 2,
+        //     props: {
+        //     // round: true,
+        //       label: 'draggables'
+        //       // style: 'position: relative'
+        //     // '@click': "$emit('disableGrid')"
+        //     },
+        //     events: {
+        //       click: 'disableEdit'
+        //     }
+        //   // componentProps: "round color: 'primary'"
+        //   }]
+        // '5': [{
+        //   // component: 'admin-lte-box'
+        //   component: 'TestTest'
+        //   // defaultSize: 2
+        // }],
+        // '6': [{
+        //   // component: 'admin-lte-box'
+        //   component: 'SecondSecond'
+        //   // defaultSize: 2
+        // }]
       }
     }
 
@@ -859,8 +933,8 @@ export default {
     create_pipelines: function (next) {
       debug('create_pipelines')
 
-      // if (root && Array.isArray(root)) {
-      //   Array.each(root, function (log) {
+      // if (logs && Array.isArray(logs)) {
+      //   Array.each(logs, function (log) {
       //     if (log) {
       //       let template = Object.clone(LogPipeline)
       //
@@ -883,41 +957,26 @@ export default {
 
       let template = Object.clone(RootPipeline)
 
-      let pipeline_id = template.input[0].poll.id + '.' + this.table
-      // debug('RootPipeline ', template.input[0].poll.conn[0])
+      let pipeline_id = template.input[0].poll.id
+      // debug('LogsPipeline ', template.input[0].poll.conn[0])
 
       // template.input[0].poll.conn[0].requests = this.__components_sources_to_requests(JSON.parse(JSON.stringify(this.components)))
       template.input[0].poll.conn[0].requests = this.__components_sources_to_requests(this.components)
       // template.input[0].poll.conn[0].queries = this.__components_sources_to_requests(JSON.parse(JSON.stringify(this.components)))
 
-      // debug('RootPipeline ', template.input[0].poll.conn[0].requests)
+      // debug('LogsPipeline ', template.input[0].poll.conn[0].requests)
 
       // if (!this.$options.pipelines[pipeline_id]) {
       let pipe = new Pipeline(template)
 
-      this.$options.__pipelines_cfg[pipeline_id] = {
-        ids: [],
-        connected: [],
-        suspended: pipe.inputs.every(function (input) { return input.options.suspended }, this)
-      }
-
-      this.__after_connect_inputs(
-        pipe,
-        this.$options.__pipelines_cfg[pipeline_id],
-        this.__resume_pipeline.pass([pipe, this.$options.__pipelines_cfg[pipeline_id], this.id, function () {
-          debug('__resume_pipeline CALLBACK')
-          pipe.fireEvent('onOnce')
-        }], this)
-      )
-
       this.$options.pipelines[pipeline_id] = pipe
 
-      // debug('RootPipeline ', this.$options.pipelines[pipeline_id].inputs[0])
+      // debug('LogsPipeline ', this.$options.pipelines[pipeline_id].inputs[0])
       // this.$options.pipelines[pipeline_id].inputs[0].addEvent('onConnect', this.$options.pipelines[pipeline_id].fireEvent('onOnce'))
 
       // this.$options.pipelines[pipeline_id].fireEvent('onResume')
       // } else if (this.$options.pipelines[pipeline_id].inputs[0].options.suspended !== false) {
-      //   debug('RootPipeline suspended', this.$options.pipelines[pipeline_id].inputs[0].options.suspended)
+      //   debug('LogsPipeline suspended', this.$options.pipelines[pipeline_id].inputs[0].options.suspended)
       //   this.$options.pipelines[pipeline_id].fireEvent('onResume')
       // }
 
@@ -966,6 +1025,9 @@ export default {
   mounted: function () {
     debug('mounted')
   }
-
+  // updated: function () {
+  //   // console.log('height:', height(document.getElementById('logs')))
+  //   this.height = this.getGridHeight() + 'px'
+  // }
 }
 </script>

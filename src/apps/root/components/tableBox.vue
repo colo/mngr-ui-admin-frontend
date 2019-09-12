@@ -8,8 +8,9 @@
     :body="{class: 'bg-secondary'}"
     v-on:hide="hide"
     v-on:show="show"
-    :header="{tools: false, class: 'with-border', component: {type: 'router-link', props: {to: table}, text: 'Table: '+table}}"
+    :header="{tools: false, class: 'with-border', component: {type: 'router-link', props: { to: {path :'/', query: {table: table}}}, text: 'Table: '+table}}"
   >
+  <!-- :header="{tools: false, class: 'with-border', component: {type: 'router-link', props: {to: table}, text: 'Table: '+table}}" -->
   <!-- :header="{ title: 'Table: <a href=/'+table+'>'+table+'</a>', tools: false }" -->
   <!-- :body="{class: 'bg-secondary'}" -->
     <div :style="{height: grid_container_height}" :key="table+'.grid.container'">
@@ -24,7 +25,7 @@
 <script>
 
 import * as Debug from 'debug'
-const debug = Debug('components:TableBox')
+const debug = Debug('apps:root:components:TableBox')
 
 import GridView from '@components/gridView'
 let moment = require('moment')
@@ -618,7 +619,7 @@ export default {
       if (pipeline) {
         let template = pipeline
 
-        let pipeline_id = template.input[0].poll.id
+        let pipeline_id = template.input[0].poll.id + '.' + this.id
         // debug('RootPipeline ', template.input[0].poll.conn[0])
 
         // template.input[0].poll.conn[0].requests = this.__components_sources_to_requests(JSON.parse(JSON.stringify(this.components)))
@@ -639,7 +640,7 @@ export default {
         this.__after_connect_inputs(
           pipe,
           this.$options.__pipelines_cfg[pipeline_id],
-          this.__resume_pipeline.pass([pipe, this.$options.__pipelines_cfg[pipeline_id], this.ID, function () {
+          this.__resume_pipeline.pass([pipe, this.$options.__pipelines_cfg[pipeline_id], this.id, function () {
             debug('__resume_pipeline CALLBACK')
             pipe.fireEvent('onOnce')
           }], this)
