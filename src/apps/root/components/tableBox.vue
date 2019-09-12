@@ -15,7 +15,7 @@
   <!-- :body="{class: 'bg-secondary'}" -->
     <div :style="{height: grid_container_height}" :key="table+'.grid.container'">
       <!-- <grid-view :id="table+'.grid'" :components="components" :grid="grid" :className="''"/> -->
-      <grid-view v-if="grid.layouts && Object.getLength(components) > 0" :swap_components="true" :id="id+'_'+table" :key="id+'_'+table" :components="components" :grid="grid" :className="''"/>
+      <grid-view v-if="grid.layouts && Object.getLength(components) > 0" :swap_components="true" :id="id+'_tablebox_'+table" :key="id+'_'+table" :components="components" :grid="grid" :className="''"/>
       <!--   -->
       <!-- v-on:height="setHeight" -->
     </div>

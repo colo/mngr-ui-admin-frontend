@@ -3,7 +3,7 @@
 <!-- <section class="content"> -->
   <!-- <grid-view :id="id" :components="components" :grid="grid"/> -->
     <!-- <grid-view :id="'grid.'+id" :components="components" :grid="grid" v-on:height="setHeight"/> -->
-    <grid-view v-if="grid.layouts && Object.getLength(components) > 0" :swap_components="true" :id="id" :components="components" :grid="grid" v-on:height="setHeight"/>
+    <grid-view v-if="grid.layouts && Object.getLength(components) > 0" :swap_components="true" :id="id+'_'+table" :components="components" :grid="grid" v-on:height="setHeight"/>
 </template>
 
 <script>
@@ -41,11 +41,64 @@ export default {
     }
   },
 
-  // computed: {
-  //   path () {
-  //     return this.table
-  //   }
-  // },
+  grid: {
+    layouts: {
+      'lg': [
+        { x: 0, y: 0, w: 3, h: 7, i: 'count' },
+        { x: 3, y: 0, w: 3, h: 7, i: 'range' },
+        { x: 6, y: 0, w: 3, h: 7, i: 'tags' },
+        { x: 9, y: 0, w: 3, h: 7, i: 'hosts' },
+        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
+        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
+        // second row
+        { x: 1, y: 1, w: 10, h: 2, i: 'range_selector' },
+        { x: 0, y: 2, w: 12, h: 16, i: 'chart' },
+        { x: 0, y: 3, w: 12, h: 30, i: 'table' }
+        // { x: 0, y: 4, w: 12, h: 2, i: '9' }
+      ],
+      'md': [
+        { x: 0, y: 0, w: 2, h: 7, i: 'count' },
+        { x: 2, y: 0, w: 2, h: 7, i: 'range' },
+        { x: 4, y: 0, w: 2, h: 7, i: 'tags' },
+        { x: 6, y: 0, w: 2, h: 7, i: 'hosts' },
+        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
+        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
+        // second row
+        { x: 1, y: 1, w: 6, h: 2, i: 'range_selector' },
+        { x: 0, y: 2, w: 8, h: 16, i: 'chart' },
+        { x: 0, y: 3, w: 8, h: 20, i: 'table' }
+        // { x: 0, y: 4, w: 8, h: 2, i: '9' }
+
+      ],
+      'sm': [
+        { x: 0, y: 0, w: 3, h: 7, i: 'count' },
+        { x: 3, y: 0, w: 3, h: 7, i: 'range' },
+        { x: 0, y: 1, w: 3, h: 7, i: 'tags' },
+        { x: 3, y: 1, w: 3, h: 7, i: 'hosts' },
+        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
+        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
+        // second row
+        { x: 1, y: 2, w: 4, h: 2, i: 'range_selector' },
+        { x: 0, y: 3, w: 6, h: 16, i: 'chart' },
+        { x: 0, y: 4, w: 6, h: 20, i: 'table' }
+        // { x: 0, y: 5, w: 6, h: 2, i: '9' }
+      ]
+
+    },
+    breakpoint: 'lg',
+    // slots: [
+    //   '<q-btn round />'
+    // ],
+
+    cols: 12,
+    // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
+    colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
+    // rowHeight: 400,
+    isDraggable: false,
+    isResizable: false,
+    preview: true
+  },
+
   data () {
     return {
       height: '0px',
@@ -70,63 +123,7 @@ export default {
       id: 'all',
       path: 'all',
 
-      grid: {
-        layouts: {
-          'lg': [
-            { x: 0, y: 0, w: 3, h: 7, i: 'count' },
-            { x: 3, y: 0, w: 3, h: 7, i: 'range' },
-            { x: 6, y: 0, w: 3, h: 7, i: 'tags' },
-            { x: 9, y: 0, w: 3, h: 7, i: 'hosts' },
-            // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
-            // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
-            // second row
-            { x: 1, y: 1, w: 10, h: 2, i: 'range_selector' },
-            { x: 0, y: 2, w: 12, h: 16, i: 'chart' },
-            { x: 0, y: 3, w: 12, h: 30, i: 'table' }
-            // { x: 0, y: 4, w: 12, h: 2, i: '9' }
-          ],
-          'md': [
-            { x: 0, y: 0, w: 2, h: 7, i: 'count' },
-            { x: 2, y: 0, w: 2, h: 7, i: 'range' },
-            { x: 4, y: 0, w: 2, h: 7, i: 'tags' },
-            { x: 6, y: 0, w: 2, h: 7, i: 'hosts' },
-            // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
-            // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
-            // second row
-            { x: 1, y: 1, w: 6, h: 2, i: 'range_selector' },
-            { x: 0, y: 2, w: 8, h: 16, i: 'chart' },
-            { x: 0, y: 3, w: 8, h: 20, i: 'table' }
-            // { x: 0, y: 4, w: 8, h: 2, i: '9' }
-
-          ],
-          'sm': [
-            { x: 0, y: 0, w: 3, h: 7, i: 'count' },
-            { x: 3, y: 0, w: 3, h: 7, i: 'range' },
-            { x: 0, y: 1, w: 3, h: 7, i: 'tags' },
-            { x: 3, y: 1, w: 3, h: 7, i: 'hosts' },
-            // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
-            // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
-            // second row
-            { x: 1, y: 2, w: 4, h: 2, i: 'range_selector' },
-            { x: 0, y: 3, w: 6, h: 16, i: 'chart' },
-            { x: 0, y: 4, w: 6, h: 20, i: 'table' }
-            // { x: 0, y: 5, w: 6, h: 2, i: '9' }
-          ]
-
-        },
-        breakpoint: 'lg',
-        // slots: [
-        //   '<q-btn round />'
-        // ],
-
-        cols: 12,
-        // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
-        colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
-        // rowHeight: 400,
-        isDraggable: false,
-        isResizable: false,
-        preview: true
-      },
+      grid: {},
       components: {}
     }
   },
@@ -141,11 +138,11 @@ export default {
     // } catch (e) {}
 
     let grid
-    try {
-      grid = JSON.parse(JSON.stringify(this.$store.getters['grids/getGrid'](this.id)))
-    } catch (e) {
-
-    }
+    // try {
+    //   grid = JSON.parse(JSON.stringify(this.$store.getters['grids/getGrid'](this.id)))
+    // } catch (e) {
+    //
+    // }
 
     debug('created', components)
     if (!components || Object.keys(components).length === 0) {
@@ -443,11 +440,11 @@ export default {
                         range[1] = (table.range[1] > range[1]) ? table.range[1] : range[1]
                         range[0] = range[1] - (5 * MINUTE)
                         // })
-                        Array.each(table.tags, function (tag) {
-                          if (!this.KEYS.contains('?tags=' + tag)) {
-                            this.KEYS.push('?tags=' + tag)
-                          }
-                        }.bind(this))
+                        // Array.each(table.tags, function (tag) {
+                        //   if (!this.KEYS.contains('?tags=' + tag)) {
+                        //     this.KEYS.push('?tags=' + tag)
+                        //   }
+                        // }.bind(this))
 
                         if (!this.KEYS.contains('?path=' + table.path)) {
                           this.KEYS.push('?path=' + table.path)
@@ -817,7 +814,11 @@ export default {
       this.$set(this.components, key, components[key])
     }
 
-    if (grid) { this.grid = grid }
+    // if (grid) { this.grid = grid }
+
+    for (const key in this.$options.grid) {
+      this.$set(this.grid, key, this.$options.grid[key])
+    }
 
     // let interval = setInterval(function () {
     //   debug('setInterval', JSON.parse(JSON.stringify(this.grid['layouts']['lg'])))
