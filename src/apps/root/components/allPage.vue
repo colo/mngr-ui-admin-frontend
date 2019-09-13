@@ -206,7 +206,7 @@ export default {
         'all': [{
           source: {
             requests: {
-              once: [{
+              periodical: [{
                 params: {
                   path: 'all'
                 },
