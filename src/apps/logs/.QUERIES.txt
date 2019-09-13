@@ -1,0 +1,40 @@
+WEB
+----
+{
+
+	"q": [
+		"data"
+
+	],
+	"transformation": [
+		{
+		"orderBy": {"index": "r.desc(timestamp)"}
+		},
+		{"slice": [0,1]}
+
+	],
+	"filter": "r.row('metadata')('tag').contains('web')"
+
+
+}
+----
+{
+
+	"q": [
+		{"data": "body_bytes_sent"}
+
+	],
+	"transformation": [
+		{
+		"orderBy": {"index": "r.desc(timestamp)"}
+		}
+
+	],
+	"filter": "r.row('metadata')('tag').contains('web')",
+	"aggregation": {
+		"sum": "('data')('body_bytes_sent')"
+	}
+
+}
+
+----------

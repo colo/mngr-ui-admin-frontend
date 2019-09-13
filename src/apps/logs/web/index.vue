@@ -1,8 +1,7 @@
 <template>
   <q-page :style="{height: height}">
-    <!-- <all-page v-if="!table"/> -->
-    <all-page />
-    <!-- <table-page v-else :table="table"/> -->
+    <!-- <all-page v-if="!table"/>
+    <table-page v-else :table="table"/> -->
   </q-page>
 </template>
 <script>
@@ -25,7 +24,7 @@ import GridView from '@components/gridView'
 // import Test from '@components/test/test.vue'
 
 import Pipeline from 'js-pipeline'
-import LogsPipeline from './pipelines/index'
+import LogsPipeline from '../pipelines/index'
 
 // import { dom } from 'quasar'
 // const { height, width } = dom
@@ -37,13 +36,13 @@ export default {
   mixins: [AdminLteMixin, DataSourcesMixin],
 
   // components: { GridView },
-  name: 'logs',
+  name: 'web',
 
-  // computed: {
-  //   table () {
-  //     return this.$route.query.table
-  //   }
-  // },
+  computed: {
+    table () {
+      return this.$route.query.table
+    }
+  },
   data () {
     return {
       height: '0px',
@@ -53,7 +52,7 @@ export default {
       **/
       store: false,
 
-      id: 'logs',
+      id: 'web',
       path: 'logs'
 
     }

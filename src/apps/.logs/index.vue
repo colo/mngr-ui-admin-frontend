@@ -2,18 +2,16 @@
 <!-- <div class="bg-primary"> -->
 <!-- <section class="content"> -->
   <!-- <grid-view :id="id" :components="components" :grid="grid"/> -->
-    <!-- <grid-view :id="'grid.'+id" :components="components" :grid="grid" v-on:height="setHeight"/> -->
-    <grid-view v-if="grid.layouts && Object.getLength(components) > 0" :swap_components="true" :id="id+'_'+table" :components="components" :grid="grid" v-on:height="setHeight"/>
+  <q-page :style="{height: height}">
+    <grid-view :id="'grid.'+id" :components="components" :grid="grid" v-on:height="setHeight"/>
+  </q-page>
 </template>
 
 <script>
-import { dom } from 'quasar'
-const { height, width } = dom
-
 import Vue from 'vue'
 
 import * as Debug from 'debug'
-const debug = Debug('apps:root:components:TablePage')
+const debug = Debug('pages:Logs')
 
 import AdminLteMixin from '@components/mixins/adminlte'
 import DataSourcesMixin from '@components/mixins/dataSources'
@@ -23,81 +21,19 @@ import GridView from '@components/gridView'
 // import Test from '@components/test/test.vue'
 
 import Pipeline from 'js-pipeline'
-import RootPipeline from '../pipelines/index'
+import LogsPipeline from './pipelines/logs'
 
+// import { dom } from 'quasar'
+// const { height, width } = dom
 let moment = require('moment')
 
 export default {
   mixins: [AdminLteMixin, DataSourcesMixin],
 
-  name: 'tablePage',
+  name: 'Logs',
   components: { GridView },
 
   // pipelines: {},
-  props: {
-    table: {
-      type: String,
-      default: undefined
-    }
-  },
-
-  grid: {
-    layouts: {
-      'lg': [
-        { x: 0, y: 0, w: 3, h: 7, i: 'count' },
-        { x: 3, y: 0, w: 3, h: 7, i: 'range' },
-        { x: 6, y: 0, w: 3, h: 7, i: 'tags' },
-        { x: 9, y: 0, w: 3, h: 7, i: 'hosts' },
-        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
-        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
-        // second row
-        { x: 1, y: 1, w: 10, h: 2, i: 'range_selector' },
-        { x: 0, y: 2, w: 12, h: 16, i: 'chart' },
-        { x: 0, y: 3, w: 12, h: 30, i: 'table' }
-        // { x: 0, y: 4, w: 12, h: 2, i: '9' }
-      ],
-      'md': [
-        { x: 0, y: 0, w: 2, h: 7, i: 'count' },
-        { x: 2, y: 0, w: 2, h: 7, i: 'range' },
-        { x: 4, y: 0, w: 2, h: 7, i: 'tags' },
-        { x: 6, y: 0, w: 2, h: 7, i: 'hosts' },
-        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
-        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
-        // second row
-        { x: 1, y: 1, w: 6, h: 2, i: 'range_selector' },
-        { x: 0, y: 2, w: 8, h: 16, i: 'chart' },
-        { x: 0, y: 3, w: 8, h: 20, i: 'table' }
-        // { x: 0, y: 4, w: 8, h: 2, i: '9' }
-
-      ],
-      'sm': [
-        { x: 0, y: 0, w: 3, h: 7, i: 'count' },
-        { x: 3, y: 0, w: 3, h: 7, i: 'range' },
-        { x: 0, y: 1, w: 3, h: 7, i: 'tags' },
-        { x: 3, y: 1, w: 3, h: 7, i: 'hosts' },
-        // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
-        // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
-        // second row
-        { x: 1, y: 2, w: 4, h: 2, i: 'range_selector' },
-        { x: 0, y: 3, w: 6, h: 16, i: 'chart' },
-        { x: 0, y: 4, w: 6, h: 20, i: 'table' }
-        // { x: 0, y: 5, w: 6, h: 2, i: '9' }
-      ]
-
-    },
-    breakpoint: 'lg',
-    // slots: [
-    //   '<q-btn round />'
-    // ],
-
-    cols: 12,
-    // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
-    colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
-    // rowHeight: 400,
-    isDraggable: false,
-    isResizable: false,
-    preview: true
-  },
 
   data () {
     return {
@@ -108,10 +44,10 @@ export default {
       **/
       store: false,
 
-      // logs: {
-      //   count: undefined
-      // },
-      // range: [0, 1],
+      logs: {
+        count: undefined
+      },
+      range: [0, 1],
       // counter: {
       //   inner: {
       //     header: 'Count',
@@ -120,10 +56,66 @@ export default {
       // },
 
       // height: '0px',
-      id: 'all',
-      path: 'all',
+      id: 'logs',
+      path: 'logs',
 
-      grid: {},
+      grid: {
+        layouts: {
+          'lg': [
+            { x: 0, y: 0, w: 3, h: 7, i: 'count' },
+            { x: 3, y: 0, w: 3, h: 7, i: 'range' },
+            { x: 6, y: 0, w: 3, h: 7, i: 'tags' },
+            { x: 9, y: 0, w: 3, h: 7, i: 'hosts' },
+            // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
+            // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
+            // second row
+            { x: 1, y: 1, w: 10, h: 2, i: 'range_selector' },
+            { x: 0, y: 2, w: 12, h: 16, i: 'chart' },
+            { x: 0, y: 3, w: 12, h: 30, i: 'table' }
+            // { x: 0, y: 4, w: 12, h: 2, i: '9' }
+          ],
+          'md': [
+            { x: 0, y: 0, w: 2, h: 7, i: 'count' },
+            { x: 2, y: 0, w: 2, h: 7, i: 'range' },
+            { x: 4, y: 0, w: 2, h: 7, i: 'tags' },
+            { x: 6, y: 0, w: 2, h: 7, i: 'hosts' },
+            // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
+            // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
+            // second row
+            { x: 1, y: 1, w: 6, h: 2, i: 'range_selector' },
+            { x: 0, y: 2, w: 8, h: 16, i: 'chart' },
+            { x: 0, y: 3, w: 8, h: 20, i: 'table' }
+            // { x: 0, y: 4, w: 8, h: 2, i: '9' }
+
+          ],
+          'sm': [
+            { x: 0, y: 0, w: 3, h: 7, i: 'count' },
+            { x: 3, y: 0, w: 3, h: 7, i: 'range' },
+            { x: 0, y: 1, w: 3, h: 7, i: 'tags' },
+            { x: 3, y: 1, w: 3, h: 7, i: 'hosts' },
+            // { x: 8, y: 0, w: 2, h: 7, i: '4', immobile: true },
+            // { x: 10, y: 0, w: 2, h: 7, i: '5', immobile: true },
+            // second row
+            { x: 1, y: 2, w: 4, h: 2, i: 'range_selector' },
+            { x: 0, y: 3, w: 6, h: 16, i: 'chart' },
+            { x: 0, y: 4, w: 6, h: 20, i: 'table' }
+            // { x: 0, y: 5, w: 6, h: 2, i: '9' }
+          ]
+
+        },
+        breakpoint: 'lg',
+        // slots: [
+        //   '<q-btn round />'
+        // ],
+
+        cols: 12,
+        // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
+        colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
+        // rowHeight: 400,
+        isDraggable: false,
+        isResizable: false,
+        preview: true
+      },
       components: {}
     }
   },
@@ -133,16 +125,16 @@ export default {
   // },
   created: function () {
     let components
-    // try {
-    //   components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
-    // } catch (e) {}
+    try {
+      components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
+    } catch (e) {}
 
     let grid
-    // try {
-    //   grid = JSON.parse(JSON.stringify(this.$store.getters['grids/getGrid'](this.id)))
-    // } catch (e) {
-    //
-    // }
+    try {
+      grid = JSON.parse(JSON.stringify(this.$store.getters['grids/getGrid'](this.id)))
+    } catch (e) {
+
+    }
 
     debug('created', components)
     if (!components || Object.keys(components).length === 0) {
@@ -162,9 +154,8 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: this.path,
+                  path: 'logs',
                   query: {
-                    from: this.table,
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -205,9 +196,8 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: this.path,
+                  path: 'logs',
                   query: {
-                    from: this.table,
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -249,9 +239,8 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: this.path,
+                  path: 'logs',
                   query: {
-                    from: this.table,
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -292,9 +281,8 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: this.path,
+                  path: 'logs',
                   query: {
-                    from: this.table,
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -332,9 +320,8 @@ export default {
             requests: {
               once: [{
                 params: {
-                  path: this.path,
+                  path: 'logs',
                   query: {
-                    from: this.table,
                     register: 'periodical',
                     'transformation': [
                       { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -365,7 +352,7 @@ export default {
         'chart': [{
           component: 'MyChart',
           props: {
-            id: 'chart',
+            id: 'chart.logs',
             data: {
               labels: [],
               datasets: []
@@ -401,7 +388,7 @@ export default {
               once: [
                 {
                   // params: {
-                  //   path: 'all',
+                  //   path: 'logs',
                   //   params: { prop: 'range' }
                   //   // query: {
                   //   //   // register: 'periodical',
@@ -413,9 +400,8 @@ export default {
                   //
                   // },
                   params: {
-                    path: this.path,
+                    path: 'logs',
                     query: {
-                      from: this.table,
                       register: 'periodical',
                       'transformation': [
                         { 'orderBy': { 'index': 'r.asc(timestamp)' } },
@@ -440,15 +426,11 @@ export default {
                         range[1] = (table.range[1] > range[1]) ? table.range[1] : range[1]
                         range[0] = range[1] - (5 * MINUTE)
                         // })
-                        // Array.each(table.tags, function (tag) {
-                        //   if (!this.KEYS.contains('?tags=' + tag)) {
-                        //     this.KEYS.push('?tags=' + tag)
-                        //   }
-                        // }.bind(this))
-
-                        if (!this.KEYS.contains('?path=' + table.path)) {
-                          this.KEYS.push('?path=' + table.path)
-                        }
+                        Array.each(table.tags, function (tag) {
+                          if (!this.KEYS.contains('.tags.' + tag)) {
+                            this.KEYS.push('.tags.' + tag)
+                          }
+                        }.bind(this))
                       }.bind(this))
 
                       this.prev.range = range
@@ -456,11 +438,11 @@ export default {
                       // vm.destroy_pipelines()
                       // vm.create_pipelines()
 
-                      debug('MyChart RANGE 2', this.prev.range, this.KEYS, vm.$options.pipelines['input.root.' + vm.table])
+                      debug('MyChart RANGE 2', this.prev.range, this.KEYS, vm.$options.pipelines['input.logs'])
                       debug('MyChart RANGE 3', vm.__components_sources_to_requests(vm.components))
                       let periodicals = vm.__components_sources_to_requests(vm.components)['periodical']
-                      vm.$options.pipelines['input.root.' + vm.table].inputs[0].conn_pollers[0].options.requests.periodical = periodicals
-                      vm.$options.pipelines['input.root.' + vm.table].inputs[0].conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
+                      vm.$options.pipelines['input.logs'].inputs[0].conn_pollers[0].options.requests.periodical = periodicals
+                      vm.$options.pipelines['input.logs'].inputs[0].conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
 
                       // this.prev.range[0] = val.range[1] - MINUTE
 
@@ -476,9 +458,9 @@ export default {
               ],
               periodical: [
                 {
-                  params: function (_key, vm) {
+                  params: function (_key) {
                     // debug('MyChart ', this.prev, this.current, _key)
-                    debug('MyChart periodical', _key, vm, this.prev.range, this.KEYS)
+                    debug('MyChart periodical', _key, this.prev.range, this.KEYS)
 
                     const MINUTE = 60000 // 60 secs
                     // const KEYS = [
@@ -527,10 +509,7 @@ export default {
                         let source_tmp = {
 
                           params: { id: _key },
-                          query: {
-                            from: vm.table,
-                            'aggregation': 'count'
-                          },
+                          query: { 'aggregation': 'count' },
                           range: 'posix ' + this.current.keys[_key].range[0] + '-' + (this.current.keys[_key].range[0] + MINUTE) + '/*'
                           // query: {
                           //   // register: 'periodical',
@@ -541,15 +520,12 @@ export default {
                           // }
                         }
 
-                        // if (_key.split('.').length > 2) {
-                        if (_key.indexOf('?') > -1) {
-                          let prop = _key.substring(_key.indexOf('?') + 1, _key.indexOf('='))
-                          let value = _key.substring(_key.indexOf('=') + 1)
+                        if (_key.split('.').length > 2) {
+                          let prop = _key.split('.')[1]
+                          let value = _key.split('.')[2]
                           source_tmp.params.prop = prop
                           source_tmp.params.value = value
                         }
-
-                        debug('MyChart periodical SOURCE_TMP ', source_tmp)
 
                         source.push(source_tmp)
                         this.current.keys[_key].range[0] += MINUTE
@@ -578,15 +554,12 @@ export default {
                     if (!this.current.data.labels.contains(label)) { this.current.data.labels.push(label) }
 
                     let index_of_value = this.current.data.labels.indexOf(label)
-                    debug('MyChart CALLBACK ', key, val, metadata, label, index_of_value)
+                    debug('MyChart cb ', key, val, metadata, label, index_of_value)
 
                     let name = key
-                    // if (name.split('.').length > 2) {
-                    //   // let prop = _key.split('.')[1]
-                    //   name = name.split('.')[2]
-                    // }
-                    if (name.indexOf('?') > -1) {
-                      name = name.substring(name.indexOf('?') + 1)
+                    if (name.split('.').length > 2) {
+                      // let prop = _key.split('.')[1]
+                      name = name.split('.')[2]
                     }
 
                     let dataset = { name: name, chartType: 'bar', values: [], _key: key }
@@ -598,7 +571,7 @@ export default {
                     // })
 
                     // dataset.values.push(val)
-                    dataset.values[index_of_value] = val[metadata.from] * 1
+                    dataset.values[index_of_value] = val * 1
 
                     // if (dataset.values.length > this.current.max_data) { dataset.values = dataset.values.slice(Math.max(dataset.values.length - this.current.max_data, 1)) }
 
@@ -621,12 +594,12 @@ export default {
 
                     if (!found) {
                       this.current.data.datasets.push(dataset)
-                      debug('MyChart CALLBACK NOT FOUND', dataset.name)
+                      debug('MyChart cb NOT FOUND', dataset.name)
                     }
 
                     if (this.KEYS.length === this.current.data.datasets.length) {
                       // let data = JSON.parse(JSON.stringify(this.current.data))
-                      debug('MyChart CALLBACK UPDATING2', this.current.data.datasets, this.current.keys)
+                      debug('MyChart cb UPDATING2', this.current.data.datasets, this.current.keys)
                       // this.props.data = data
 
                       // debug('MyChart cb UPDATING', this.KEYS.length, this.current.data.datasets.length)
@@ -639,7 +612,7 @@ export default {
                         if (dataset.values.length !== this.current.keys[dataset._key].count) { match_length = false }
                       }
 
-                      debug('MyChart CALLBACK KEYS', this.current.data.datasets, this.current.keys)
+                      debug('MyChart cb KEYS', this.current.data.datasets, this.current.keys)
 
                       if (match_length) {
                         // this.update(datasets)
@@ -649,7 +622,7 @@ export default {
                         // }
 
                         let data = JSON.parse(JSON.stringify(this.current.data))
-                        debug('MyChart CALLBACK UPDATING2', data)
+                        debug('MyChart cb UPDATING2', data)
                         this.props.data = data
 
                         // Vue.$set(this.props, 'data', data)
@@ -697,116 +670,192 @@ export default {
             }
           }
 
-        }]
-        //
-        // 'table': [{
-        //   component: 'MyTable',
-        //   props: {
-        //     data: []
-        //   },
-        //   source: {
-        //     requests: {
-        //       once: [
-        //         {
-        //           params: {
-        //             path: this.path,
-        //             query: {
-        //               // register: 'periodical',
-        //               'q': [
-        //                 { 'data': ['log'] },
-        //                 { 'metadata': ['host', 'tag', 'timestamp'] }
-        //               ],
-        //               'transformation': [
-        //                 { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-        //                 'slice:0:10'
-        //               ]
-        //             }
-        //             // body: {
-        //             //   'transformation': 'limit:30000'
-        //             //
-        //             // }
-        //           },
-        //           callback: function (val) {
-        //             val = JSON.parse(JSON.stringify(val[0]))
-        //             debug('MyTable', val)
-        //
-        //             // if (Array.isArray(val)) val = val[0] // wtf?
-        //             //
-        //             // if (!Array.isArray(val)) val = [val]
-        //
-        //             val.sort(function (a, b) {
-        //               if (a.metadata.timestamp > b.metadata.timestamp) {
-        //                 return -1
-        //               }
-        //               if (a.metadata.timestamp < b.metadata.timestamp) {
-        //                 return 1
-        //               }
-        //               // a must be equal to b
-        //               return 0
-        //             })
-        //             debug('MyTable row', val)
-        //             for (let i = 0; i < val.length; i++) {
-        //               let row = Object.merge(val[i].data, val[i].metadata)
-        //
-        //               row.date = moment(row.timestamp).format('dddd, MMMM Do YYYY, h:mm:ss a')
-        //
-        //               debug('MyTable', row)
-        //               this.props.data.push(row)
-        //             }
-        //           }
-        //         },
-        //         {
-        //           params: {
-        //             path: this.path,
-        //             query: {
-        //               register: 'changes',
-        //               'q': [
-        //                 { 'data': ['log'] },
-        //                 { 'metadata': ['host', 'tag', 'timestamp'] }
-        //               ]
-        //               // 'transformation': [
-        //               //   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-        //               //   'slice:0:9'
-        //               // ]
-        //             }
-        //           // body: {
-        //           //   'transformation': 'limit:30000'
-        //           //
-        //           // }
-        //           },
-        //           callback: function (val) {
-        //             val = JSON.parse(JSON.stringify(val))
-        //             debug('MyTable changes', val)
-        //
-        //             if (Array.isArray(val)) val = val[0]
-        //
-        //             if (!Array.isArray(val)) val = [val]
-        //
-        //             val.sort(function (a, b) {
-        //               if (a.metadata.timestamp > b.metadata.timestamp) {
-        //                 return -1
-        //               }
-        //               if (a.metadata.timestamp < b.metadata.timestamp) {
-        //                 return 1
-        //               }
-        //               // a must be equal to b
-        //               return 0
-        //             })
-        //
-        //             for (let i = 0; i < val.length; i++) {
-        //               let row = Object.merge(val[i].data, val[i].metadata)
-        //               row.date = moment(row.timestamp).format('dddd, MMMM Do YYYY, h:mm:ss a')
-        //
-        //               debug('MyTable changes', row)
-        //               this.props.data.unshift(row)
-        //             }
-        //           }
-        //         }
-        //       ]
-        //     }
-        //   }
-        // }]
+        }],
 
+        'table': [{
+          component: 'MyTable',
+          props: {
+            data: []
+          },
+          source: {
+            requests: {
+              once: [
+                {
+                  params: {
+                    path: 'logs',
+                    query: {
+                      // register: 'periodical',
+                      'q': [
+                        { 'data': ['log'] },
+                        { 'metadata': ['host', 'tag', 'timestamp'] }
+                      ],
+                      'transformation': [
+                        { 'orderBy': { 'index': 'r.desc(timestamp)' } },
+                        'slice:0:10'
+                      ]
+                    }
+                    // body: {
+                    //   'transformation': 'limit:30000'
+                    //
+                    // }
+                  },
+                  callback: function (val) {
+                    val = JSON.parse(JSON.stringify(val[0]))
+                    debug('MyTable', val)
+
+                    // if (Array.isArray(val)) val = val[0] // wtf?
+                    //
+                    // if (!Array.isArray(val)) val = [val]
+
+                    val.sort(function (a, b) {
+                      if (a.metadata.timestamp > b.metadata.timestamp) {
+                        return -1
+                      }
+                      if (a.metadata.timestamp < b.metadata.timestamp) {
+                        return 1
+                      }
+                      // a must be equal to b
+                      return 0
+                    })
+                    debug('MyTable row', val)
+                    for (let i = 0; i < val.length; i++) {
+                      let row = Object.merge(val[i].data, val[i].metadata)
+
+                      row.date = moment(row.timestamp).format('dddd, MMMM Do YYYY, h:mm:ss a')
+
+                      debug('MyTable', row)
+                      this.props.data.push(row)
+                    }
+                  }
+                },
+                {
+                  params: {
+                    path: 'logs',
+                    query: {
+                      register: 'changes',
+                      'q': [
+                        { 'data': ['log'] },
+                        { 'metadata': ['host', 'tag', 'timestamp'] }
+                      ]
+                      // 'transformation': [
+                      //   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
+                      //   'slice:0:9'
+                      // ]
+                    }
+                  // body: {
+                  //   'transformation': 'limit:30000'
+                  //
+                  // }
+                  },
+                  callback: function (val) {
+                    val = JSON.parse(JSON.stringify(val))
+                    debug('MyTable changes', val)
+
+                    if (Array.isArray(val)) val = val[0]
+
+                    if (!Array.isArray(val)) val = [val]
+
+                    val.sort(function (a, b) {
+                      if (a.metadata.timestamp > b.metadata.timestamp) {
+                        return -1
+                      }
+                      if (a.metadata.timestamp < b.metadata.timestamp) {
+                        return 1
+                      }
+                      // a must be equal to b
+                      return 0
+                    })
+
+                    for (let i = 0; i < val.length; i++) {
+                      let row = Object.merge(val[i].data, val[i].metadata)
+                      row.date = moment(row.timestamp).format('dddd, MMMM Do YYYY, h:mm:ss a')
+
+                      debug('MyTable changes', row)
+                      this.props.data.unshift(row)
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }]
+        // '9': [{
+        //   component: 'MyRange'
+        // }]
+        // '9': [{
+        //   component: 'q-btn'
+        // }],
+        // '1': [{
+        //   id: 1,
+        //   component: 'admin-lte-events'
+        // }],
+        // '2': [{
+        //   id: 2,
+        //   component: 'admin-lte-fullcalendar'
+        // }]
+        // '1': [{
+        //   id: 0,
+        //   component: 'admin-lte-box',
+        //   props: {
+        //     type: 'box-success',
+        //     title: 'MyBox',
+        //     body: {
+        //       text: 'box content'
+        //     },
+        //     footer: false
+        //   }
+        //   // defaultSize: 2
+        // }],
+        // '2': [
+        //   {
+        //     id: 2,
+        //     component: 'admin-lte-small-box',
+        //     // props: {
+        //     //   bg: 'bg-primary'
+        //     // },
+        //     defaultSize: 2
+        //   }
+        // ],
+        // '4': [],
+        // '9': [
+        //   {
+        //     component: 'q-btn',
+        //     // defaultSize: 2,
+        //     props: {
+        //       // round: true,
+        //       label: 'edit/preview'
+        //       // style: 'position: relative'
+        //       // '@click': "$emit('disableGrid')"
+        //     },
+        //     events: {
+        //       click: 'disableGrid'
+        //     }
+        //     // componentProps: "round color: 'primary'"
+        //   },
+        //   {
+        //     component: 'q-btn',
+        //     // defaultSize: 2,
+        //     props: {
+        //     // round: true,
+        //       label: 'draggables'
+        //       // style: 'position: relative'
+        //     // '@click': "$emit('disableGrid')"
+        //     },
+        //     events: {
+        //       click: 'disableEdit'
+        //     }
+        //   // componentProps: "round color: 'primary'"
+        //   }]
+        // '5': [{
+        //   // component: 'admin-lte-box'
+        //   component: 'TestTest'
+        //   // defaultSize: 2
+        // }],
+        // '6': [{
+        //   // component: 'admin-lte-box'
+        //   component: 'SecondSecond'
+        //   // defaultSize: 2
+        // }]
       }
     }
 
@@ -814,11 +863,7 @@ export default {
       this.$set(this.components, key, components[key])
     }
 
-    // if (grid) { this.grid = grid }
-
-    for (const key in this.$options.grid) {
-      this.$set(this.grid, key, this.$options.grid[key])
-    }
+    if (grid) { this.grid = grid }
 
     // let interval = setInterval(function () {
     //   debug('setInterval', JSON.parse(JSON.stringify(this.grid['layouts']['lg'])))
@@ -860,8 +905,8 @@ export default {
     create_pipelines: function (next) {
       debug('create_pipelines')
 
-      // if (root && Array.isArray(root)) {
-      //   Array.each(root, function (log) {
+      // if (logs && Array.isArray(logs)) {
+      //   Array.each(logs, function (log) {
       //     if (log) {
       //       let template = Object.clone(LogPipeline)
       //
@@ -882,43 +927,28 @@ export default {
       //   }.bind(this))
       // }
 
-      let template = Object.clone(RootPipeline)
+      let template = Object.clone(LogsPipeline)
 
-      let pipeline_id = template.input[0].poll.id + '.' + this.table
-      // debug('RootPipeline ', template.input[0].poll.conn[0])
+      let pipeline_id = template.input[0].poll.id
+      // debug('LogsPipeline ', template.input[0].poll.conn[0])
 
       // template.input[0].poll.conn[0].requests = this.__components_sources_to_requests(JSON.parse(JSON.stringify(this.components)))
       template.input[0].poll.conn[0].requests = this.__components_sources_to_requests(this.components)
       // template.input[0].poll.conn[0].queries = this.__components_sources_to_requests(JSON.parse(JSON.stringify(this.components)))
 
-      // debug('RootPipeline ', template.input[0].poll.conn[0].requests)
+      // debug('LogsPipeline ', template.input[0].poll.conn[0].requests)
 
       // if (!this.$options.pipelines[pipeline_id]) {
       let pipe = new Pipeline(template)
 
-      this.$options.__pipelines_cfg[pipeline_id] = {
-        ids: [],
-        connected: [],
-        suspended: pipe.inputs.every(function (input) { return input.options.suspended }, this)
-      }
-
-      this.__after_connect_inputs(
-        pipe,
-        this.$options.__pipelines_cfg[pipeline_id],
-        this.__resume_pipeline.pass([pipe, this.$options.__pipelines_cfg[pipeline_id], this.id, function () {
-          debug('__resume_pipeline CALLBACK')
-          pipe.fireEvent('onOnce')
-        }], this)
-      )
-
       this.$options.pipelines[pipeline_id] = pipe
 
-      // debug('RootPipeline ', this.$options.pipelines[pipeline_id].inputs[0])
+      // debug('LogsPipeline ', this.$options.pipelines[pipeline_id].inputs[0])
       // this.$options.pipelines[pipeline_id].inputs[0].addEvent('onConnect', this.$options.pipelines[pipeline_id].fireEvent('onOnce'))
 
       // this.$options.pipelines[pipeline_id].fireEvent('onResume')
       // } else if (this.$options.pipelines[pipeline_id].inputs[0].options.suspended !== false) {
-      //   debug('RootPipeline suspended', this.$options.pipelines[pipeline_id].inputs[0].options.suspended)
+      //   debug('LogsPipeline suspended', this.$options.pipelines[pipeline_id].inputs[0].options.suspended)
       //   this.$options.pipelines[pipeline_id].fireEvent('onResume')
       // }
 
@@ -967,6 +997,9 @@ export default {
   mounted: function () {
     debug('mounted')
   }
-
+  // updated: function () {
+  //   // console.log('height:', height(document.getElementById('logs')))
+  //   this.height = this.getGridHeight() + 'px'
+  // }
 }
 </script>

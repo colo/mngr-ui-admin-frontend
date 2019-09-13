@@ -1,11 +1,12 @@
 <template>
-<!-- <div class="bg-primary"> -->
-<!-- <section class="content"> -->
-
-    <!-- <grid-view :swap_components="true" :id="'grid.'+id" :components="components" :grid="grid" v-on:height="setHeight"/> -->
-    <grid-view v-if="grid.layouts && Object.getLength(components) > 0" :swap_components="true" :id="id" :components="components" :grid="grid" v-on:height="setHeight"/>
-
-  <!-- <table-page v-else :table="$route.params.table"/> -->
+  <grid-view
+    v-if="grid.layouts && Object.getLength(components) > 0"
+    :swap_components="true"
+    :id="id"
+    :components="components"
+    :grid="grid"
+    v-on:height="setHeight"
+  />
 </template>
 <script>
 /* global EventBus */
@@ -17,7 +18,7 @@ const { height, width } = dom
 import Vue from 'vue'
 
 import * as Debug from 'debug'
-const debug = Debug('apps:root:components:AllPage')
+const debug = Debug('apps:logs:components:AllPage')
 
 import AdminLteMixin from '@components/mixins/adminlte'
 import DataSourcesMixin from '@components/mixins/dataSources'
@@ -169,13 +170,13 @@ export default {
       **/
       store: false,
 
-      root: {
-        count: undefined
-      },
-      range: [0, 1],
+      // root: {
+      //   count: undefined
+      // },
+      // range: [0, 1],
 
-      id: 'all',
-      path: 'all',
+      id: 'web',
+      path: 'logs',
 
       grid: {
         // layouts: {
@@ -208,7 +209,7 @@ export default {
             requests: {
               periodical: [{
                 params: {
-                  path: 'all'
+                  path: '/logs'
                 },
                 callback: function (tables, metadata, key, vm) {
                   debug('All callback', tables, vm.$options.grid_template)
@@ -251,7 +252,7 @@ export default {
                       Array.each(cloned_component, function (widget, index) {
                         widget.props.table = rt_tb
                         widget.props.data = data
-                        widget.props.pipeline = 'root/pipelines/index'
+                        widget.props.pipeline = 'logs/pipelines/index'
                         widget.props.path = vm.path
                         // if (widget.props.id) widget.props.id += '.' + rt_tb
 

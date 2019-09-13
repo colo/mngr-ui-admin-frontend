@@ -2,8 +2,8 @@
 <!-- <div class="bg-primary"> -->
 <!-- <section class="content"> -->
   <q-page :style="{height: height}">
-    <all-page v-if="!table"/>
-    <table-page v-else :table="table"/>
+    <all-page key="all" v-if="!table"/>
+    <table-page v-else :table="table" :key="table"/>
   </q-page>
   <!-- <table-page v-else :table="$route.params.table"/> -->
 </template>
@@ -17,7 +17,7 @@ const { height, width } = dom
 import Vue from 'vue'
 
 import * as Debug from 'debug'
-const debug = Debug('pages:root')
+const debug = Debug('apps:root')
 
 import AdminLteMixin from '@components/mixins/adminlte'
 import DataSourcesMixin from '@components/mixins/dataSources'
@@ -27,7 +27,7 @@ import GridView from '@components/gridView'
 // import Test from '@components/test/test.vue'
 
 import Pipeline from 'js-pipeline'
-import RootPipeline from './pipelines/root'
+import RootPipeline from './pipelines/index'
 
 // import { dom } from 'quasar'
 // const { height, width } = dom

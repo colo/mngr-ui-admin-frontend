@@ -6,10 +6,10 @@
 const App = require ( 'node-app-socket.io-client/index' )
 
 import * as Debug from "debug"
-const debug = Debug("apps:logslibs:pipelines:input:io.logs")
+const debug = Debug("libs:input:io.logs")
 
-// debug_internals = Debug("mngr-ui:apps:logslibs:pipelines:input:io.logs:Internals"),
-// debug_events = Debug("mngr-ui:apps:logslibs:pipelines:input:io.logs:Events");
+// debug_internals = Debug("mngr-ui:libs:input:io.logs:Internals"),
+// debug_events = Debug("mngr-ui:libs:input:io.logs:Events");
 
 // import store from 'src/store'
 
