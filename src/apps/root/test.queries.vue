@@ -37,153 +37,112 @@ export default {
                   path: 'all'
                 },
                 callback: function (tables, metadata, key, vm) {
-                  debug('All callback', tables, vm.$options.grid_template)
-                  // let grid = JSON.parse(JSON.stringify(vm.grid))
-                  let grid_template = Object.clone(vm.$options.grid_template)
+                  debug('All callback', tables)
+                  let components = {}
 
-                  let last_component_row = 0
-                  Object.each(tables, function (data, rt_tb) {
-                    debug('All %s', rt_tb)
-                    Object.each(grid_template.layouts, function (layout, layout_name) {
-                      debug('All layout_name %s', layout_name)
-                      Array.each(layout, function (component, index) {
-                        let cloned_component = Object.clone(component)
-                        cloned_component.i = cloned_component.i + '_' + rt_tb
-                        cloned_component.y = cloned_component.y + last_component_row
-
-                        // if (!grid.layouts[layout_name]) grid.layouts[layout_name] = []
-                        if (!vm.grid.layouts) vm.$set(vm.grid, 'layouts', {})
-                        if (!vm.grid.layouts[layout_name]) vm.$set(vm.grid.layouts, layout_name, [])
-
-                        if (vm.grid.layouts[layout_name].every(function (item) { return item.i !== cloned_component.i })) {
-                          vm.grid.layouts[layout_name].push(cloned_component)
+                  let changed = false
+                  Object.each(tables, function (data, table) {
+                    if (!vm.components[table]) {
+                      changed = true
+                      components[table] = [{
+                        source: {
+                          requests: {
+                            once: {
+                              params: {
+                                path: 'all',
+                                query: {
+                                  from: table,
+                                  register: 'changes',
+                                  'q': [
+                                    // { 'data': ['log'] },
+                                    'metadata'
+                                  ]
+                                  // 'transformation': [
+                                  //   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
+                                  //   'slice:0:9'
+                                  // ]
+                                }
+                              // body: {
+                              //   'transformation': 'limit:30000'
+                              //
+                              // }
+                              },
+                              callback: function (val) {
+                                val = JSON.parse(JSON.stringify(val))
+                                debug('MyTable changes', val)
+                              }
+                            }
+                          }
                         }
-                      })
-                      last_component_row++
-                    })
+                      }]
+
+                      vm.$set(vm.components, table, components[table])
+                    }
                   })
-
-                  // let components = JSON.parse(JSON.stringify(vm.components))
-                  // let components = {}
-                  let components_template = Object.clone(vm.$options.components_template)
-                  let modified = false
-                  Object.each(tables, function (data, rt_tb) {
-                    debug('All table %s', rt_tb, components_template)
-                    Object.each(components_template, function (component, id) {
-                      let cloned_component = Array.clone(component)
-
-                      debug('All component %s %o', id, cloned_component)
-                      id += '_' + rt_tb
-                      Array.each(cloned_component, function (widget, index) {
-                        widget.props.table = rt_tb
-                        widget.props.data = data
-                        widget.props.pipeline = 'root/pipelines/root'
-                        widget.props.path = vm.path
-                        // if (widget.props.id) widget.props.id += '.' + rt_tb
-
-                        // widget.source.requests.once[0].params.query.from = rt_tb
-                      })
-
-                      // components[id] = cloned_component
-                      // vm.$set(vm.components, id, cloned_component)
-                      if (!vm.components[key]) {
-                        vm.$set(vm.components, id, cloned_component)
-                        modified = true
-                      }
-                    })
-                  })
-
-                  // vm.grid = grid
-                  // debug('All grid / components %o', grid, components)
-
-                  // for (const key in grid) {
-                  //   vm.$set(vm.grid, key, grid[key])
-                  // }
-
-                  // for (const key in components) {
-                  //   if (!vm.components[key]) {
-                  //     vm.$set(vm.components, key, components[key])
-                  //   }
-                  // }
-
-                  // vm.__bind_components_to_sources(vm.components)
-                  // if (modified === true) {
-                  //   vm.destroy_pipelines()
-                  //   vm.create_pipelines()
-                  // }
-                  // this.props.inner.text = val[0][0].count
-                }
-              },
-              {
-                params: {
-                  path: 'all',
-                  query: {
-                    register: 'changes',
-                    'q': [
-                      // { 'data': ['log'] },
-                      'metadata'
-                    ]
-                    // 'transformation': [
-                    //   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-                    //   'slice:0:9'
-                    // ]
+                  debug('register tables components %o %o', components, changed)
+                  if (changed) {
+                    vm.destroy_pipelines()
+                    vm.create_pipelines()
                   }
-                // body: {
-                //   'transformation': 'limit:30000'
-                //
-                // }
-                },
-                callback: function (val) {
-                  val = JSON.parse(JSON.stringify(val))
-                  debug('MyTable changes', val)
-
-                  // if (Array.isArray(val)) val = val[0]
-                  //
-                  // if (!Array.isArray(val)) val = [val]
-                  //
-                  // val.sort(function (a, b) {
-                  //   if (a.metadata.timestamp > b.metadata.timestamp) {
-                  //     return -1
-                  //   }
-                  //   if (a.metadata.timestamp < b.metadata.timestamp) {
-                  //     return 1
-                  //   }
-                  //   // a must be equal to b
-                  //   return 0
+                  // Object.each(components, function (data, component) {
+                  //   vm.$set(vm.components, component, data)
                   // })
-                  //
-                  // for (let i = 0; i < val.length; i++) {
-                  //   let row = Object.merge(val[i].data, val[i].metadata)
-                  //   row.date = moment(row.timestamp).format('dddd, MMMM Do YYYY, h:mm:ss a')
-                  //
-                  //   debug('MyTable changes', row)
-                  //   this.props.data.unshift(row)
-                  // }
+                  // let once = vm.__components_sources_to_requests(components)['once']
+                  // vm.destroy_pipelines()
+                  // vm.create_pipelines()
+                  // vm.$options.pipelines['input.root'].inputs[0].conn_pollers[0].options.requests.once = once
+                  // vm.$options.pipelines['input.root'].inputs[0].conn_pollers[0].fireEvent('onOnce')
                 }
               }
+
             ]
           }
         }
       }
 
     ]
-    /**
-    * @todo
-    * test queries -> http://colo:8080/?from=munin&params[prop]=tags&params[value]=["memory"]
-    **/
+
   },
 
-  // computed: {
-  //   table () {
-  //     return this.$route.query.table
-  //   }
-  // },
+  /**
+  * works
+  * http://localhost:8083/?from=munin&params[prop]=tags&params[value]=["memory"]
+  * http://localhost:8083/?from=logs&q=data&fields=body_bytes_sent&aggregation=sum:('body_bytes_sent')
+  * http://localhost:8083/?from=logs_historical&q=data&transformation=limit:1
+  **/
+
+  components_query: {
+    'query': [
+      {
+        source: {
+          requests: {
+            once: {
+              params: {
+                path: 'all',
+                query: undefined
+              // body: {
+              //   'transformation': 'limit:30000'
+              //
+              // }
+              },
+              callback: function (val) {
+                val = JSON.parse(JSON.stringify(val))
+                debug('from query changes', val)
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+
   data () {
     return {
 
       id: 'all',
-      path: 'all'
+      path: 'all',
 
+      components: {}
     }
   },
 
@@ -195,6 +154,21 @@ export default {
 
   created: function () {
     debug('ROUTE %o', this.$route)
+    if (this.$route.query && Object.getLength(this.$route.query) > 0) {
+      let components = Object.clone(this.$options.components_query)
+      Object.each(components, function (data, component) {
+        Array.each(data, function (value, index) {
+          value.source.requests.once.params.query = this.$route.query
+        }.bind(this))
+
+        debug('DATA %o', data)
+        this.$set(this.components, component, data)
+      }.bind(this))
+    } else {
+      Object.each(this.$options.components, function (data, component) {
+        this.$set(this.components, component, data)
+      }.bind(this))
+    }
   },
 
   methods: {
@@ -209,7 +183,7 @@ export default {
 
       let pipeline_id = template.input[0].poll.id
 
-      template.input[0].poll.conn[0].requests = this.__components_sources_to_requests(this.$options.components)
+      template.input[0].poll.conn[0].requests = this.__components_sources_to_requests(this.components)
 
       let pipe = new Pipeline(template)
 

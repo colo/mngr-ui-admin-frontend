@@ -10,7 +10,7 @@ const routes = [
       {
         path: '',
         // path: '',
-        component: () => import('@apps/root/index'),
+        component: () => import('@apps/root/test.queries'),
         meta: {
           breadcrumb: { label: 'Index', icon: 'widgets', app: 'root' }
         }
