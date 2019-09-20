@@ -9,9 +9,10 @@ module.exports = function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     boot: [
-      'adminlte',
+      // 'adminlte',
       'i18n',
       'axios',
+      'custom-flatlogiclightblue'
     ],
 
     css: [
@@ -38,12 +39,12 @@ module.exports = function (ctx) {
 
       components: [
         'QLayout',
-        // 'QHeader',
-        // 'QDrawer',
+        'QHeader',
+        'QDrawer',
         'QPageContainer',
         'QPage',
         'QToolbar',
-        // 'QToolbarTitle',
+        'QToolbarTitle',
         'QBtn',
         'QIcon',
         // 'QList',
@@ -106,6 +107,7 @@ module.exports = function (ctx) {
           '@mixins': path.resolve(__dirname, './src/components/mixins'),
           '@wrappers': path.resolve(__dirname, './src/components/wrappers'),
           '@apps': path.resolve(__dirname, './src/apps'),
+          '@skins': path.resolve(__dirname, './src/skins')
         }
 
         /**

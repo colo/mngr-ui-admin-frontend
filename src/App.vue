@@ -1,6 +1,7 @@
 <template>
   <div id="q-app">
-    <router-view />
+    <!-- <router-view /> -->
+    <router-view :key="$route.fullPath"></router-view>
   </div>
 </template>
 
@@ -18,5 +19,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style src="@skins/flatlogic/lightblue/styles/theme.scss" lang="scss" />

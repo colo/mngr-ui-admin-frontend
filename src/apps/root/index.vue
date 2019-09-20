@@ -2,7 +2,8 @@
 <!-- <div class="bg-primary"> -->
 <!-- <section class="content"> -->
   <q-page :style="{height: height}">
-    <all-page key="all" v-if="!table"/>
+    <!-- <all-page key="all" v-if="!table"/> -->
+    <dashboard key="all" v-if="!table"/>
     <table-page v-else :table="table" :key="table"/>
   </q-page>
   <!-- <table-page v-else :table="$route.params.table"/> -->
@@ -19,7 +20,7 @@ import Vue from 'vue'
 import * as Debug from 'debug'
 const debug = Debug('apps:root')
 
-import AdminLteMixin from '@components/mixins/adminlte'
+// import AdminLteMixin from '@components/mixins/adminlte'
 import DataSourcesMixin from '@components/mixins/dataSources'
 
 import GridView from '@components/gridView'
@@ -35,10 +36,13 @@ import RootPipeline from './pipelines/index'
 import upperFirst from 'lodash/upperFirst'
 import camelCase from 'lodash/camelCase'
 
-export default {
-  mixins: [AdminLteMixin, DataSourcesMixin],
+import Dashboard from './pages/flatlogic/lightblue/Dashboard/Dashboard'
 
-  // components: { GridView },
+export default {
+  // mixins: [AdminLteMixin, DataSourcesMixin],
+  mixins: [DataSourcesMixin],
+
+  components: { Dashboard },
   name: 'root',
 
   computed: {

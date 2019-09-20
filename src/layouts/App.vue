@@ -1,8 +1,9 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-     <!-- :style="{height: height}" -->
-  <!--   <q-header elevated>
-      <q-toolbar>
+  <!-- <q-layout view="lHh Lpr lFf"> -->
+  <q-layout view="hHh LpR fFf">
+
+    <q-header elevated class="transparent">
+      <q-toolbar class="full-width">
         <q-btn
           flat
           dense
@@ -11,116 +12,76 @@
           aria-label="Menu"
         >
           <q-icon name="menu" />
+
         </q-btn>
-
-        <q-toolbar-title>
+        <q-space />
+        <!-- <q-toolbar-title>
           Quasar App
-        </q-toolbar-title>
+        </q-toolbar-title> -->
 
-        <div>Quasar v{{ $q.version }}</div>
+        <!-- <div>Quasar v{{ $q.version }}</div> -->
+        <flat-logic-light-blue-helper-helper />
+        <flat-logic-light-blue-header-header />
       </q-toolbar>
     </q-header>
 
     <q-drawer
       v-model="leftDrawerOpen"
-      bordered
-      content-class="bg-grey-2"
+      show-if-above
+      none
+      :width="250"
+      :breakpoint="500"
     >
-      <q-list>
-        <q-item-label header>Essential Links</q-item-label>
-        <q-item clickable tag="a" target="_blank" href="https://quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="school" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Docs</q-item-label>
-            <q-item-label caption>quasar.dev</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://github.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="code" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Github</q-item-label>
-            <q-item-label caption>github.com/quasarframework</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://chat.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="chat" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Discord Chat Channel</q-item-label>
-            <q-item-label caption>chat.quasar.dev</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://forum.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="record_voice_over" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Forum</q-item-label>
-            <q-item-label caption>forum.quasar.dev</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://twitter.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="rss_feed" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Twitter</q-item-label>
-            <q-item-label caption>@quasarframework</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://facebook.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="public" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Facebook</q-item-label>
-            <q-item-label caption>@QuasarFramework</q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </q-drawer> -->
+    <!-- :class="'transparent'"
+    content-class="dashboard-page"
+    :content-style="{ backgroundColor: 'rgba(0,0,0,0)' }" -->
+    <!-- <q-drawer
+        v-model="leftDrawerOpen"
+        show-if-above
 
-    <q-page-container class="bg-secondary">
-       <!-- :style="{height: '100%'}" -->
-      <router-view />
+        :mini="miniState"
+        @mouseover="miniState = false"
+        @mouseout="miniState = true"
+
+        :width="200"
+        :breakpoint="500"
+        bordered
+        content-class="transparent"
+      > -->
+      <Sidebar />
+
+    </q-drawer>
+
+    <q-page-container>
+      <q-page>
+      <div class="content animated fadeInUp">
+        <transition name="router-animation">
+          <router-view />
+        </transition>
+      </div>
+      </q-page>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-// import { openURL } from 'quasar'
-import * as Debug from 'debug'
-const debug = Debug('layouts:App')
+import { openURL } from 'quasar'
 
-import { dom } from 'quasar'
-const { height, width } = dom
-
+import Sidebar from '@components/Sidebar/flatlogic/lightblue/Sidebar'
 export default {
-  name: 'MyLayout'
-  // data () {
-  //   return {
-  //     height: '0px'
-  //     // leftDrawerOpen: this.$q.platform.is.desktop
-  //   }
-  // },
-  // methods: {
-  //   // openURL
-  //   getGridHeight: function () {
-  //     debug('getGridHeight', height(document.getElementById('logs')))
-  //     return height(document.getElementById('logs')) + 500
-  //   }
-  // },
-  // mounted: function () {
-  //   // console.log('height:', height(document.getElementById('logs')))
-  //   this.height = this.getGridHeight() + 'px'
-  // }
+  name: 'MyLayout',
+
+  components: { Sidebar },
+
+  data () {
+    return {
+      leftDrawerOpen: false
+      // miniState: true
+    }
+  },
+  methods: {
+    openURL
+  }
 }
 </script>
-
-<style>
-</style>
+<style src="@skins/flatlogic/lightblue/components/Layout/Layout.scss" lang="scss" />
