@@ -88,24 +88,35 @@
                 close settings customHeader
               >
                 <div class="stats-row">
-                  <stats-card title="Total traffic"
-                              type="gradient-red"
-                              sub-title="350,897"
-                              icon="ni ni-active-40"
-                              class="mb-4 mb-xl-0"
-                  >
-                    <template slot="footer">
-                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                        <span class="text-nowrap">Since last month</span>
-                    </template>
-                </stats-card>
                   <div class="stat-item">
-                    <h6 class="name"><i class="glyphicon glyphicon-plus" />Count</h6>
-                    <p class="value">76.38%</p>
+                    <stats-card title="Total traffic"
+                                type="gradient-red"
+                                sub-title="350,897"
+                                icon="ni ni-active-40"
+                                class="mb-4 mb-xl-0"
+                    >
+                      <template slot="footer">
+                          <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                          <span class="text-nowrap">Since last month</span>
+                      </template>
+                  </stats-card>
+                    <!-- <h6 class="name"><i class="glyphicon glyphicon-plus" />Count</h6>
+                    <p class="value">76.38%</p> -->
                   </div>
                   <div class="stat-item">
-                    <h6 class="name"><i class="glyphicon glyphicon-hdd" /> Hosts</h6>
-                    <p class="value">10.38%</p>
+                    <stats-card title="Total traffic"
+                                type="gradient-red"
+                                sub-title="350,897"
+                                icon="ni ni-active-40"
+                                class="mb-4 mb-xl-0"
+                    >
+                      <template slot="footer">
+                          <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                          <span class="text-nowrap">Since last month</span>
+                      </template>
+                  </stats-card>
+                    <!-- <h6 class="name"><i class="glyphicon glyphicon-hdd" /> Hosts</h6>
+                    <p class="value">10.38%</p> -->
                   </div>
                   <div class="stat-item">
                     <h6 class="name"><i class="glyphicon glyphicon-glyph-calendar" /> Range</h6>

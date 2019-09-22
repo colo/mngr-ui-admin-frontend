@@ -50,4 +50,4 @@ export default {
 <style lang="scss" scoped>
   @import "@skins/creativetim/argon/assets/scss/argon.scss";
 </style>
-<!-- <style type="text/css" src="@skins/creativetim/argon/assets/vendor/nucleo/css/nucleo.css"></style> -->
+<style type="text/css" src="@skins/creativetim/argon/assets/vendor/nucleo/css/nucleo.css" scoped></style>
