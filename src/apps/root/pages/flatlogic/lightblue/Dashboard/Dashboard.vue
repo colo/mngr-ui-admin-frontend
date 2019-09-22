@@ -6,15 +6,15 @@
       </small>
     </h1>
     <b-row>
-      <b-col lg="7">
+      <!-- <b-col lg="7">
         <Widget class="bg-transparent">
           <Map />
         </Widget>
-      </b-col>
-      <b-col lg="4" offset-lg="1">
+      </b-col> -->
+      <b-col lg="12">
         <Widget
           class="bg-transparent"
-          title="<h5>Map<span class='fw-semi-bold'>&nbsp;Statistics</span></h5>"
+          title="<h5>Table<span class='fw-semi-bold'>&nbsp;Statistics</span></h5>"
           settings refresh close customHeader
         >
           <p>Status: <strong>Live</strong></p>
@@ -22,7 +22,7 @@
             <span class="circle bg-warning text-white"><i class="fa fa-map-marker" /></span> &nbsp;
             146 Countries, 2759 Cities
           </p>
-          <div class="row progress-stats">
+          <!-- <div class="row progress-stats">
             <div class="col-md-9 col-12">
               <h6 class="name">Foreign Visits</h6>
               <p class="description deemphasize mb-xs">Some Cool Text</p>
@@ -36,8 +36,8 @@
                                        :delay="1500" />%</span>
               </span>
             </div>
-          </div>
-          <div class="row progress-stats">
+          </div> -->
+          <!-- <div class="row progress-stats">
             <div class="col-md-9 col-12">
               <h6 class="name">Local Visits</h6>
               <p class="description deemphasize mb-xs">P. to C. Conversion</p>
@@ -66,8 +66,8 @@
                                        :delay="1500" />%</span>
               </span>
             </div>
-          </div>
-          <h6 class="fw-semi-bold mt">Map Distributions</h6>
+          </div> -->
+          <!-- <h6 class="fw-semi-bold mt">Map Distributions</h6>
           <p>Tracking: <strong>Active</strong></p>
           <p>
             <span class="circle bg-warning text-white"><i class="fa fa-cog" /></span>
@@ -80,7 +80,124 @@
                 <i class="fa fa-search text-gray" />
               </b-btn>
             </b-input-group-append>
-          </b-input-group>
+          </b-input-group> -->
+          <b-row>
+            <b-col lg="4" xs="12">
+              <Widget
+                title="<h6> Path group </h6>"
+                close settings customHeader
+              >
+                <div class="stats-row">
+                  <stats-card title="Total traffic"
+                              type="gradient-red"
+                              sub-title="350,897"
+                              icon="ni ni-active-40"
+                              class="mb-4 mb-xl-0"
+                  >
+                    <template slot="footer">
+                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                        <span class="text-nowrap">Since last month</span>
+                    </template>
+                </stats-card>
+                  <div class="stat-item">
+                    <h6 class="name"><i class="glyphicon glyphicon-plus" />Count</h6>
+                    <p class="value">76.38%</p>
+                  </div>
+                  <div class="stat-item">
+                    <h6 class="name"><i class="glyphicon glyphicon-hdd" /> Hosts</h6>
+                    <p class="value">10.38%</p>
+                  </div>
+                  <div class="stat-item">
+                    <h6 class="name"><i class="glyphicon glyphicon-glyph-calendar" /> Range</h6>
+                    <p class="value">3.38%</p>
+                  </div>
+                  <div class="stat-item">
+                    <h6 class="name"><i class="glyphicon glyphicon-tags" /> Tags</h6>
+                    <p class="value">3.38%</p>
+                  </div>
+                  <div class="stat-item">
+                    <h6 class="name"><i class="glyphicon glyphicon-filter" />Types</h6>
+                    <p class="value">3.38%</p>
+                  </div>
+                </div>
+                <!-- <b-progress variant="success" :value="60"
+                  :max="100" class="bg-gray-lighter progress-xs" />
+                <p>
+                  <small>
+                    <span class="circle bg-warning text-white">
+                      <i class="fa fa-chevron-up" />
+                    </span>
+                  </small>
+                  <span class="fw-semi-bold">&nbsp;17% higher</span>
+                  &nbsp;than last month
+                </p> -->
+              </Widget>
+            </b-col>
+            <b-col lg="4" xs="12">
+              <Widget
+                title="<h6> TRAFFIC VALUES </h6>"
+                close settings customHeader
+              >
+                <div class="stats-row">
+                  <div class="stat-item">
+                    <h6 class="name">Overall Values</h6>
+                    <p class="value">17 567 318</p>
+                  </div>
+                  <div class="stat-item">
+                    <h6 class="name">Montly</h6>
+                    <p class="value">55 120</p>
+                  </div>
+                  <div class="stat-item">
+                    <h6 class="name">24h</h6>
+                    <p class="value">9 695</p>
+                  </div>
+                </div>
+                <b-progress variant="danger"
+                  :value="60" :max="100" class="bg-gray-lighter progress-xs" />
+                <p>
+                  <small>
+                    <span class="circle bg-warning text-white">
+                      <i class="fa fa-chevron-down" />
+                    </span>
+                  </small>
+                  <span class="fw-semi-bold">&nbsp;8% lower</span>
+                  &nbsp;than last month
+                </p>
+              </Widget>
+            </b-col>
+            <b-col lg="4" xs="12">
+              <Widget
+                title="<h6> RANDOM VALUES </h6>"
+                close settings customHeader
+              >
+                <div class="stats-row">
+                  <div class="stat-item">
+                    <h6 class="name fs-sm">Overcome T.</h6>
+                    <p class="value">104.85%</p>
+                  </div>
+                  <div class="stat-item">
+                    <h6 class="name fs-sm">Takeoff Angle</h6>
+                    <p class="value">14.29&deg;</p>
+                  </div>
+                  <div class="stat-item">
+                    <h6 class="name fs-sm">World Pop.</h6>
+                    <p class="value">7,211M</p>
+                  </div>
+                </div>
+                <b-progress variant="primary" :value="60"
+                  :max="100" class="bg-gray-lighter progress-xs" />
+                <p>
+                  <small>
+                    <span class="circle bg-warning text-white">
+                      <i class="fa fa-plus" />
+                    </span>
+                  </small>
+                  <span class="fw-semi-bold">&nbsp;8 734 higher</span>
+                  &nbsp;than last month
+                </p>
+              </Widget>
+            </b-col>
+          </b-row>
         </Widget>
       </b-col>
     </b-row>
@@ -364,9 +481,12 @@ const todos = [
   }
 ]
 
+import StatsCard from '@apps/root/components/creativetim/argon/StatsCard'
+
 export default {
   name: 'Dashboard',
   components: {
+    StatsCard,
     Widget,
     Map,
     AnimatedNumber,

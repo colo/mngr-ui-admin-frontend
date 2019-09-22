@@ -12,6 +12,7 @@ module.exports = function (ctx) {
       // 'adminlte',
       'i18n',
       'axios',
+      // 'custom-creativetimargon',
       'custom-flatlogiclightblue'
     ],
 
