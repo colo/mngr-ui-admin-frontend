@@ -174,8 +174,8 @@ export default {
   methods: {
 
     /**
-  * @start pipelines
-  **/
+    * @start pipelines
+    **/
     create_pipelines: function (next) {
       debug('create_pipelines')
 
@@ -208,8 +208,8 @@ export default {
     }
 
     /**
-  * @end pipelines
-  **/
+    * @end pipelines
+    **/
 
   }
   // mounted: function () {

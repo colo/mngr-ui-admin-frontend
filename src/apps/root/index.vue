@@ -4,7 +4,7 @@
   <q-page :style="{height: height}">
     <!-- <all-page key="all" v-if="!table"/> -->
     <dashboard key="all" v-if="!table"/>
-    <table-page v-else :table="table" :key="table"/>
+    <!-- <table-page v-else :table="table" :key="table"/> -->
   </q-page>
   <!-- <table-page v-else :table="$route.params.table"/> -->
 </template>

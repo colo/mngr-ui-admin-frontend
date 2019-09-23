@@ -5,710 +5,121 @@
         <small>The Lucky One</small>
       </small>
     </h1>
-    <b-row>
-      <!-- <b-col lg="7">
-        <Widget class="bg-transparent">
-          <Map />
-        </Widget>
-      </b-col> -->
-      <b-col lg="12">
-        <Widget
-          class="bg-transparent"
-          title="<h5>Table<span class='fw-semi-bold'>&nbsp;Statistics</span></h5>"
-          settings refresh close customHeader
-        >
-          <p>Status: <strong>Live</strong></p>
-          <p>
-            <span class="circle bg-warning text-white"><i class="fa fa-map-marker" /></span> &nbsp;
-            146 Countries, 2759 Cities
-          </p>
-          <!-- <div class="row progress-stats">
-            <div class="col-md-9 col-12">
-              <h6 class="name">Foreign Visits</h6>
-              <p class="description deemphasize mb-xs">Some Cool Text</p>
-              <b-progress variant="primary" :value="60" :max="100" class="bg-white progress-xs" />
-            </div>
-            <div class="col-md-3 col-12 text-center">
-              <span class="status rounded rounded-lg bg-widget">
-                <span><animated-number :value="75"
-                                       :round="true"
-                                       :duration="1000"
-                                       :delay="1500" />%</span>
-              </span>
-            </div>
-          </div> -->
-          <!-- <div class="row progress-stats">
-            <div class="col-md-9 col-12">
-              <h6 class="name">Local Visits</h6>
-              <p class="description deemphasize mb-xs">P. to C. Conversion</p>
-              <b-progress variant="danger" :value="39" :max="100" class="bg-white progress-xs" />
-            </div>
-            <div class="col-md-3 col-12 text-center">
-              <span class="status rounded rounded-lg bg-widget">
-                <span><animated-number :value="84"
-                                       :round="true"
-                                       :duration="1000"
-                                       :delay="1500" />%</span>
-              </span>
-            </div>
-          </div>
-          <div class="row progress-stats">
-            <div class="col-md-9 col-12">
-              <h6 class="name">Sound Frequencies</h6>
-              <p class="description deemphasize mb-xs">Average Bitrate</p>
-              <b-progress variant="success" :value="80" :max="100" class="bg-white progress-xs" />
-            </div>
-            <div class="col-md-3 col-12 text-center">
-              <span class="status rounded rounded-lg bg-widget">
-                <span><animated-number :value="92"
-                                       :round="true"
-                                       :duration="1000"
-                                       :delay="1500" />%</span>
-              </span>
-            </div>
-          </div> -->
-          <!-- <h6 class="fw-semi-bold mt">Map Distributions</h6>
-          <p>Tracking: <strong>Active</strong></p>
-          <p>
-            <span class="circle bg-warning text-white"><i class="fa fa-cog" /></span>
-            &nbsp; 391 elements installed, 84 sets
-          </p>
-          <b-input-group class="mt">
-            <b-form-input />
-            <b-input-group-append>
-              <b-btn variant="default">
-                <i class="fa fa-search text-gray" />
-              </b-btn>
-            </b-input-group-append>
-          </b-input-group> -->
-          <b-row>
-            <b-col lg="12" xs="12">
-              <Widget
-                title="<h6> Path group </h6>"
-                close settings customHeader
-              >
-                <div class="stats-row">
-                  <div class="stat-item">
-                    <stats-card title="Count"
-                                type="gradient-green"
-                                sub-title="350,897"
-                                icon="glyphicon glyphicon-plus"
-                                class="mb-4 mb-xl-0"
-                    >
-                      <template slot="footer">
-                          <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                          <span class="text-nowrap">Since last month</span>
-                      </template>
-                  </stats-card>
-                    <!-- <h6 class="name"><i class="glyphicon glyphicon-plus" />Count</h6>
-                    <p class="value">76.38%</p> -->
-                  </div>
-                  <div class="stat-item">
-                    <stats-card title="Hosts"
-                                type="gradient-green"
-                                sub-title="350,897"
-                                icon="glyphicon glyphicon-hdd"
-                                class="mb-4 mb-xl-0"
-                    >
-                      <template slot="footer">
-                          <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                          <span class="text-nowrap">Since last month</span>
-                      </template>
-                  </stats-card>
-                    <!-- <h6 class="name"><i class="glyphicon glyphicon-hdd" /> Hosts</h6>
-                    <p class="value">10.38%</p> -->
-                  </div>
-                  <div class="stat-item">
-                    <stats-card title="Range"
-                                type="gradient-green"
-                                sub-title="350,897"
-                                icon="glyphicon glyphicon-glyph-calendar"
-                                class="mb-4 mb-xl-0"
-                    >
-                      <template slot="footer">
-                          <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                          <span class="text-nowrap">Since last month</span>
-                      </template>
-                  </stats-card>
-                    <!-- <h6 class="name"><i class="glyphicon glyphicon-glyph-calendar" /> Range</h6>
-                    <p class="value">3.38%</p> -->
-                  </div>
-                  <div class="stat-item">
-                    <stats-card title="Tags"
-                                type="gradient-green"
-                                sub-title="350,897"
-                                icon="glyphicon glyphicon-tags"
-                                class="mb-4 mb-xl-0"
-                    >
-                      <template slot="footer">
-                          <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                          <span class="text-nowrap">Since last month</span>
-                      </template>
-                  </stats-card>
-                    <!-- <h6 class="name"><i class="glyphicon glyphicon-tags" /> Tags</h6>
-                    <p class="value">3.38%</p> -->
-                  </div>
-                  <div class="stat-item">
-                    <stats-card title="Types"
-                                type="gradient-green"
-                                sub-title="350,897"
-                                icon="glyphicon glyphicon-filter"
-                                class="mb-4 mb-xl-0"
-                    >
-                      <template slot="footer">
-                          <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                          <span class="text-nowrap">Since last month</span>
-                      </template>
-                  </stats-card>
-                    <!-- <h6 class="name"><i class="glyphicon glyphicon-filter" />Types</h6>
-                    <p class="value">3.38%</p> -->
-                  </div>
-                  <div class="stat-item vertical-top">
-                    <!-- <q-card class="my-card"> -->
-                      <q-card-section>
-                        <q-table
-                          flat
-                          dense
-                          hide-bottom
-                          hide-header
-                          :data="data"
-                          :columns="columns"
-                          row-key="name"
-                          :table-style="{width: '600px'}"
-                        />
+    <template v-for="(groups, table) in tables">
+      <b-row :key="table">
+        <b-col lg="12">
+          <input-table :table="table" :groups="groups"/>
+        </b-col>
+      </b-row>
+    </template>
 
-                      </q-card-section>
-                    <!-- </q-card> -->
-
-                  </div>
-                </div>
-
-                <!-- <b-progress variant="success" :value="60"
-                  :max="100" class="bg-gray-lighter progress-xs" />
-                <p>
-                  <small>
-                    <span class="circle bg-warning text-white">
-                      <i class="fa fa-chevron-up" />
-                    </span>
-                  </small>
-                  <span class="fw-semi-bold">&nbsp;17% higher</span>
-                  &nbsp;than last month
-                </p> -->
-              </Widget>
-            </b-col>
-            <b-col lg="4" xs="12">
-              <Widget
-                title="<h6> TRAFFIC VALUES </h6>"
-                close settings customHeader
-              >
-                <div class="stats-row">
-                  <div class="stat-item">
-                    <h6 class="name">Overall Values</h6>
-                    <p class="value">17 567 318</p>
-                  </div>
-                  <div class="stat-item">
-                    <h6 class="name">Montly</h6>
-                    <p class="value">55 120</p>
-                  </div>
-                  <div class="stat-item">
-                    <h6 class="name">24h</h6>
-                    <p class="value">9 695</p>
-                  </div>
-                </div>
-                <b-progress variant="danger"
-                  :value="60" :max="100" class="bg-gray-lighter progress-xs" />
-                <p>
-                  <small>
-                    <span class="circle bg-warning text-white">
-                      <i class="fa fa-chevron-down" />
-                    </span>
-                  </small>
-                  <span class="fw-semi-bold">&nbsp;8% lower</span>
-                  &nbsp;than last month
-                </p>
-              </Widget>
-            </b-col>
-            <b-col lg="4" xs="12">
-              <Widget
-                title="<h6> RANDOM VALUES </h6>"
-                close settings customHeader
-              >
-                <div class="stats-row">
-                  <div class="stat-item">
-                    <h6 class="name fs-sm">Overcome T.</h6>
-                    <p class="value">104.85%</p>
-                  </div>
-                  <div class="stat-item">
-                    <h6 class="name fs-sm">Takeoff Angle</h6>
-                    <p class="value">14.29&deg;</p>
-                  </div>
-                  <div class="stat-item">
-                    <h6 class="name fs-sm">World Pop.</h6>
-                    <p class="value">7,211M</p>
-                  </div>
-                </div>
-                <b-progress variant="primary" :value="60"
-                  :max="100" class="bg-gray-lighter progress-xs" />
-                <p>
-                  <small>
-                    <span class="circle bg-warning text-white">
-                      <i class="fa fa-plus" />
-                    </span>
-                  </small>
-                  <span class="fw-semi-bold">&nbsp;8 734 higher</span>
-                  &nbsp;than last month
-                </p>
-              </Widget>
-            </b-col>
-          </b-row>
-        </Widget>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col lg="4" xs="12">
-        <Widget
-          title="<h6> USERBASE GROWTH </h6>"
-          close settings customHeader
-        >
-          <div class="stats-row">
-            <div class="stat-item">
-              <h6 class="name">Overall Growth</h6>
-              <p class="value">76.38%</p>
-            </div>
-            <div class="stat-item">
-              <h6 class="name">Montly</h6>
-              <p class="value">10.38%</p>
-            </div>
-            <div class="stat-item">
-              <h6 class="name">24h</h6>
-              <p class="value">3.38%</p>
-            </div>
-          </div>
-          <b-progress variant="success" :value="60"
-            :max="100" class="bg-gray-lighter progress-xs" />
-          <p>
-            <small>
-              <span class="circle bg-warning text-white">
-                <i class="fa fa-chevron-up" />
-              </span>
-            </small>
-            <span class="fw-semi-bold">&nbsp;17% higher</span>
-            &nbsp;than last month
-          </p>
-        </Widget>
-      </b-col>
-      <b-col lg="4" xs="12">
-        <Widget
-          title="<h6> TRAFFIC VALUES </h6>"
-          close settings customHeader
-        >
-          <div class="stats-row">
-            <div class="stat-item">
-              <h6 class="name">Overall Values</h6>
-              <p class="value">17 567 318</p>
-            </div>
-            <div class="stat-item">
-              <h6 class="name">Montly</h6>
-              <p class="value">55 120</p>
-            </div>
-            <div class="stat-item">
-              <h6 class="name">24h</h6>
-              <p class="value">9 695</p>
-            </div>
-          </div>
-          <b-progress variant="danger"
-            :value="60" :max="100" class="bg-gray-lighter progress-xs" />
-          <p>
-            <small>
-              <span class="circle bg-warning text-white">
-                <i class="fa fa-chevron-down" />
-              </span>
-            </small>
-            <span class="fw-semi-bold">&nbsp;8% lower</span>
-            &nbsp;than last month
-          </p>
-        </Widget>
-      </b-col>
-      <b-col lg="4" xs="12">
-        <Widget
-          title="<h6> RANDOM VALUES </h6>"
-          close settings customHeader
-        >
-          <div class="stats-row">
-            <div class="stat-item">
-              <h6 class="name fs-sm">Overcome T.</h6>
-              <p class="value">104.85%</p>
-            </div>
-            <div class="stat-item">
-              <h6 class="name fs-sm">Takeoff Angle</h6>
-              <p class="value">14.29&deg;</p>
-            </div>
-            <div class="stat-item">
-              <h6 class="name fs-sm">World Pop.</h6>
-              <p class="value">7,211M</p>
-            </div>
-          </div>
-          <b-progress variant="primary" :value="60"
-            :max="100" class="bg-gray-lighter progress-xs" />
-          <p>
-            <small>
-              <span class="circle bg-warning text-white">
-                <i class="fa fa-plus" />
-              </span>
-            </small>
-            <span class="fw-semi-bold">&nbsp;8 734 higher</span>
-            &nbsp;than last month
-          </p>
-        </Widget>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col lg="4" xs="12">
-        <Widget
-          title="<h6><span class='badge badge-danger'>New</span> Messages</h6>"
-          refresh close customHeader
-        >
-          <div class="widget-body p-0">
-            <div class="list-group list-group-lg">
-              <a class="list-group-item" href="#">
-                <span class="thumb-sm float-left mr">
-                  <img class="rounded-circle" src="@skins/flatlogic/lightblue/assets/people/a2.jpg" alt="..." />
-                  <i class="status status-bottom bg-success" />
-                </span>
-                <div>
-                  <h6 class="m-0">Chris Gray</h6>
-                  <p class="help-block text-ellipsis m-0">
-                    Hey! What&apos;s up? So many times since we
-                  </p>
-                </div>
-              </a>
-              <a class="list-group-item" href="#">
-                <span class="thumb-sm float-left mr">
-                  <img class="rounded-circle" src="@skins/flatlogic/lightblue/assets/people/a4.jpg" alt="..." />
-                  <i class="status status-bottom bg-success" />
-                </span>
-                <div>
-                  <h6 class="m-0">Jamey Brownlow</h6>
-                  <p class="help-block text-ellipsis m-0">
-                    Good news coming tonight. Seems they agreed to proceed
-                  </p>
-                </div>
-              </a>
-              <a class="list-group-item" href="#">
-                <span class="thumb-sm float-left mr">
-                  <img class="rounded-circle" src="@skins/flatlogic/lightblue/assets/people/a1.jpg" alt="..." />
-                  <i class="status status-bottom bg-warning" />
-                </span>
-                <div>
-                  <h6 class="m-0">Livia Walsh</h6>
-                  <p class="help-block text-ellipsis m-0">Check my latest email plz!</p>
-                </div>
-              </a>
-              <a class="list-group-item" href="#">
-                <span class="thumb-sm float-left mr">
-                  <img class="rounded-circle" src="@skins/flatlogic/lightblue/assets/people/a5.jpg" alt="..." />
-                  <i class="status status-bottom bg-danger" />
-                </span>
-                <div>
-                  <h6 class="m-0">Jaron Fitzroy</h6>
-                  <p class="help-block text-ellipsis m-0">What about summer break?</p>
-                </div>
-              </a>
-            </div>
-          </div>
-          <footer class="bg-widget mt">
-            <input type="search" class="form-control form-control-sm" placeholder="Search" />
-          </footer>
-        </Widget>
-      </b-col>
-      <b-col lg="4" xs="12">
-        <Widget
-          title="<h6> Market <span class='fw-semi-bold'>Stats</span></h6>"
-          close customHeader
-        >
-          <div class="widget-body">
-            <h3>$720 Earned</h3>
-            <p class="fs-mini text-muted mb mt-sm">
-              Target <span class="fw-semi-bold">$820</span> day earnings
-              is <span class="fw-semi-bold">96%</span> reached.
-            </p>
-          </div>
-          <div class="widget-bottom-overflow">
-            <table class="table table-striped table-sm">
-              <thead class="no-bd">
-                <tr>
-                  <th>
-                    <div class="checkbox abc-checkbox">
-                      <input
-                        type="checkbox"
-                        class="mt-0"
-                        id="checkbox210"
-                        @click="checkTable(0)"
-                        :checked="checkedArr[0]"
-                      />
-                      <label for="checkbox210" />
-                    </div>
-                  </th>
-                  <th>&nbsp;</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <div class="checkbox abc-checkbox">
-                      <input
-                        type="checkbox"
-                        class="mt-0"
-                        id="checkbox212"
-                        @click="checkTable(1)"
-                        :checked="checkedArr[1]"
-                      />
-                      <label for="checkbox212" />
-                    </div>
-                  </td>
-                  <td>HP Core i7</td>
-                  <td class="text-align-right fw-semi-bold">$346.1</td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="checkbox abc-checkbox">
-                      <input
-                        type="checkbox"
-                        class="mt-0"
-                        id="checkbox214"
-                        @click="checkTable(2)"
-                        :checked="checkedArr[2]"
-                      />
-                      <label for="checkbox214" />
-                    </div>
-                  </td>
-                  <td>Air Pro</td>
-                  <td class="text-align-right fw-semi-bold">$533.1</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="widget-body mt-xlg chart-overflow-bottom">
-            <area-chart class="area-chart" :height="100" :options="{legend: false, scales: {yAxes: [{display: false}], xAxes: [{display: false}]}}"  :chart-data="dataCollection"></area-chart>
-          </div>
-        </Widget>
-      </b-col>
-      <b-col lg="4" xs="12">
-        <Widget
-          title="<h6>Calendar</h6" bodyClass="p-0"
-          settings close customHeader>
-          <v-calendar class="v-calendar" :attributes='calendarAttributes'>
-          </v-calendar>
-          <div class="list-group fs-mini">
-            <a href="#" class="list-group-item text-ellipsis">
-              <span class="badge badge-pill badge-warning float-right">6:45</span>
-              Weed out the flower bed
-            </a>
-            <a href="#" class="list-group-item text-ellipsis">
-              <span class="badge badge-pill badge-success float-right">9:41</span>
-              Stop world water pollution
-            </a>
-          </div>
-        </Widget>
-      </b-col>
-    </b-row>
   </div>
 </template>
 
 <script>
 import Vue from 'vue'
-import Widget from '@skins/flatlogic/lightblue/components/Widget/Widget'
-import Map from './components/Map/Map'
-import AnimatedNumber from 'animated-number-vue'
-import AreaChart from './components/AreaChart/AreaChart'
+// // import Group from '@apps/root/components/group'
+// import Widget from '@skins/flatlogic/lightblue/components/Widget/Widget'
+// import Map from './components/Map/Map'
+// // import AnimatedNumber from 'animated-number-vue'
+// import AreaChart from './components/AreaChart/AreaChart'
+// import StatsCard from '@apps/root/components/creativetim/argon/StatsCard'
 
-const todos = [
-  {
-    description: 'Take Sebastian to basketball practice.',
-    isComplete: false,
-    dates: { weekdays: 6, weeklyInterval: 2 }, // Every other Friday
-    color: '#ff8080' // Red
-  },
-  {
-    description: 'German courses',
-    isComplete: false,
-    dates: new Date(),
-    color: '#64a4ff' // Red
-  },
-  {
-    description: 'Constitution Day',
-    isComplete: false,
-    dates: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000), // in 6 days
-    color: '#6ae696' // Red
-  }
-]
+import * as Debug from 'debug'
+const debug = Debug('apps:root:pages:flatlogic:lightblue:Dashboard:Dashboard')
 
-import StatsCard from '@apps/root/components/creativetim/argon/StatsCard'
+import DataSourcesMixin from '@components/mixins/dataSources'
+
+import Pipeline from 'js-pipeline'
+import RootPipeline from '@apps/root/pipelines/index'
 
 export default {
+  mixins: [ DataSourcesMixin ],
+
   name: 'Dashboard',
   components: {
-    StatsCard,
-    Widget,
-    Map,
-    AnimatedNumber,
-    AreaChart
+    // StatsCard,
+    // Widget,
+    // Map,
+    // AnimatedNumber,
+    // AreaChart
   },
   data () {
     return {
-      columns: [
-        {
-          name: 'name',
-          required: true,
-          label: 'Dessert (100g serving)',
-          align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
-          sortable: true
-        },
-        { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-        { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-        { name: 'protein', label: 'Protein (g)', field: 'protein' }
-        // { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-        // { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-        // { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
-      ],
-      data: [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0
-          // sodium: 87,
-          // calcium: '14%',
-          // iron: '1%'
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: '8%',
-          iron: '1%'
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: '6%',
-          iron: '7%'
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: '3%',
-          iron: '8%'
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: '7%',
-          iron: '16%'
-        }
+      id: 'all',
+      path: 'all',
 
-      ],
-
-      checkedArr: [false, false, false],
-      dataCollection: {},
-      todos
-    }
-  },
-  mounted () {
-    this.fillData()
-  },
-  methods: {
-    checkTable (id) {
-      let arr = []
-      if (id === 0) {
-        const val = !this.checkedArr[0]
-        for (let i = 0; i < this.checkedArr.length; i += 1) {
-          arr[i] = val
-        }
-      } else {
-        arr = this.checkedArr
-        arr[id] = !arr[id]
-      }
-      if (arr[0]) {
-        let count = 1
-        for (let i = 1; i < arr.length; i += 1) {
-          if (arr[i]) {
-            count += 1
-          }
-        }
-        if (count !== arr.length) {
-          arr[0] = !arr[0]
-        }
-      }
-      Vue.set(this, 'checkedArr', arr)
-    },
-    fillData () {
-      this.dataCollection = {
-        labels: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
-        datasets: [
+      tables: {},
+      components: {
+        'all': [
           {
-            label: 'Data One',
-            backgroundColor: '#f87979',
-            borderColor: 'transparent',
-            data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()]
-          }, {
-            label: 'Data Two',
-            backgroundColor: '#7c87f8',
-            borderColor: 'transparent',
-            data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()]
+            source: {
+              requests: {
+                periodical: [
+                  {
+                    params: {
+                      path: 'all'
+                    },
+                    callback: function (tables, metadata, key, vm) {
+                      debug('All callback', tables)
+
+                      Object.each(tables, function (data, table) {
+                        vm.$set(vm.tables, table, data)
+                      })
+                    }
+                  }
+
+                ]
+              }
+            }
           }
+
         ]
       }
-    },
-    getRandomInt () {
-      return Math.floor(Math.random() * (50 - 5 + 1)) + 5
     }
   },
-  computed: {
-    calendarAttributes () {
-      return [
-        // Today attribute
-        {
-          contentStyle: {
-            fontWeight: '700',
-            fontSize: '.9rem'
-          },
-          dates: new Date()
-        },
-        // Attributes for todos
-        ...this.todos.map(todo => ({
-          dates: todo.dates,
-          dot: {
-            backgroundColor: todo.color,
-            opacity: todo.isComplete ? 0.3 : 1
-          },
-          popover: {
-            label: todo.description
-          }
-        }))
-      ]
+  methods: {
+
+    /**
+    * @start pipelines
+    **/
+    create_pipelines: function (next) {
+      debug('create_pipelines')
+
+      let template = Object.clone(RootPipeline)
+
+      let pipeline_id = template.input[0].poll.id
+
+      template.input[0].poll.conn[0].requests = this.__components_sources_to_requests(this.components)
+
+      let pipe = new Pipeline(template)
+
+      this.$options.__pipelines_cfg[pipeline_id] = {
+        ids: [],
+        connected: [],
+        suspended: pipe.inputs.every(function (input) { return input.options.suspended }, this)
+      }
+
+      this.__after_connect_inputs(
+        pipe,
+        this.$options.__pipelines_cfg[pipeline_id],
+        this.__resume_pipeline.pass([pipe, this.$options.__pipelines_cfg[pipeline_id], this.id, function () {
+          debug('__resume_pipeline CALLBACK')
+          pipe.fireEvent('onOnce')
+        }], this)
+      )
+
+      this.$options.pipelines[pipeline_id] = pipe
+
+      if (next) { next() }
     }
+
+    /**
+    * @end pipelines
+    **/
+
   }
+
 }
 </script>
 
