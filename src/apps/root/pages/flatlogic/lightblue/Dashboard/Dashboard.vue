@@ -174,8 +174,9 @@
                           :data="data"
                           :columns="columns"
                           row-key="name"
-                          :table-style="{width: '400px'}"
+                          :table-style="{width: '600px'}"
                         />
+
                       </q-card-section>
                     <!-- </q-card> -->
 
