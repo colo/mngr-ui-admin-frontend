@@ -62,7 +62,9 @@ module.exports = function (ctx) {
         'QInnerLoading',
         'QSpinnerGears',
         'QSeparator',
-        'QBtn'
+        'QBtn',
+        'QCard',
+        'QCardSection',
       ],
 
       directives: [
