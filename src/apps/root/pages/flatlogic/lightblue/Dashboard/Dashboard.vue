@@ -77,20 +77,96 @@ export default {
                           components[table + '_feed'] = [{
                             source: {
                               requests: {
-                                once: [
+                                // once: [
+                                //   {
+                                //     params: {
+                                //       path: 'all',
+                                //       query: {
+                                //         from: table,
+                                //         // register: 'changes',
+                                //         'q': [
+                                //           // { 'data': ['log'] },
+                                //           'metadata'
+                                //         ],
+                                //         'transformation': [
+                                //           { 'orderBy': { 'index': 'r.desc(timestamp)' } },
+                                //           'slice:0:9'
+                                //         ]
+                                //       }
+                                //
+                                //     },
+                                //     callback: function (val, metadata, key, vm) {
+                                //       const MAX_FEED_DATA = 10
+                                //
+                                //       debug('MyTable ONCE %o %o', val, metadata)
+                                //       let table = metadata.from[0]
+                                //       val = JSON.parse(JSON.stringify(val))
+                                //       val = val[table]
+                                //
+                                //       let feed = []
+                                //       Array.each(val, function (docs) {
+                                //         feed = docs.map(function (item, index) {
+                                //           return item.metadata
+                                //         })
+                                //       })
+                                //
+                                //       // if (!Array.isArray(feed)) feed = [feed]
+                                //
+                                //       if (!vm.tables_feeds[table] || JSON.parse(JSON.stringify(vm.tables_feeds[table])).length < MAX_FEED_DATA) vm.$set(vm.tables_feeds, table, feed)
+                                //
+                                //       debug('MyTable ONCE2 %o %o', vm.tables_feeds, metadata)
+                                //     }
+                                //   },
+                                //   {
+                                //     params: {
+                                //       path: 'all',
+                                //       query: {
+                                //         from: table,
+                                //         register: 'changes',
+                                //         'q': [
+                                //           // { 'data': ['log'] },
+                                //           'metadata'
+                                //         ]
+                                //         // 'transformation': [
+                                //         //   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
+                                //         //   'slice:0:9'
+                                //         // ]
+                                //       }
+                                //
+                                //     },
+                                //     callback: function (val, metadata, key, vm) {
+                                //       val = JSON.parse(JSON.stringify(val))
+                                //       let feed = val.map(function (item, index) {
+                                //         return item.metadata
+                                //       })
+                                //       // if (!Array.isArray(feed)) feed = [feed]
+                                //
+                                //       let table = metadata.from
+                                //
+                                //       // if (!vm.tables_feeds[table]) vm.$set(vm.tables_feeds, table, [])
+                                //
+                                //       vm.$set(vm.tables_feeds, table, feed)
+                                //
+                                //       debug('MyTable changes %o %o', vm.tables_feeds, metadata)
+                                //     }
+                                //   }
+                                // ],
+
+                                periodical: [
                                   {
                                     params: {
                                       path: 'all',
                                       query: {
                                         from: table,
                                         // register: 'changes',
+                                        register: 'periodical',
                                         'q': [
                                           // { 'data': ['log'] },
                                           'metadata'
                                         ],
                                         'transformation': [
                                           { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-                                          'slice:0:9'
+                                          { 'sample': 10 }
                                         ]
                                       }
 
@@ -99,60 +175,38 @@ export default {
                                       const MAX_FEED_DATA = 10
 
                                       debug('MyTable ONCE %o %o', val, metadata)
-                                      let table = metadata.from[0]
+                                      let table = metadata.from
                                       val = JSON.parse(JSON.stringify(val))
-                                      val = val[table]
+                                      // val = val[table]
 
                                       let feed = []
                                       Array.each(val, function (docs) {
-                                        feed = docs.map(function (item, index) {
+                                        feed.combine(docs.map(function (item, index) {
                                           return item.metadata
-                                        })
+                                        }))
                                       })
 
+                                      feed.sort(function (a, b) {
+                                        if (a.timestamp > b.timestamp) {
+                                          return -1
+                                        }
+                                        if (a.timestamp < b.timestamp) {
+                                          return 1
+                                        }
+                                        // a must be equal to b
+                                        return 0
+                                      })
                                       // if (!Array.isArray(feed)) feed = [feed]
 
-                                      if (!vm.tables_feeds[table] || JSON.parse(JSON.stringify(vm.tables_feeds[table])).length < MAX_FEED_DATA) vm.$set(vm.tables_feeds, table, feed)
+                                      // if (!vm.tables_feeds[table] || JSON.parse(JSON.stringify(vm.tables_feeds[table])).length < MAX_FEED_DATA)
+                                      if (feed.length > 0) { vm.$set(vm.tables_feeds, table, feed) }
 
                                       debug('MyTable ONCE2 %o %o', vm.tables_feeds, metadata)
                                     }
-                                  },
-                                  {
-                                    params: {
-                                      path: 'all',
-                                      query: {
-                                        from: table,
-                                        register: 'changes',
-                                        'q': [
-                                          // { 'data': ['log'] },
-                                          'metadata'
-                                        ]
-                                        // 'transformation': [
-                                        //   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-                                        //   'slice:0:9'
-                                        // ]
-                                      }
-
-                                    },
-                                    callback: function (val, metadata, key, vm) {
-                                      val = JSON.parse(JSON.stringify(val))
-                                      let feed = val.map(function (item, index) {
-                                        return item.metadata
-                                      })
-                                      // if (!Array.isArray(feed)) feed = [feed]
-
-                                      let table = metadata.from
-
-                                      // if (!vm.tables_feeds[table]) vm.$set(vm.tables_feeds, table, [])
-
-                                      vm.$set(vm.tables_feeds, table, feed)
-
-                                      debug('MyTable changes %o %o', vm.tables_feeds, metadata)
-                                    }
                                   }
                                 ]
-
                               }
+
                             }
                           }]
 

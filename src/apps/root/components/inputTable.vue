@@ -136,7 +136,7 @@ export default {
           required: true,
           label: 'Insertion time',
           align: 'left',
-          field: row => row.timestamp
+          field: row => moment(row.timestamp).format('dddd, MMMM Do YYYY, h:mm:ss a')
           // format: val => new Date(`${val}`)
           // sortable: true
         },
