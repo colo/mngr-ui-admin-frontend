@@ -1,6 +1,6 @@
 <template>
   <Widget
-  :title="'<h6>'+group.path+'</h6>'"
+  :title="'<h6>'+group.path+': <span class=\'text-success text-nowrap\'>'+group.count+'</span></h6>'"
   customHeader
   >
     <!-- <q-card class="my-card">

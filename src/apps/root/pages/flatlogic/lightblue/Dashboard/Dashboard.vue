@@ -8,7 +8,7 @@
     <template v-for="(groups, table) in tables">
       <b-row :key="table">
         <b-col lg="12">
-          <input-table :table="table" :groups="groups"/>
+          <input-table :table="table" :groups="groups" :feed="(tables_feeds[`${table}`]) ? tables_feeds[`${table}`] : []"/>
         </b-col>
       </b-row>
     </template>
@@ -50,6 +50,7 @@ export default {
       path: 'all',
 
       tables: {},
+      tables_feeds: {},
       components: {
         'all': [
           {
@@ -66,6 +67,103 @@ export default {
                       Object.each(tables, function (data, table) {
                         vm.$set(vm.tables, table, data)
                       })
+
+                      let components = {}
+
+                      let changed = false
+                      Object.each(tables, function (data, table) {
+                        if (!vm.components[table + '_feed']) {
+                          changed = true
+                          components[table + '_feed'] = [{
+                            source: {
+                              requests: {
+                                once: [
+                                  {
+                                    params: {
+                                      path: 'all',
+                                      query: {
+                                        from: table,
+                                        // register: 'changes',
+                                        'q': [
+                                          // { 'data': ['log'] },
+                                          'metadata'
+                                        ],
+                                        'transformation': [
+                                          { 'orderBy': { 'index': 'r.desc(timestamp)' } },
+                                          'slice:0:9'
+                                        ]
+                                      }
+
+                                    },
+                                    callback: function (val, metadata, key, vm) {
+                                      const MAX_FEED_DATA = 10
+
+                                      debug('MyTable ONCE %o %o', val, metadata)
+                                      let table = metadata.from[0]
+                                      val = JSON.parse(JSON.stringify(val))
+                                      val = val[table]
+
+                                      let feed = []
+                                      Array.each(val, function (docs) {
+                                        feed = docs.map(function (item, index) {
+                                          return item.metadata
+                                        })
+                                      })
+
+                                      // if (!Array.isArray(feed)) feed = [feed]
+
+                                      if (!vm.tables_feeds[table] || JSON.parse(JSON.stringify(vm.tables_feeds[table])).length < MAX_FEED_DATA) vm.$set(vm.tables_feeds, table, feed)
+
+                                      debug('MyTable ONCE2 %o %o', vm.tables_feeds, metadata)
+                                    }
+                                  },
+                                  {
+                                    params: {
+                                      path: 'all',
+                                      query: {
+                                        from: table,
+                                        register: 'changes',
+                                        'q': [
+                                          // { 'data': ['log'] },
+                                          'metadata'
+                                        ]
+                                        // 'transformation': [
+                                        //   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
+                                        //   'slice:0:9'
+                                        // ]
+                                      }
+
+                                    },
+                                    callback: function (val, metadata, key, vm) {
+                                      val = JSON.parse(JSON.stringify(val))
+                                      let feed = val.map(function (item, index) {
+                                        return item.metadata
+                                      })
+                                      // if (!Array.isArray(feed)) feed = [feed]
+
+                                      let table = metadata.from
+
+                                      // if (!vm.tables_feeds[table]) vm.$set(vm.tables_feeds, table, [])
+
+                                      vm.$set(vm.tables_feeds, table, feed)
+
+                                      debug('MyTable changes %o %o', vm.tables_feeds, metadata)
+                                    }
+                                  }
+                                ]
+
+                              }
+                            }
+                          }]
+
+                          vm.$set(vm.components, table + '_feed', components[table + '_feed'])
+                        }
+                      })
+                      debug('register tables components %o %o', components, changed)
+                      if (changed) {
+                        vm.destroy_pipelines()
+                        vm.create_pipelines()
+                      }
                     }
                   }
 

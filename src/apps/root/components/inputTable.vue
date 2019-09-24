@@ -19,15 +19,16 @@
         default-opened
       >
         <q-table
+          :pagination.sync="feed_pagination"
           flat
           dense
           hide-bottom
-          hide-header
-          :data="data"
-          :columns="columns"
+          :data="feed_data"
+          :columns="feed_columns"
           row-key="name"
           card-class="transparent"
         />
+        <!-- hide-header -->
         <q-separator />
         <input-table-groups-chart :id="table" :data="groups_chart_data"/>
       </q-expansion-item>
@@ -96,6 +97,8 @@ let moment = require('moment')
 import Widget from '@skins/flatlogic/lightblue/components/Widget/Widget'
 import StatsCard from '@apps/root/components/creativetim/argon/StatsCard'
 
+const MAX_FEED_DATA = 10
+
 export default {
   // mixins: [DataSourcesMixin],
 
@@ -105,6 +108,10 @@ export default {
 
   // pipelines: {},
   props: {
+    feed: {
+      type: Array,
+      default: function () { return {} }
+    },
     table: {
       type: String,
       default: undefined
@@ -121,77 +128,79 @@ export default {
         labels: [],
         datasets: []
       },
-      columns: [
+      feed_pagination: { rowsPerPage: 0 },
+      feed_data: [],
+      feed_columns: [
         {
-          name: 'name',
+          name: 'Time',
           required: true,
-          label: 'Dessert (100g serving)',
+          label: 'Insertion time',
           align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
-          sortable: true
+          field: row => row.timestamp
+          // format: val => new Date(`${val}`)
+          // sortable: true
         },
-        { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-        { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-        { name: 'protein', label: 'Protein (g)', field: 'protein' }
-        // { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
+        { name: 'id', align: 'center', label: 'doc id', field: 'id' },
+        { name: 'host', label: 'Host', field: 'host' },
+        { name: 'path', label: 'Path', field: 'path' },
+        { name: 'tag', label: 'Tags', field: 'tag' },
+        { name: 'type', label: 'Type', field: 'type' }
         // { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
         // { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
-      ],
-      data: [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0
-          // sodium: 87,
-          // calcium: '14%',
-          // iron: '1%'
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: '8%',
-          iron: '1%'
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: '6%',
-          iron: '7%'
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: '3%',
-          iron: '8%'
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: '7%',
-          iron: '16%'
-        }
-
       ]
+      // data: [
+      //   {
+      //     name: 'Frozen Yogurt',
+      //     calories: 159,
+      //     fat: 6.0,
+      //     carbs: 24,
+      //     protein: 4.0
+      //     // sodium: 87,
+      //     // calcium: '14%',
+      //     // iron: '1%'
+      //   },
+      //   {
+      //     name: 'Ice cream sandwich',
+      //     calories: 237,
+      //     fat: 9.0,
+      //     carbs: 37,
+      //     protein: 4.3,
+      //     sodium: 129,
+      //     calcium: '8%',
+      //     iron: '1%'
+      //   },
+      //   {
+      //     name: 'Eclair',
+      //     calories: 262,
+      //     fat: 16.0,
+      //     carbs: 23,
+      //     protein: 6.0,
+      //     sodium: 337,
+      //     calcium: '6%',
+      //     iron: '7%'
+      //   },
+      //   {
+      //     name: 'Cupcake',
+      //     calories: 305,
+      //     fat: 3.7,
+      //     carbs: 67,
+      //     protein: 4.3,
+      //     sodium: 413,
+      //     calcium: '3%',
+      //     iron: '8%'
+      //   },
+      //   {
+      //     name: 'Gingerbread',
+      //     calories: 356,
+      //     fat: 16.0,
+      //     carbs: 49,
+      //     protein: 3.9,
+      //     sodium: 327,
+      //     calcium: '7%',
+      //     iron: '16%'
+      //   }
+      //
+      // ]
 
       // height: '0px',
       //
@@ -268,6 +277,18 @@ export default {
         }
         // }.bind(this))
       }.bind(this))
+    },
+    feed: function (val) {
+      debug('watch feed', val, this.feed_data.length)
+      Array.each(val, function (doc) {
+        this.feed_data.push(doc)
+      }.bind(this))
+
+      if (JSON.parse(JSON.stringify(this.feed_data)).length > MAX_FEED_DATA) {
+        debug('watch feed2', val, this.feed_data.length)
+        let feed_data = JSON.parse(JSON.stringify(this.feed_data)).slice(Math.max(JSON.parse(JSON.stringify(this.feed_data)).length - MAX_FEED_DATA, 1))
+        this.$set(this, 'feed_data', feed_data)
+      }
     }
   },
   computed: {
