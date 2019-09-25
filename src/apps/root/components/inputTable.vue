@@ -280,15 +280,28 @@ export default {
     },
     feed: function (val) {
       debug('watch feed', val, this.feed_data.length)
+      let feed = JSON.parse(JSON.stringify(this.feed_data))
       Array.each(val, function (doc) {
-        this.feed_data.push(doc)
-      }.bind(this))
+        feed.push(doc)
+      })
 
-      if (JSON.parse(JSON.stringify(this.feed_data)).length > MAX_FEED_DATA) {
+      feed.sort(function (a, b) {
+        if (a.timestamp > b.timestamp) {
+          return -1
+        }
+        if (a.timestamp < b.timestamp) {
+          return 1
+        }
+        // a must be equal to b
+        return 0
+      })
+
+      if (feed.length > MAX_FEED_DATA) {
         debug('watch feed2', val, this.feed_data.length)
-        let feed_data = JSON.parse(JSON.stringify(this.feed_data)).slice(Math.max(JSON.parse(JSON.stringify(this.feed_data)).length - MAX_FEED_DATA, 1))
-        this.$set(this, 'feed_data', feed_data)
+        // let feed_data = JSON.parse(JSON.stringify(this.feed_data)).slice(Math.max(JSON.parse(JSON.stringify(this.feed_data)).length - MAX_FEED_DATA, 1))
+        feed = feed.slice(0, MAX_FEED_DATA)
       }
+      this.$set(this, 'feed_data', feed)
     }
   },
   computed: {
