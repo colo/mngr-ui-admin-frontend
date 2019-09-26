@@ -63,6 +63,14 @@ export default {
     this.__unregister_store_module(this.path)
   },
 
+  beforeRouteLeave (to, from, next) {
+    // called when the route that renders this component is about to
+    // be navigated away from.
+    // has access to `this` component instance.
+    this.destroy_pipelines()
+    this.__unregister_store_module(this.path)
+    next()
+  },
   // computed: mapState({
   //
   //   'periodical?register=periodical&transformation=limit%3A30000.range' (state) {
