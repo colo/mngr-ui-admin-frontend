@@ -1,1 +1,1 @@
-/home/colo/projects/mngr-ui-admin-logs/src/apps/logs/etc/logs.io.js
+../apps/logs/etc/logs.io.js
