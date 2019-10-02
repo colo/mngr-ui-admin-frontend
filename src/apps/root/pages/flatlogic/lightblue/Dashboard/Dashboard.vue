@@ -57,6 +57,30 @@ export default {
           {
             source: {
               requests: {
+                // TEST register periodical
+                // once: [
+                //   {
+                //     params: {
+                //       path: 'all',
+                //       query: {
+                //         // from: 'os',
+                //         register: 'periodical'
+                //         // 'q': [
+                //         //   // { 'data': ['log'] },
+                //         //   'metadata'
+                //         // ],
+                //         // 'transformation': [
+                //         //   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
+                //         //   'slice:0:9'
+                //         // ]
+                //       }
+                //
+                //     },
+                //     callback: function (tables, metadata, key, vm) {
+                //       debug('All callback TEST %o %o', tables, metadata)
+                //     }
+                //   }
+                // ],
                 periodical: [
                   {
                     params: {
