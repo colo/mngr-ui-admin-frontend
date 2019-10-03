@@ -94,6 +94,10 @@ export default {
                     callback: function (tables, metadata, key, vm) {
                       debug('All callback TEST %o', vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0])
 
+                      Object.each(tables, function (data, table) {
+                        vm.$set(vm.tables, table, data)
+                      })
+
                       vm.$set(vm.components.all[0].source.requests, 'periodical', [vm.$options.periodical_component])
                       vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
                       vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
