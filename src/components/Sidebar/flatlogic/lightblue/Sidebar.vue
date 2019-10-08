@@ -18,6 +18,13 @@
       />
       <h5 class="navTitle">TEMPLATE</h5>
       <NavLink
+              header="Munin"
+              link="/munin"
+              iconName="flaticon-list"
+              index="typography"
+              isHeader
+      />
+      <NavLink
               header="Typography"
               link="/typography"
               iconName="flaticon-list"
