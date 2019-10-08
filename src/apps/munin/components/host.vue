@@ -51,13 +51,13 @@ export default {
   feed_component: {
     source: {
       requests: {
-        once: [{
+        periodical: [{
           params: {
             path: 'all',
             query: {
               'from': 'munin',
-              'register': 'changes',
-              // 'format': 'tabular',
+              // 'register': 'changes',
+              'format': 'tabular',
               /**
               * right now needed to match OUTPUT 'id' with this query (need to @fix)
               **/
@@ -71,11 +71,11 @@ export default {
                 'metadata',
                 'data'
               ],
-              // 'transformation': [
-              //   {
-              //     'orderBy': { 'index': 'r.desc(timestamp)' }
-              //   }
-              // ],
+              'transformation': [
+                {
+                  'orderBy': { 'index': 'r.desc(timestamp)' }
+                }
+              ],
               'filter': { 'metadata': { 'host': undefined } }
 
             }
@@ -83,6 +83,11 @@ export default {
           callback: function (data, metadata, key, vm) {
             debug('PERIODICAL %o %o', data, metadata)
 
+            // Array.each(data.munin, function(plugin){
+            //   if(plugin[0] && plugin[0].metadata){
+            //
+            //   }
+            // })
             // vm.$set(vm.munin, data.munin)
             //
             // // Object.each(data., function (data, table) {
@@ -445,7 +450,7 @@ export default {
   created: function () {
     debug('mounted HOST %s %o %o', this.host, this.$options.range_component, this.$options.__pipelines_cfg)
     this.$options.range_component.source.requests.once[0].params.query.filter.metadata.host = this.host
-    this.$options.feed_component.source.requests.once[0].params.query.filter.metadata.host = this.host
+    this.$options.feed_component.source.requests.periodical[0].params.query.filter.metadata.host = this.host
     this.$set(this.components, 'range', this.$options.range_component)
     this.$set(this.components, 'feed', this.$options.feed_component)
   }
