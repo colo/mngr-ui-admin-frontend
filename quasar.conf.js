@@ -10,6 +10,7 @@ module.exports = function (ctx) {
     // --> boot files are part of "main.js"
     boot: [
       // 'adminlte',
+      'vue-observe-visibility',
       'i18n',
       'axios',
       // 'custom-creativetimargon',

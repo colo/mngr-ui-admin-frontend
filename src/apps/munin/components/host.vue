@@ -1,5 +1,14 @@
 <template>
-  <div></div>
+  <div>
+  <template v-for="(plugin, name) in plugins">
+    <b-row :key="name">
+      <b-col lg="12">
+        <munin-dygraph :id="name" :data="plugin"/>
+        <!-- :feed="(tables_feeds[`${table}`]) ? tables_feeds[`${table}`] : []" -->
+      </b-col>
+    </b-row>
+  </template>
+</div>
 </template>
 
 <script>
@@ -83,11 +92,10 @@ export default {
           callback: function (data, metadata, key, vm) {
             debug('PERIODICAL %o %o', data, metadata)
 
-            // Array.each(data.munin, function(plugin){
-            //   if(plugin[0] && plugin[0].metadata){
-            //
-            //   }
-            // })
+            Object.each(data.munin, function (plugin, name) {
+              // if(!vm.plugins[name]) vm.$set(vm.plugins, name, {})
+              vm.$set(vm.plugins, name, plugin)
+            })
             // vm.$set(vm.munin, data.munin)
             //
             // // Object.each(data., function (data, table) {
@@ -137,7 +145,7 @@ export default {
           callback: function (data, metadata, key, vm) {
             debug('RANGES %o %o %o', data, metadata, JSON.parse(JSON.stringify(vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].options.requests)))
 
-            vm.$set(vm.munin, data.munin)
+            // vm.$set(vm.munin, data.munin)
 
             // // Object.each(data., function (data, table) {
             // //   vm.$set(vm.munin, table, data)
@@ -169,7 +177,8 @@ export default {
       id: 'all',
       path: 'all',
 
-      munin: [],
+      // munin: [],
+      plugins: {},
       // groups_chart_data: {
       //   labels: [],
       //   datasets: []
