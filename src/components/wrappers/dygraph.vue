@@ -204,8 +204,6 @@ export default {
 
       // console.log('__chart_create', this.id, this.$options.chart_options)
 
-      debug('__chart_create', this.id, this.$options.chart_options, this.smoothness)
-
       if (this.$options.chart_options.labels && document.getElementById(this.id)) {
         if (this.$options.chart_options.labelsDiv) { this.$options.chart_options.labelsDiv = this.id + '-' + this.$options.chart_options.labelsDiv }
 
@@ -240,6 +238,8 @@ export default {
           this.$options.chart_options
         )
 
+        debug('__chart_create', this.id, this.$options.chart_options, data)
+
         this.$options.graph.ready(function () {
           // //////////////console.log('chart '+this.id+' ready')
           debug('__chart_create ready', this.id)
@@ -254,6 +254,7 @@ export default {
     },
     get_data: function (data) {
       data = data || Array.clone(this.chart_data)
+      data = JSON.parse(JSON.stringify(data))
 
       data.sort(function (a, b) { return (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0) })
 
@@ -265,9 +266,8 @@ export default {
       return data
     },
     update (data) {
-      // debug('update', this.id, this.ready)
-
       data = this.get_data(data)
+      debug('update', this.id, this.ready, data, this.$options.chart_options.labels)
       // let options = (this.ready === true && this.$options.graph.numRows() > 1) ? { 'dateWindow': this.$options.graph.xAxisExtremes() } : {}
       // if(this.$options.visible === true && this.ready === true){
       if (this.ready === true && data && data[0]) {

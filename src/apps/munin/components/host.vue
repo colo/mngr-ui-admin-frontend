@@ -57,118 +57,302 @@ export default {
   //   }
   // },
 
-  feed_component: {
-    source: {
-      requests: {
-        periodical: [{
-          params: {
-            path: 'all',
-            query: {
-              'from': 'munin',
-              // 'register': 'changes',
-              'format': 'tabular',
-              /**
-              * right now needed to match OUTPUT 'id' with this query (need to @fix)
-              **/
-              'q': [
-                // {
-                //   'metadata': [
-                //     'timestamp',
-                //     'path'
-                //   ]
-                // },
-                'metadata',
-                'data'
-              ],
-              'transformation': [
-                {
-                  'orderBy': { 'index': 'r.desc(timestamp)' }
-                }
-              ],
-              'filter': { 'metadata': { 'host': undefined } }
+  // feed_component: {
+  //   source: {
+  //     requests: {
+  //       periodical: [
+  //         {
+  //           params: function (_key, vm) {
+  //             debug('PERIODICAL %o %o', _key, vm)
+  //
+  //             const MINUTE = 60000
+  //
+  //             let source
+  //             let key
+  //
+  //             if (!_key) {
+  //               key = ['munin.periodical.range']
+  //             }
+  //
+  //             // debug('MyChart periodical CURRENT', this.prev.range[1], this.current.keys)
+  //
+  //             if (
+  //               _key
+  //             ) {
+  //               source = [{
+  //                 params: { id: _key },
+  //                 path: 'all',
+  //                 range: 'posix ' + (Date.now() - (5 * MINUTE)) + '-' + Date.now() + '/*',
+  //                 query: {
+  //                   'from': 'munin',
+  //                   // 'register': 'changes',
+  //                   'format': 'tabular',
+  //                   /**
+  //                   * right now needed to match OUTPUT 'id' with this query (need to @fix)
+  //                   **/
+  //                   'q': [
+  //                     // {
+  //                     //   'metadata': [
+  //                     //     'timestamp',
+  //                     //     'path'
+  //                     //   ]
+  //                     // },
+  //                     // 'metadata',
+  //                     'data'
+  //                   ],
+  //                   'transformation': [
+  //                     {
+  //                       'orderBy': { 'index': 'r.desc(timestamp)' }
+  //                     }
+  //                   ],
+  //                   'filter': { 'metadata': { 'host': vm.host } }
+  //
+  //                 }
+  //               }]
+  //             }
+  //
+  //             // debug('MyChart periodical KEY ', key, source)
+  //
+  //             return { key, source }
+  //           },
+  //           callback: function (data, metadata, key, vm) {
+  //             debug('PERIODICAL %o %o', data, metadata)
+  //
+  //             Object.each(data.munin, function (plugin, name) {
+  //               // if(!vm.plugins[name]) vm.$set(vm.plugins, name, {})
+  //               vm.$set(vm.plugins, name, plugin)
+  //             })
+  //             // vm.$set(vm.munin, data.munin)
+  //             //
+  //             // // Object.each(data., function (data, table) {
+  //             // //   vm.$set(vm.munin, table, data)
+  //             // // })
+  //             //
+  //             // vm.$set(vm.components, 'periodical', )
+  //             // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
+  //             // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
+  //           }
+  //         }
+  //         // {
+  //         // // params: {
+  //         // //   path: 'all',
+  //         // //   query: {
+  //         // //     'from': 'munin',
+  //         // //     // 'register': 'changes',
+  //         // //     'format': 'tabular',
+  //         // //     /**
+  //         // //     * right now needed to match OUTPUT 'id' with this query (need to @fix)
+  //         // //     **/
+  //         // //     'q': [
+  //         // //       // {
+  //         // //       //   'metadata': [
+  //         // //       //     'timestamp',
+  //         // //       //     'path'
+  //         // //       //   ]
+  //         // //       // },
+  //         // //       'metadata',
+  //         // //       'data'
+  //         // //     ],
+  //         // //     'transformation': [
+  //         // //       {
+  //         // //         'orderBy': { 'index': 'r.desc(timestamp)' }
+  //         // //       }
+  //         // //     ],
+  //         // //     'filter': { 'metadata': { 'host': undefined } }
+  //         // //
+  //         // //   }
+  //         // // },
+  //         // params: function (_key, vm) {
+  //         //   debug('PERIODICAL %o %o', _key, vm)
+  //         //
+  //         //   let key = ['munin.range']
+  //         //   let source = [{
+  //         //     params: { id: key },
+  //         //     path: 'all',
+  //         //     query: {
+  //         //       'from': 'munin',
+  //         //       // 'register': 'changes',
+  //         //       'format': 'tabular',
+  //         //       /**
+  //         //       * right now needed to match OUTPUT 'id' with this query (need to @fix)
+  //         //       **/
+  //         //       'q': [
+  //         //         // {
+  //         //         //   'metadata': [
+  //         //         //     'timestamp',
+  //         //         //     'path'
+  //         //         //   ]
+  //         //         // },
+  //         //         'metadata',
+  //         //         'data'
+  //         //       ],
+  //         //       'transformation': [
+  //         //         {
+  //         //           'orderBy': { 'index': 'r.desc(timestamp)' }
+  //         //         }
+  //         //       ],
+  //         //       'filter': { 'metadata': { 'host': vm.host } }
+  //         //
+  //         //     }
+  //         //   }]
+  //         //
+  //         //   return { key: key, source: source }
+  //         // },
+  //         // callback: function (data, metadata, key, vm) {
+  //         //   debug('PERIODICAL %o %o', data, metadata)
+  //         //
+  //         //   Object.each(data.munin, function (plugin, name) {
+  //         //     // if(!vm.plugins[name]) vm.$set(vm.plugins, name, {})
+  //         //     vm.$set(vm.plugins, name, plugin)
+  //         //   })
+  //         //   // vm.$set(vm.munin, data.munin)
+  //         //   //
+  //         //   // // Object.each(data., function (data, table) {
+  //         //   // //   vm.$set(vm.munin, table, data)
+  //         //   // // })
+  //         //   //
+  //         //   // vm.$set(vm.components, 'periodical', )
+  //         //   // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
+  //         //   // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
+  //         // }
+  //         //
+  //         // }
+  //       ]
+  //     }
+  //   }
+  // },
 
-            }
-          },
-          callback: function (data, metadata, key, vm) {
-            debug('PERIODICAL %o %o', data, metadata)
-
-            Object.each(data.munin, function (plugin, name) {
-              // if(!vm.plugins[name]) vm.$set(vm.plugins, name, {})
-              vm.$set(vm.plugins, name, plugin)
-            })
-            // vm.$set(vm.munin, data.munin)
-            //
-            // // Object.each(data., function (data, table) {
-            // //   vm.$set(vm.munin, table, data)
-            // // })
-            //
-            // vm.$set(vm.components, 'periodical', )
-            // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
-            // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
-          }
-
-        }]
-      }
-    }
-  },
+  // range_component: {
+  //   source: {
+  //     requests: {
+  //       once: [{
+  //         params: {
+  //           path: 'all',
+  //           range: 'posix ' + (Date.now() - (5 * MINUTE)) + '-' + Date.now() + '/*',
+  //           query: {
+  //             'from': 'munin',
+  //             'format': 'tabular',
+  //             /**
+  //             * right now needed to match OUTPUT 'id' with this query (need to @fix)
+  //             **/
+  //             'q': [
+  //               {
+  //                 'metadata': [
+  //                   'timestamp',
+  //                   'path'
+  //                 ]
+  //               },
+  //               'data'
+  //             ],
+  //             'transformation': [
+  //               {
+  //                 'orderBy': { 'index': 'r.desc(timestamp)' }
+  //               }
+  //             ],
+  //             'filter': { 'metadata': { 'host': undefined } }
+  //
+  //           }
+  //         },
+  //         callback: function (data, metadata, key, vm) {
+  //           // debug('RANGES %o %o %o', data, metadata, JSON.parse(JSON.stringify(vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].options.requests)))
+  //
+  //           // vm.$set(vm.munin, data.munin)
+  //
+  //           // // Object.each(data., function (data, table) {
+  //           // //   vm.$set(vm.munin, table, data)
+  //           // // })
+  //           // // vm.$options.feed_component.source.requests.once[0].params.query.filter.metadata.host = vm.host
+  //           // // let components = {
+  //           // //   range: vm.$options.range_component,
+  //           // //   feed: vm.$options.feed_component
+  //           // // }
+  //           // vm.$delete(vm.components, 'range')
+  //           // vm.$set(vm.components, 'feed', vm.$options.feed_component)
+  //           //
+  //           // vm.$nextTick(function () {
+  //           //   vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
+  //           //   // vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
+  //           //   vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].fireEvent('onOnceRequestsUpdated')
+  //           //   vm.$options.pipelines[vm.host].get_input_by_id('input.munin').fireEvent('onOnce')
+  //           //   debug('RANGES %o %o', JSON.parse(JSON.stringify(vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].options.requests)), vm.components)
+  //           // })
+  //         }
+  //
+  //       }]
+  //     }
+  //   }
+  // },
 
   range_component: {
-    source: {
-      requests: {
-        once: [{
-          params: {
-            path: 'all',
-            query: {
-              'from': 'munin',
-              // 'format': 'tabular',
-              /**
-              * right now needed to match OUTPUT 'id' with this query (need to @fix)
-              **/
-              'q': [
-                {
-                  'metadata': [
-                    'timestamp',
-                    'path'
-                  ]
-                },
-                'data'
-              ],
-              'transformation': [
-                {
-                  'orderBy': { 'index': 'r.desc(timestamp)' }
-                }
-              ],
-              'filter': { 'metadata': { 'host': undefined } }
+    params: function (_key, vm) {
+      debug('PERIODICAL %o %o', _key, vm)
 
-            }
-          },
-          callback: function (data, metadata, key, vm) {
-            debug('RANGES %o %o %o', data, metadata, JSON.parse(JSON.stringify(vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].options.requests)))
+      const MINUTE = 60000
 
-            // vm.$set(vm.munin, data.munin)
+      let source
+      let key
 
-            // // Object.each(data., function (data, table) {
-            // //   vm.$set(vm.munin, table, data)
-            // // })
-            // // vm.$options.feed_component.source.requests.once[0].params.query.filter.metadata.host = vm.host
-            // // let components = {
-            // //   range: vm.$options.range_component,
-            // //   feed: vm.$options.feed_component
-            // // }
-            // vm.$delete(vm.components, 'range')
-            // vm.$set(vm.components, 'feed', vm.$options.feed_component)
-            //
-            // vm.$nextTick(function () {
-            //   vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
-            //   // vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
-            //   vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].fireEvent('onOnceRequestsUpdated')
-            //   vm.$options.pipelines[vm.host].get_input_by_id('input.munin').fireEvent('onOnce')
-            //   debug('RANGES %o %o', JSON.parse(JSON.stringify(vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].options.requests)), vm.components)
-            // })
+      if (!_key) {
+        key = ['munin.periodical.range']
+      }
+
+      // debug('MyChart periodical CURRENT', this.prev.range[1], this.current.keys)
+
+      if (
+        _key
+      ) {
+        source = [{
+          params: { id: _key },
+          path: 'all',
+          range: 'posix ' + (Date.now() - (5 * MINUTE)) + '-' + Date.now() + '/*',
+          query: {
+            'from': 'munin',
+            // 'register': 'changes',
+            'format': 'tabular',
+            /**
+            * right now needed to match OUTPUT 'id' with this query (need to @fix)
+            **/
+            'q': [
+              // {
+              //   'metadata': [
+              //     'timestamp',
+              //     'path'
+              //   ]
+              // },
+              // 'metadata',
+              'data'
+            ],
+            'transformation': [
+              {
+                'orderBy': { 'index': 'r.desc(timestamp)' }
+              }
+            ],
+            'filter': { 'metadata': { 'host': vm.host } }
+
           }
-
         }]
       }
+
+      // debug('MyChart periodical KEY ', key, source)
+
+      return { key, source }
+    },
+    callback: function (data, metadata, key, vm) {
+      debug('PERIODICAL CALLBACK %o %o', data, metadata)
+
+      Object.each(data.munin, function (plugin, name) {
+        // if(!vm.plugins[name]) vm.$set(vm.plugins, name, {})
+        vm.$set(vm.plugins, name, plugin)
+      })
+      // vm.$set(vm.munin, data.munin)
+      //
+      // // Object.each(data., function (data, table) {
+      // //   vm.$set(vm.munin, table, data)
+      // // })
+      //
+      // vm.$set(vm.components, 'periodical', )
+      // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
+      // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
     }
   },
 
@@ -205,7 +389,14 @@ export default {
       // ],
 
       components: {
-
+        range: {
+          source: {
+            requests: {
+              once: [],
+              periodical: []
+            }
+          }
+        }
         // 'feed': [{
         //   source: {
         //     requests: {
@@ -458,10 +649,12 @@ export default {
   // },
   created: function () {
     debug('mounted HOST %s %o %o', this.host, this.$options.range_component, this.$options.__pipelines_cfg)
-    this.$options.range_component.source.requests.once[0].params.query.filter.metadata.host = this.host
-    this.$options.feed_component.source.requests.periodical[0].params.query.filter.metadata.host = this.host
-    this.$set(this.components, 'range', this.$options.range_component)
-    this.$set(this.components, 'feed', this.$options.feed_component)
+    // this.$options.range_component.source.requests.once[0].params.query.filter.metadata.host = this.host
+    // this.$options.feed_component.source.requests.periodical[0].params.query.filter.metadata.host = this.host
+    // this.$set(this.components, 'range', this.$options.range_component)
+    // this.$set(this.components, 'feed', this.$options.feed_component)
+    this.components.range.source.requests.once.push(this.$options.range_component)
+    this.components.range.source.requests.periodical.push(this.$options.range_component)
   }
 
 }

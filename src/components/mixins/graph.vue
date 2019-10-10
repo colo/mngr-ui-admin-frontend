@@ -13,6 +13,7 @@
     v-bind="wrapper.props"
   >
   </component>
+
   <!-- v-scroll="scrolled" -->
   <!-- <div v-else :style="chart.style">
      <q-inner-loading :visible="chart_init !== true" class="absolute-center">
