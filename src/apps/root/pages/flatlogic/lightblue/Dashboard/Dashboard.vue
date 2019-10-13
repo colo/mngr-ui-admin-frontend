@@ -34,6 +34,8 @@ import DataSourcesMixin from '@components/mixins/dataSources'
 import Pipeline from 'js-pipeline'
 import RootPipeline from '@apps/root/pipelines/index'
 
+const MINUTE = 60000
+
 export default {
   mixins: [ DataSourcesMixin ],
 
@@ -48,7 +50,8 @@ export default {
 
   periodical_component: {
     params: {
-      path: 'all'
+      path: 'all',
+      range: 'posix ' + (Date.now() - (15 * MINUTE)) + '-' + Date.now() + '/*'
     },
     callback: function (tables, metadata, key, vm) {
       debug('All callback', tables)
@@ -76,26 +79,29 @@ export default {
                 once: [
                   {
                     params: {
-                      path: 'all'
-                      // query: {
-                      //   // from: 'os',
-                      //   register: 'periodical'
-                      //   // 'q': [
-                      //   //   // { 'data': ['log'] },
-                      //   //   'metadata'
-                      //   // ],
-                      //   // 'transformation': [
-                      //   //   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-                      //   //   'slice:0:9'
-                      //   // ]
-                      // }
+                      path: 'all',
+                      // range: 'posix ' + (Date.now() - (15 * MINUTE)) + '-' + Date.now() + '/*'
+
+                      query: {
+                        // from: 'os',
+                        // register: 'periodical'
+                        'q': [
+                          // { 'data': ['log'] },
+                          { 'metadata': 'timestamp' }
+                        ],
+                        'transformation': [
+                          { 'orderBy': { 'index': 'r.desc(timestamp)' } },
+                          'slice:0:9'
+                        ]
+                      }
 
                     },
                     callback: function (tables, metadata, key, vm) {
-                      debug('All callback TEST %o', vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0])
+                      debug('All callback TEST %o %o %o', tables, metadata, vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0])
 
                       Object.each(tables, function (data, table) {
-                        vm.$set(vm.tables, table, data)
+                        // vm.$set(vm.tables, table, data)
+                        vm.$set(vm.tables, table, {})
                       })
 
                       vm.$set(vm.components.all[0].source.requests, 'periodical', [vm.$options.periodical_component])
