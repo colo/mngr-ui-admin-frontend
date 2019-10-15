@@ -30,6 +30,8 @@ import DataSourcesMixin from '@components/mixins/dataSources'
 import JSPipeline from 'js-pipeline'
 import Pipeline from '@apps/munin/pipelines/index'
 
+const MINUTE = 60000
+
 export default {
   mixins: [ DataSourcesMixin ],
 
@@ -74,6 +76,7 @@ export default {
                   {
                     params: {
                       path: 'all',
+                      range: 'posix ' + (Date.now() - (5 * MINUTE)) + '-' + Date.now() + '/*',
                       query: {
                         from: 'munin',
                         index: 'host'

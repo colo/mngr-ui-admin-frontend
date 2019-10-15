@@ -91,7 +91,7 @@ export default {
                         ],
                         'transformation': [
                           { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-                          'slice:0:9'
+                          'slice:0:1'
                         ]
                       }
 
