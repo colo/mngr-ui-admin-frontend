@@ -49,15 +49,34 @@ export default {
   },
 
   periodical_component: {
+    // params: {
+    //   path: 'all',
+    //   range: 'posix ' + (Date.now() - (15 * MINUTE)) + '-' + Date.now() + '/*'
+    // },
     params: {
       path: 'all',
-      range: 'posix ' + (Date.now() - (15 * MINUTE)) + '-' + Date.now() + '/*'
+      // range: 'posix ' + (Date.now() - (15 * MINUTE)) + '-' + Date.now() + '/*'
+
+      query: {
+        // from: 'os',
+        // register: 'periodical'
+        'index': false,
+        'q': [
+          // { 'data': ['log'] },
+          { 'metadata': 'timestamp' }
+        ],
+        'transformation': [
+          { 'orderBy': { 'index': 'r.desc(timestamp)' } },
+          'slice:0:1'
+        ]
+      }
+
     },
     callback: function (tables, metadata, key, vm) {
       debug('All callback', tables)
 
       Object.each(tables, function (data, table) {
-        vm.$set(vm.tables, table, data)
+        vm.$set(vm.tables, table, [])
       })
     }
   },
@@ -85,6 +104,7 @@ export default {
                       query: {
                         // from: 'os',
                         // register: 'periodical'
+                        'index': false,
                         'q': [
                           // { 'data': ['log'] },
                           { 'metadata': 'timestamp' }
@@ -101,7 +121,7 @@ export default {
 
                       Object.each(tables, function (data, table) {
                         // vm.$set(vm.tables, table, data)
-                        vm.$set(vm.tables, table, {})
+                        vm.$set(vm.tables, table, [])
                       })
 
                       vm.$set(vm.components.all[0].source.requests, 'periodical', [vm.$options.periodical_component])

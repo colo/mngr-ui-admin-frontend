@@ -20,38 +20,28 @@
       >
         <q-table
           :pagination.sync="feed_pagination"
+          :rows-per-page-options="[10]"
           flat
           dense
-          hide-bottom
           :data="feed_data"
           :columns="feed_columns"
           row-key="name"
           card-class="transparent"
         />
+        <!-- hide-bottom -->
         <!-- hide-header -->
         <q-separator />
-        <q-card class="transparent">
+        <!-- <q-card class="transparent">
           <q-card-section>
             <input-table-groups-chart :id="table" :data="groups_chart_data"/>
           </q-card-section>
-        </q-card>
+        </q-card> -->
 
       </q-expansion-item>
 
-      <!-- <q-expansion-item
-        expand-separator
-        icon="add_circle_outlined"
-        label="Groups"
-        caption="stats"
-        default-opened
-      >
-        <input-table-groups-chart :id="table" :data="groups_chart_data"/>
-
-      </q-expansion-item> -->
     </q-list>
 
-    <q-list bordered class="rounded-borders col-12" >
-    <!-- <template v-for="(group, index) in groups"> -->
+    <!-- <q-list bordered class="rounded-borders col-12" >
 
       <q-expansion-item
         expand-separator
@@ -59,20 +49,11 @@
         label="Groups"
       >
       <template v-for="(group, index) in groups">
-      <!-- caption="live data" -->
-        <!-- <q-card>
-          <q-card-section> -->
-      <!-- <b-row :key="index"> -->
-        <!-- <b-col lg="16" md="12" xs="2"> -->
           <input-table-group :key="index" :group="group"/>
-        <!-- </b-col> -->
-      <!-- </q-card-section>
-      </q-card> -->
       </template>
     </q-expansion-item>
-      <!-- </b-row> -->
 
-    </q-list>
+    </q-list> -->
 
   </Widget>
 </template>
@@ -107,7 +88,7 @@ import DataSourcesMixin from '@components/mixins/dataSources'
 import Pipeline from 'js-pipeline'
 import RootPipeline from '@apps/root/pipelines/index'
 
-const MAX_FEED_DATA = 10
+const MAX_FEED_DATA = 50
 
 export default {
   mixins: [DataSourcesMixin],
@@ -141,7 +122,7 @@ export default {
         labels: [],
         datasets: []
       },
-      feed_pagination: { rowsPerPage: 0 },
+      feed_pagination: { rowsPerPage: 10 },
       feed_data: [],
       feed_columns: [
         {
@@ -179,7 +160,7 @@ export default {
                       ],
                       'transformation': [
                         { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-                        'slice:0:10'
+                        'slice:0:50'
                       ]
                     }
 
@@ -384,34 +365,47 @@ export default {
     * @start pipelines
     **/
     create_pipelines: function (next) {
-      debug('create_pipelines')
+      debug('create_pipelines %o', this.$options.pipelines['input.root'])
 
-      let template = Object.clone(RootPipeline)
+      if (this.$options.pipelines['input.root'] && this.$options.pipelines['input.root'].get_input_by_id('input.root')) {
+        let requests = this.__components_sources_to_requests(this.components)
+        if (requests.once) {
+          this.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].options.requests.once.combine(requests.once)
+          this.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].fireEvent('onOnceRequestsUpdated')
+        }
 
-      let pipeline_id = template.input[0].poll.id
+        if (requests.periodical) {
+          this.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].options.requests.periodical.combine(requests.periodical)
+          this.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
+        }
+      } else {
+        let template = Object.clone(RootPipeline)
 
-      template.input[0].poll.conn[0].requests = this.__components_sources_to_requests(this.components)
+        let pipeline_id = template.input[0].poll.id
 
-      let pipe = new Pipeline(template)
+        template.input[0].poll.conn[0].requests = this.__components_sources_to_requests(this.components)
 
-      this.$options.__pipelines_cfg[pipeline_id] = {
-        ids: [],
-        connected: [],
-        suspended: pipe.inputs.every(function (input) { return input.options.suspended }, this)
+        let pipe = new Pipeline(template)
+
+        this.$options.__pipelines_cfg[pipeline_id] = {
+          ids: [],
+          connected: [],
+          suspended: pipe.inputs.every(function (input) { return input.options.suspended }, this)
+        }
+
+        this.__after_connect_inputs(
+          pipe,
+          this.$options.__pipelines_cfg[pipeline_id],
+          this.__resume_pipeline.pass([pipe, this.$options.__pipelines_cfg[pipeline_id], this.id, function () {
+            debug('__resume_pipeline CALLBACK')
+            pipe.fireEvent('onOnce')
+          }], this)
+        )
+
+        this.$options.pipelines[pipeline_id] = pipe
+
+        if (next) { next() }
       }
-
-      this.__after_connect_inputs(
-        pipe,
-        this.$options.__pipelines_cfg[pipeline_id],
-        this.__resume_pipeline.pass([pipe, this.$options.__pipelines_cfg[pipeline_id], this.id, function () {
-          debug('__resume_pipeline CALLBACK')
-          pipe.fireEvent('onOnce')
-        }], this)
-      )
-
-      this.$options.pipelines[pipeline_id] = pipe
-
-      if (next) { next() }
     }
 
     /**
