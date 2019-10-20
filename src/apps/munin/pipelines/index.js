@@ -23,7 +23,7 @@ export default {
       poll: {
         // suspended: true,
         id: 'input.munin',
-        conn: [
+        conn: Array.clone([
 
           // Object.merge(
           //   // Object.clone(DefaultConn),
@@ -34,7 +34,7 @@ export default {
           }
           // )
 
-        ],
+        ]),
         connect_retry_count: -1,
         connect_retry_periodical: 1000,
         requests: {

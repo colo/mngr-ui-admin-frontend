@@ -66,7 +66,7 @@ export default {
 
                 },
                 callback: function (data, metadata, key, vm) {
-                  debug('All callback TEST %o', data, metadata, vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers)
+                  debug('All callback TEST %o %o %o', data, metadata, vm.$options.pipelines['input.munin'].get_input_by_id('input.munin'))
 
                   let components = {}
 
@@ -81,7 +81,7 @@ export default {
                   // })
 
                   // vm.$set(vm.components.all[0].source.requests, 'periodical', [vm.$options.periodical_component])
-                  debug('All callback COMPONENTS %o', vm.components, vm.$options.pipelines['input.munin'].get_input_by_id('input.munin'))
+                  // debug('All callback COMPONENTS %o', vm.components, vm.$options.pipelines['input.munin'].get_input_by_id('input.munin'))
                   vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
 
                   vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].fireEvent('onOnceRequestsUpdated')
