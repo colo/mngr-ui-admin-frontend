@@ -149,12 +149,106 @@ export default {
           },
           callback: function (data, metadata, key, vm) {
             // if (data && data.munin && data.munin.length === 1) {
-            debug('GROUP DATA %o', data)
-            vm.groups.push(data.munin[0])
-            // }
-            // Object.each(tables, function (data, table) {
-            //   vm.$set(vm.tables, table, data)
+            debug('GROUP DATA %o', data, metadata)
+            // vm.groups.push(data.munin[0])
+            let host = data.munin[0].host
+
+            vm.$set(vm.groups, host, data.munin[0])
+            let periodical = Object.clone(vm.$options.per_host_component_periodical)
+
+            periodical.host = host
+            vm.$set(vm.components, host + '_periodical', periodical)
+
+            vm.__bind_components_to_sources(vm.components)
+            vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
+            vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
+          }
+        }]
+      }
+    }
+  },
+
+  per_host_component_periodical: {
+    host: undefined,
+    source: {
+      requests: {
+        // TEST register periodical
+        // once: [{
+        //   params: {
+        //     path: 'all',
+        //     // range: 'posix ' + (Date.now() - (5 * MINUTE)) + '-' + Date.now() + '/*',
+        //     range: undefined,
+        //     query: {
+        //       from: 'munin',
+        //       index: 'host',
+        //       'filter': { 'metadata': { 'host': undefined } }
+        //     }
+        //
+        //   },
+        //   callback: function (data, metadata, key, vm) {
+        //     // if (data && data.munin && data.munin.length === 1) {
+        //     debug('GROUP DATA %o', data)
+        //     vm.groups.push(data.munin[0])
+        //     // }
+        //     // Object.each(tables, function (data, table) {
+        //     //   vm.$set(vm.tables, table, data)
+        //     // })
+        //   }
+        // }],
+        periodical: [{
+          params: function (_key, vm) {
+            debug('PERIODICAL %o', this)
+
+            const MINUTE = 60000
+
+            let source
+            let key
+
+            if (!_key) {
+              key = [this.host + '.periodical.range']
+            }
+
+            // debug('MyChart periodical CURRENT', this.prev.range[1], this.current.keys)
+
+            if (
+              _key
+            ) {
+              source = [{
+                params: { id: _key },
+                path: 'all',
+                range: 'posix ' + (Date.now() - MINUTE) + '-' + Date.now() + '/*',
+                query: {
+                  from: 'munin',
+                  index: 'host',
+                  'filter': { 'metadata': { 'host': this.host } }
+                }
+              }]
+            }
+
+            debug('PERIODICAL KEY %s %o', key, source)
+
+            return { key, source }
+          },
+          callback: function (data, metadata, key, vm) {
+            debug('PERIODICAL CALLBACK %o %o', data, metadata)
+
+            let host = data.munin[0].host
+
+            vm.$set(vm.groups, host, data.munin[0])
+
+            // Object.each(data.munin, function (plugin, name) {
+            //   // if(!vm.plugins[name]) vm.$set(vm.plugins, name, {})
+            //   vm.$set(vm.plugins, name, plugin)
             // })
+            // // vm.$set(vm.munin, data.munin)
+            // //
+            // // // Object.each(data., function (data, table) {
+            // // //   vm.$set(vm.munin, table, data)
+            // // // })
+            // //
+            // // vm.$set(vm.components, 'periodical', )
+            // // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
+            // // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
           }
         }]
       }
@@ -166,7 +260,7 @@ export default {
       id: 'all',
       path: 'all',
 
-      groups: [],
+      groups: {},
       // tables: {},
       // tables_feeds: {},
 
