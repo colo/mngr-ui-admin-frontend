@@ -44,16 +44,120 @@ export default {
     // AreaChart
   },
 
-  periodical_component: {
-    params: {
-      path: 'all'
-    },
-    callback: function (tables, metadata, key, vm) {
-      debug('All callback', tables)
+  start_components: {
+    'all': [
+      {
+        source: {
+          requests: {
+            // TEST register periodical
+            once: [
+              {
+                params: {
+                  path: 'all',
+                  // range: 'posix ' + (Date.now() - (5 * MINUTE)) + '-' + Date.now() + '/*',
+                  query: {
+                    from: 'munin',
+                    index: 'host',
+                    'q': [
+                      { 'metadata': ['host', 'timestamp'] }
+                    ],
+                    'aggregation': 'max'
+                  }
 
-      Object.each(tables, function (data, table) {
-        vm.$set(vm.tables, table, data)
-      })
+                },
+                callback: function (data, metadata, key, vm) {
+                  debug('All callback TEST %o', data, metadata, vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers)
+
+                  let components = {}
+
+                  Object.each(data.munin, function (group, index) {
+                    components[group.metadata.host] = Object.clone(vm.$options.per_host_component)
+                    components[group.metadata.host].source.requests.once[0].params.range = 'posix ' + (group.metadata.timestamp - MINUTE) + '-' + group.metadata.timestamp + '/*'
+                    components[group.metadata.host].source.requests.once[0].params.query.filter.metadata.host = group.metadata.host
+                  })
+                  vm.components = components
+                  // Object.each(data.munin, function (group, index) {
+                  //   vm.$set(vm.groups, index, group)
+                  // })
+
+                  // vm.$set(vm.components.all[0].source.requests, 'periodical', [vm.$options.periodical_component])
+                  debug('All callback COMPONENTS %o', vm.components, vm.$options.pipelines['input.munin'].get_input_by_id('input.munin'))
+                  vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
+
+                  vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].fireEvent('onOnceRequestsUpdated')
+                }
+              }
+            ]
+            // periodical: []
+
+          }
+        }
+      }
+
+      // {
+      //   source: {
+      //     requests: {
+      //       // TEST register periodical
+      //       once: [
+      //         {
+      //           params: {
+      //             path: 'all',
+      //             range: 'posix ' + (Date.now() - (5 * MINUTE)) + '-' + Date.now() + '/*',
+      //             query: {
+      //               from: 'munin',
+      //               index: 'host'
+      //             }
+      //
+      //           },
+      //           callback: function (data, metadata, key, vm) {
+      //             debug('All callback TEST %o', data, metadata, vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0])
+      //
+      //             Object.each(data.munin, function (group, index) {
+      //               vm.$set(vm.groups, index, group)
+      //             })
+      //
+      //             // vm.$set(vm.components.all[0].source.requests, 'periodical', [vm.$options.periodical_component])
+      //             // vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
+      //             // vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
+      //           }
+      //         }
+      //       ],
+      //       periodical: []
+      //
+      //     }
+      //   }
+      // }
+
+    ]
+  },
+
+  per_host_component: {
+    source: {
+      requests: {
+        // TEST register periodical
+        once: [{
+          params: {
+            path: 'all',
+            // range: 'posix ' + (Date.now() - (5 * MINUTE)) + '-' + Date.now() + '/*',
+            range: undefined,
+            query: {
+              from: 'munin',
+              index: 'host',
+              'filter': { 'metadata': { 'host': undefined } }
+            }
+
+          },
+          callback: function (data, metadata, key, vm) {
+            // if (data && data.munin && data.munin.length === 1) {
+            debug('GROUP DATA %o', data)
+            vm.groups.push(data.munin[0])
+            // }
+            // Object.each(tables, function (data, table) {
+            //   vm.$set(vm.tables, table, data)
+            // })
+          }
+        }]
+      }
     }
   },
 
@@ -66,56 +170,7 @@ export default {
       // tables: {},
       // tables_feeds: {},
 
-      components: {
-        'all': [
-          {
-            source: {
-              requests: {
-                // TEST register periodical
-                once: [
-                  {
-                    params: {
-                      path: 'all',
-                      range: 'posix ' + (Date.now() - (5 * MINUTE)) + '-' + Date.now() + '/*',
-                      query: {
-                        from: 'munin',
-                        index: 'host'
-                      }
-                      // query: {
-                      //   // from: 'os',
-                      //   register: 'periodical'
-                      //   // 'q': [
-                      //   //   // { 'data': ['log'] },
-                      //   //   'metadata'
-                      //   // ],
-                      //   // 'transformation': [
-                      //   //   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-                      //   //   'slice:0:9'
-                      //   // ]
-                      // }
-
-                    },
-                    callback: function (data, metadata, key, vm) {
-                      debug('All callback TEST %o', data, metadata, vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0])
-
-                      Object.each(data.munin, function (group, index) {
-                        vm.$set(vm.groups, index, group)
-                      })
-
-                      // vm.$set(vm.components.all[0].source.requests, 'periodical', [vm.$options.periodical_component])
-                      // vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
-                      // vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
-                    }
-                  }
-                ],
-                periodical: []
-
-              }
-            }
-          }
-
-        ]
-      }
+      components: {}
     }
   },
   watch: {
@@ -137,7 +192,9 @@ export default {
     * @start pipelines
     **/
     create_pipelines: function (next) {
-      debug('create_pipelines')
+      debug('create_pipelines %o', Pipeline)
+
+      this.components = this.$options.start_components
 
       let template = Object.clone(Pipeline)
 

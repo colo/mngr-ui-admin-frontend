@@ -25,14 +25,14 @@ export default {
         id: 'input.munin',
         conn: [
 
-          Object.merge(
-            // Object.clone(DefaultConn),
-            {
-              id: 'input.munin',
-              module: InputIO
+          // Object.merge(
+          //   // Object.clone(DefaultConn),
+          {
+            id: 'input.munin',
+            module: InputIO
 
-            }
-          )
+          }
+          // )
 
         ],
         connect_retry_count: -1,
