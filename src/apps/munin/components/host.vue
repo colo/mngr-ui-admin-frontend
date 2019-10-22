@@ -41,248 +41,6 @@ export default {
   // components: { GridView, Widget, StatsCard },
   components: { Widget, StatsCard },
 
-  // pipelines: {},
-  // props: {
-  //   // feed: {
-  //   //   type: Array,
-  //   //   default: function () { return {} }
-  //   // },
-  //   table: {
-  //     type: String,
-  //     default: undefined
-  //   },
-  //   groups: {
-  //     type: Array,
-  //     default: function () { return {} }
-  //   }
-  // },
-
-  // feed_component: {
-  //   source: {
-  //     requests: {
-  //       periodical: [
-  //         {
-  //           params: function (_key, vm) {
-  //             debug('PERIODICAL %o %o', _key, vm)
-  //
-  //             const MINUTE = 60000
-  //
-  //             let source
-  //             let key
-  //
-  //             if (!_key) {
-  //               key = ['munin.periodical.range']
-  //             }
-  //
-  //             // debug('MyChart periodical CURRENT', this.prev.range[1], this.current.keys)
-  //
-  //             if (
-  //               _key
-  //             ) {
-  //               source = [{
-  //                 params: { id: _key },
-  //                 path: 'all',
-  //                 range: 'posix ' + (Date.now() - (5 * MINUTE)) + '-' + Date.now() + '/*',
-  //                 query: {
-  //                   'from': 'munin',
-  //                   // 'register': 'changes',
-  //                   'format': 'tabular',
-  //                   /**
-  //                   * right now needed to match OUTPUT 'id' with this query (need to @fix)
-  //                   **/
-  //                   'q': [
-  //                     // {
-  //                     //   'metadata': [
-  //                     //     'timestamp',
-  //                     //     'path'
-  //                     //   ]
-  //                     // },
-  //                     // 'metadata',
-  //                     'data'
-  //                   ],
-  //                   'transformation': [
-  //                     {
-  //                       'orderBy': { 'index': 'r.desc(timestamp)' }
-  //                     }
-  //                   ],
-  //                   'filter': { 'metadata': { 'host': vm.host } }
-  //
-  //                 }
-  //               }]
-  //             }
-  //
-  //             // debug('MyChart periodical KEY ', key, source)
-  //
-  //             return { key, source }
-  //           },
-  //           callback: function (data, metadata, key, vm) {
-  //             debug('PERIODICAL %o %o', data, metadata)
-  //
-  //             Object.each(data.munin, function (plugin, name) {
-  //               // if(!vm.plugins[name]) vm.$set(vm.plugins, name, {})
-  //               vm.$set(vm.plugins, name, plugin)
-  //             })
-  //             // vm.$set(vm.munin, data.munin)
-  //             //
-  //             // // Object.each(data., function (data, table) {
-  //             // //   vm.$set(vm.munin, table, data)
-  //             // // })
-  //             //
-  //             // vm.$set(vm.components, 'periodical', )
-  //             // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
-  //             // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
-  //           }
-  //         }
-  //         // {
-  //         // // params: {
-  //         // //   path: 'all',
-  //         // //   query: {
-  //         // //     'from': 'munin',
-  //         // //     // 'register': 'changes',
-  //         // //     'format': 'tabular',
-  //         // //     /**
-  //         // //     * right now needed to match OUTPUT 'id' with this query (need to @fix)
-  //         // //     **/
-  //         // //     'q': [
-  //         // //       // {
-  //         // //       //   'metadata': [
-  //         // //       //     'timestamp',
-  //         // //       //     'path'
-  //         // //       //   ]
-  //         // //       // },
-  //         // //       'metadata',
-  //         // //       'data'
-  //         // //     ],
-  //         // //     'transformation': [
-  //         // //       {
-  //         // //         'orderBy': { 'index': 'r.desc(timestamp)' }
-  //         // //       }
-  //         // //     ],
-  //         // //     'filter': { 'metadata': { 'host': undefined } }
-  //         // //
-  //         // //   }
-  //         // // },
-  //         // params: function (_key, vm) {
-  //         //   debug('PERIODICAL %o %o', _key, vm)
-  //         //
-  //         //   let key = ['munin.range']
-  //         //   let source = [{
-  //         //     params: { id: key },
-  //         //     path: 'all',
-  //         //     query: {
-  //         //       'from': 'munin',
-  //         //       // 'register': 'changes',
-  //         //       'format': 'tabular',
-  //         //       /**
-  //         //       * right now needed to match OUTPUT 'id' with this query (need to @fix)
-  //         //       **/
-  //         //       'q': [
-  //         //         // {
-  //         //         //   'metadata': [
-  //         //         //     'timestamp',
-  //         //         //     'path'
-  //         //         //   ]
-  //         //         // },
-  //         //         'metadata',
-  //         //         'data'
-  //         //       ],
-  //         //       'transformation': [
-  //         //         {
-  //         //           'orderBy': { 'index': 'r.desc(timestamp)' }
-  //         //         }
-  //         //       ],
-  //         //       'filter': { 'metadata': { 'host': vm.host } }
-  //         //
-  //         //     }
-  //         //   }]
-  //         //
-  //         //   return { key: key, source: source }
-  //         // },
-  //         // callback: function (data, metadata, key, vm) {
-  //         //   debug('PERIODICAL %o %o', data, metadata)
-  //         //
-  //         //   Object.each(data.munin, function (plugin, name) {
-  //         //     // if(!vm.plugins[name]) vm.$set(vm.plugins, name, {})
-  //         //     vm.$set(vm.plugins, name, plugin)
-  //         //   })
-  //         //   // vm.$set(vm.munin, data.munin)
-  //         //   //
-  //         //   // // Object.each(data., function (data, table) {
-  //         //   // //   vm.$set(vm.munin, table, data)
-  //         //   // // })
-  //         //   //
-  //         //   // vm.$set(vm.components, 'periodical', )
-  //         //   // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
-  //         //   // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
-  //         // }
-  //         //
-  //         // }
-  //       ]
-  //     }
-  //   }
-  // },
-
-  // range_component: {
-  //   source: {
-  //     requests: {
-  //       once: [{
-  //         params: {
-  //           path: 'all',
-  //           range: 'posix ' + (Date.now() - (5 * MINUTE)) + '-' + Date.now() + '/*',
-  //           query: {
-  //             'from': 'munin',
-  //             'format': 'tabular',
-  //             /**
-  //             * right now needed to match OUTPUT 'id' with this query (need to @fix)
-  //             **/
-  //             'q': [
-  //               {
-  //                 'metadata': [
-  //                   'timestamp',
-  //                   'path'
-  //                 ]
-  //               },
-  //               'data'
-  //             ],
-  //             'transformation': [
-  //               {
-  //                 'orderBy': { 'index': 'r.desc(timestamp)' }
-  //               }
-  //             ],
-  //             'filter': { 'metadata': { 'host': undefined } }
-  //
-  //           }
-  //         },
-  //         callback: function (data, metadata, key, vm) {
-  //           // debug('RANGES %o %o %o', data, metadata, JSON.parse(JSON.stringify(vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].options.requests)))
-  //
-  //           // vm.$set(vm.munin, data.munin)
-  //
-  //           // // Object.each(data., function (data, table) {
-  //           // //   vm.$set(vm.munin, table, data)
-  //           // // })
-  //           // // vm.$options.feed_component.source.requests.once[0].params.query.filter.metadata.host = vm.host
-  //           // // let components = {
-  //           // //   range: vm.$options.range_component,
-  //           // //   feed: vm.$options.feed_component
-  //           // // }
-  //           // vm.$delete(vm.components, 'range')
-  //           // vm.$set(vm.components, 'feed', vm.$options.feed_component)
-  //           //
-  //           // vm.$nextTick(function () {
-  //           //   vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
-  //           //   // vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
-  //           //   vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].fireEvent('onOnceRequestsUpdated')
-  //           //   vm.$options.pipelines[vm.host].get_input_by_id('input.munin').fireEvent('onOnce')
-  //           //   debug('RANGES %o %o', JSON.parse(JSON.stringify(vm.$options.pipelines[vm.host].get_input_by_id('input.munin').conn_pollers[0].options.requests)), vm.components)
-  //           // })
-  //         }
-  //
-  //       }]
-  //     }
-  //   }
-  // },
-
   range_component: {
     params: function (_key, vm) {
       debug('PERIODICAL %o %o', _key, vm)
@@ -330,6 +88,39 @@ export default {
             'filter': { 'metadata': { 'host': vm.host } }
 
           }
+        },
+        {
+          params: { id: _key },
+          path: 'all',
+          range: 'posix ' + (Date.now() - (5 * MINUTE)) + '-' + Date.now() + '/*',
+          query: {
+            'from': 'munin_historical',
+            // 'register': 'changes',
+            'format': 'tabular',
+            /**
+            * right now needed to match OUTPUT 'id' with this query (need to @fix)
+            **/
+            'q': [
+              // {
+              //   'metadata': [
+              //     'timestamp',
+              //     'path'
+              //   ]
+              // },
+              // 'metadata',
+              'data'
+            ],
+            'transformation': [
+              {
+                'orderBy': { 'index': 'r.desc(timestamp)' }
+              }
+            ],
+            'filter': [
+              { 'metadata': { 'host': vm.host } },
+              { 'metadata': { 'type': 'minute' } }
+            ]
+
+          }
         }]
       }
 
@@ -338,12 +129,20 @@ export default {
       return { key, source }
     },
     callback: function (data, metadata, key, vm) {
-      debug('PERIODICAL CALLBACK %o %o', data, metadata)
+      // debug('PERIODICAL HOST CALLBACK %o %o', data, metadata)
 
-      Object.each(data.munin, function (plugin, name) {
-        // if(!vm.plugins[name]) vm.$set(vm.plugins, name, {})
-        vm.$set(vm.plugins, name, plugin)
-      })
+      if (data.munin) {
+        Object.each(data.munin, function (plugin, name) {
+          if (!vm.plugins[name]) vm.$set(vm.plugins, name, { periodical: undefined, minute: undefined })
+          vm.$set(vm.plugins[name], 'periodical', plugin)
+        })
+      } else if (data.munin_historical) {
+        Object.each(data.munin_historical, function (plugin, name) {
+          if (!vm.plugins[name]) vm.$set(vm.plugins, name, { periodical: undefined, minute: undefined })
+          vm.$set(vm.plugins[name], 'minute', plugin)
+        })
+      }
+
       // vm.$set(vm.munin, data.munin)
       //
       // // Object.each(data., function (data, table) {
@@ -363,30 +162,6 @@ export default {
 
       // munin: [],
       plugins: {},
-      // groups_chart_data: {
-      //   labels: [],
-      //   datasets: []
-      // },
-      // feed_pagination: { rowsPerPage: 0 },
-      // feed_data: [],
-      // feed_columns: [
-      //   {
-      //     name: 'Time',
-      //     required: true,
-      //     label: 'Document timestamp',
-      //     align: 'left',
-      //     field: row => moment(row.timestamp).format('dddd, MMMM Do YYYY, h:mm:ss a')
-      //     // format: val => new Date(`${val}`)
-      //     // sortable: true
-      //   },
-      //   { name: 'id', align: 'center', label: 'doc id', field: 'id' },
-      //   { name: 'host', label: 'Host', field: 'host' },
-      //   { name: 'path', label: 'Path', field: 'path' },
-      //   // { name: 'tag', label: 'Tags', field: 'tag' },
-      //   { name: 'type', label: 'Type', field: 'type' }
-      //   // { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-      //   // { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
-      // ],
 
       components: {
         range: {
@@ -397,195 +172,12 @@ export default {
             }
           }
         }
-        // 'feed': [{
-        //   source: {
-        //     requests: {
-        //       once: [
-        //         {
-        //           params: {
-        //             path: 'all',
-        //             query: {
-        //               from: this.table,
-        //               // register: 'changes',
-        //               'q': [
-        //                 // { 'data': ['log'] },
-        //                 'metadata'
-        //               ],
-        //               'transformation': [
-        //                 { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-        //                 'slice:0:10'
-        //               ]
-        //             }
-        //
-        //           },
-        //           callback: function (val, metadata, key, vm) {
-        //             // const MAX_FEED_DATA = 10
-        //
-        //             debug('MyTable ONCE %o %o', val, metadata)
-        //
-        //             if (JSON.parse(JSON.stringify(vm.feed_data)).length === 0) {
-        //               let table = vm.table
-        //               val = JSON.parse(JSON.stringify(val))
-        //               val = val[table]
-        //
-        //               let feed = []
-        //               Array.each(val, function (docs) {
-        //                 feed.combine(docs.map(function (item, index) {
-        //                   return item.metadata
-        //                 }))
-        //               })
-        //
-        //               feed.sort(function (a, b) {
-        //                 if (a.timestamp > b.timestamp) {
-        //                   return -1
-        //                 }
-        //                 if (a.timestamp < b.timestamp) {
-        //                   return 1
-        //                 }
-        //                 // a must be equal to b
-        //                 return 0
-        //               })
-        //
-        //               if (feed.length > MAX_FEED_DATA) {
-        //                 // let feed_data = JSON.parse(JSON.stringify(this.feed_data)).slice(Math.max(JSON.parse(JSON.stringify(this.feed_data)).length - MAX_FEED_DATA, 1))
-        //                 feed = feed.slice(0, MAX_FEED_DATA)
-        //               }
-        //
-        //               debug('MyTable ONCE2 %o %o', feed)
-        //               vm.$set(vm, 'feed_data', feed)
-        //             }
-        //           }
-        //         },
-        //         {
-        //           params: {
-        //             path: 'all',
-        //             query: {
-        //               from: this.table,
-        //               register: 'changes',
-        //               'q': [
-        //                 // { 'data': ['log'] },
-        //                 // 'id',
-        //                 'metadata'
-        //               ]
-        //               // 'transformation': [
-        //               //   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-        //               //   'slice:0:9'
-        //               // ]
-        //             }
-        //
-        //           },
-        //           callback: function (val, metadata, key, vm) {
-        //             // debug('MyTable changes %o %o', val, metadata)
-        //
-        //             val = JSON.parse(JSON.stringify(val))
-        //             // let table = metadata.from
-        //             let new_feed = (vm.feed_data) ? JSON.parse(JSON.stringify(vm.feed_data)) : []
-        //             // let feed = []
-        //             // debug('MyTable changes %o %o', val, feed, metadata)
-        //
-        //             new_feed.combine(val.map(function (item, index) {
-        //               return item.metadata
-        //             }))
-        //
-        //             // let ids = []
-        //             // ids.combine(new_feed.map(function (item) {
-        //             //   return item.id
-        //             // }))
-        //
-        //             // debug('MyTable changes %o %o', new_feed, ids)
-        //
-        //             let feed = {}
-        //             new_feed.each(function (item) {
-        //               feed[item.id] = item
-        //             })
-        //             // Array.each(ids, function (id) {
-        //             //   Array.each(new_feed, function (item) {
-        //             //     if (item.id === id) { feed[id] = item }
-        //             //   })
-        //             // })
-        //
-        //             feed = Object.values(feed)
-        //
-        //             debug('MyTable changes %o %o %o', new_feed, feed)
-        //
-        //             feed.sort(function (a, b) {
-        //               if (a.timestamp > b.timestamp) {
-        //                 return -1
-        //               }
-        //               if (a.timestamp < b.timestamp) {
-        //                 return 1
-        //               }
-        //               // a must be equal to b
-        //               return 0
-        //             })
-        //
-        //             if (feed.length > MAX_FEED_DATA) {
-        //               // let feed_data = JSON.parse(JSON.stringify(this.feed_data)).slice(Math.max(JSON.parse(JSON.stringify(this.feed_data)).length - MAX_FEED_DATA, 1))
-        //               feed = feed.slice(0, MAX_FEED_DATA)
-        //             }
-        //
-        //             vm.$set(vm, 'feed_data', feed)
-        //           }
-        //         }
-        //       ]
-        //
-        //     }
-        //
-        //   }
-        // }]
+
       }
     }
   },
 
   watch: {
-    // this.$store.state[this.id + '_sources']['logs?register=periodical&transformation=limit%3A30000']
-    // groups: function (groups) {
-    //   debug('watch groups', groups)
-    //   let label = moment(Date.now()).format('DD/MM/YYYY, h:mm:ss a')
-    //
-    //   if (!this.groups_chart_data.labels.contains(label)) { this.groups_chart_data.labels.push(label) }
-    //
-    //   let index_of_value = this.groups_chart_data.labels.indexOf(label)
-    //
-    //   Array.each(groups, function (val) {
-    //     // Array.each(data, function (val) {
-    //     debug('MyChart cb ', val, label)
-    //
-    //     let name = val.path
-    //     // if (name.indexOf(metadata.from) > -1) {
-    //     //   name = name.substring(name.indexOf(metadata.from + '.') + metadata.from.length + 1)
-    //     //   name = (name === '') ? metadata.from : name
-    //     // }
-    //
-    //     let dataset = { name: name, chartType: 'bar', values: [], _key: val.path }
-    //     for (let index = 0; index < this.groups_chart_data.datasets.length; index++) {
-    //       if (this.groups_chart_data.datasets[index].name === dataset.name) { dataset = this.groups_chart_data.datasets[index] }
-    //     }
-    //     Array.each(this.groups_chart_data.datasets, function (_dataset, index) {
-    //       if (_dataset.name === dataset.name) { dataset = _dataset }
-    //     })
-    //
-    //     dataset.values[index_of_value] = val.count * 1
-    //
-    //     let found = false
-    //     Array.each(this.groups_chart_data.datasets, function (_dataset, index) {
-    //       for (let index = 0; index < this.groups_chart_data.datasets.length; index++) {
-    //         let _dataset = this.groups_chart_data.datasets[index]
-    //         if (_dataset.name === dataset.name) {
-    //           found = true
-    //
-    //           this.groups_chart_data.datasets[index] = dataset
-    //         }
-    //       }
-    //     }.bind(this))
-    //
-    //     if (!found) {
-    //       this.groups_chart_data.datasets.push(dataset)
-    //       debug('MyChart cb NOT FOUND', dataset.name)
-    //     }
-    //     // }.bind(this))
-    //   }.bind(this))
-    // }
 
   },
   methods: {

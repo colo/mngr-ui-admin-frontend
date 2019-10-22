@@ -123,6 +123,36 @@ import Pipeline from '@apps/munin/pipelines/index'
 
 const MAX_FEED_DATA = 10
 
+const roundMilliseconds = function (timestamp) {
+  let d = new Date(timestamp)
+  d.setMilliseconds(0)
+
+  return d.getTime()
+}
+
+const roundSeconds = function (timestamp) {
+  timestamp = roundMilliseconds(timestamp)
+  let d = new Date(timestamp)
+  d.setSeconds(0)
+
+  return d.getTime()
+}
+
+const roundMinutes = function (timestamp) {
+  timestamp = roundSeconds(timestamp)
+  let d = new Date(timestamp)
+  d.setMinutes(0)
+
+  return d.getTime()
+}
+const roundHours = function (timestamp) {
+  timestamp = roundMinutes(timestamp)
+  let d = new Date(timestamp)
+  d.setHours(0)
+
+  return d.getTime()
+}
+
 export default {
   // mixins: [DataSourcesMixin],
 
@@ -325,41 +355,81 @@ export default {
         val = JSON.parse(JSON.stringify(val))
 
         debug('data watch %s %o', this.id, JSON.parse(JSON.stringify(val)))
+        let periodical = val.periodical
+        let minute = val.minute
 
         this.$set(this.chart.options, 'labels', ['Time'])
 
-        if (Object.getLength(val) === 1) {
-          this.processed_data = val[Object.keys(val)[0]]
-          this.chart.options.labels.push(Object.keys(val)[0])
-        } else {
-          let processed_data = []
+        // if (Object.getLength(periodical) === 1) {
+        //   this.processed_data = periodical[Object.keys(periodical)[0]]
+        //   this.chart.options.labels.push(Object.keys(periodical)[0])
+        // } else {
+        let processed_data = []
 
-          let index = 0
-          Object.each(val, function (arr, key) {
-            this.chart.options.labels.push(key)
+        let index = 0
+        Object.each(periodical, function (arr, key) {
+          this.chart.options.labels.push(key)
 
-            if (index === 0) {
-              processed_data = Array.clone(arr)
-            } else {
-              Array.each(processed_data, function (row, i) {
-                let timestamp = row[0]
-                if (arr[i][0] === timestamp) {
-                  // arr[i][0] = undefined
-                  // arr[i] = arr[i].clean()
-                  // processed_data[i].combine(arr[i])
-                  processed_data[i].push(arr[i][1])
-                }
-                // else {
-                //   processed_data[i].combine([timestamp, 0])
-                // }
-              })
-            }
+          if (index === 0) {
+            processed_data = Array.clone(arr)
+          } else {
+            Array.each(processed_data, function (row, i) {
+              let timestamp = row[0]
+              if (arr[i][0] === timestamp) {
+                // arr[i][0] = undefined
+                // arr[i] = arr[i].clean()
+                // processed_data[i].combine(arr[i])
+                processed_data[i].push(arr[i][1])
+              }
+              // else {
+              //   processed_data[i].combine([timestamp, 0])
+              // }
+            })
+          }
 
-            index++
-          }.bind(this))
+          /**
+          * 'munin_historical tabular' order
+          * "max": 3966 ,
+          * "mean": 3944 ,
+          * "median": 3945 ,
+          * "min": 3919 ,
+          * "mode": 3919 ,
+          * "range": 47 ,
+          * "sum": 23664
+          **/
 
-          this.processed_data = processed_data
-        }
+          this.chart.options.labels.push(key + '(median)')
+          Array.each(processed_data, function (row, i) {
+            let timestamp = row[0]
+            Array.each(minute[key], function (minute_row) {
+              let minute_row_timestamp = minute_row[0]
+              if (roundSeconds(minute_row_timestamp) <= roundSeconds(timestamp)) {
+                processed_data[i].push(minute_row[3]) // median
+              }
+            })
+          })
+
+          index++
+        }.bind(this))
+
+        this.processed_data = processed_data
+        // }
+
+        // // Object.each(plugin, function (pl_data, prop) {
+        // //       if (data.munin_historical[name]) {
+        // //         let historical_data = data.munin_historical[name][prop]
+        // //         debug('PERIODICAL HOST CALLBACK median %s %s %o %o', name, prop, historical_data, pl_data)
+        // Array.each(pl_data, function (pl_data_row, index) {
+        //   let timestamp = pl_data_row[0]
+        //   Array.each(historical_data, function (historical_data_row) {
+        //     let historical_data_timestamp = historical_data_row[0]
+        //     if (roundSeconds(historical_data_timestamp) === historical_data_timestamp(timestamp)) {
+        //
+        //     }
+        //   })
+        // })
+        // //       }
+        // //     })
       },
       deep: true
     }
