@@ -153,6 +153,9 @@ const roundHours = function (timestamp) {
   return d.getTime()
 }
 
+const SECOND = 1000
+const MINUTE = 60 * SECOND
+
 export default {
   // mixins: [DataSourcesMixin],
 
@@ -398,29 +401,40 @@ export default {
           * "sum": 23664
           **/
 
-          debug('MINUTE %o', minute)
+          // debug('MINUTE %o', minute)
 
           if (minute && minute[key] && Array.isArray(minute[key]) && minute[key].length > 0) {
+            if (!this.chart.options.labels.contains(key + '(median)')) {
+              this.chart.options.labels.push(key + '(median)')
+            }
+
+            let index = this.chart.options.labels.indexOf(key + '(median)')
+            let last
+
             Array.each(processed_data, function (row, i) {
               let timestamp = row[0]
+              let added_minute = false
+
               Array.each(minute[key], function (minute_row) {
                 let minute_row_timestamp = minute_row[0]
                 // debug('TIMESTAMPs %s %s', new Date(roundSeconds(minute_row_timestamp)), new Date(roundSeconds(timestamp)))
 
-                if (roundSeconds(minute_row_timestamp) === roundSeconds(timestamp)) {
-                  if (!this.chart.options.labels.contains(key + '(median)')) {
-                    this.chart.options.labels.push(key + '(median)')
-                  }
-                  processed_data[i].push(minute_row[3]) // median
+                if (roundSeconds(minute_row_timestamp) === roundSeconds(timestamp) - MINUTE) {
+                  processed_data[i][index] = minute_row[3] // median
+                  added_minute = true
                 }
-              }.bind(this))
-            }.bind(this))
+
+                last = minute_row[3]
+              })
+
+              if (added_minute === false) { processed_data[i][index] = last }
+            })
           }
 
           index++
         }.bind(this))
 
-        // debug('data watch %s %o', this.id, JSON.parse(JSON.stringify(processed_data)))
+        debug('data watch %s %o', this.id, JSON.parse(JSON.stringify(processed_data)))
 
         this.processed_data = processed_data
         // }
