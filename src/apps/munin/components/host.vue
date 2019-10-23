@@ -97,6 +97,7 @@ export default {
             'from': 'munin_historical',
             // 'register': 'changes',
             'format': 'tabular',
+            'index': false,
             /**
             * right now needed to match OUTPUT 'id' with this query (need to @fix)
             **/
