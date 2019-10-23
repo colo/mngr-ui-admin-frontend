@@ -354,7 +354,7 @@ export default {
       handler: function (val) {
         val = JSON.parse(JSON.stringify(val))
 
-        debug('data watch %s %o', this.id, JSON.parse(JSON.stringify(val)))
+        // debug('data watch %s %o', this.id, JSON.parse(JSON.stringify(val)))
         let periodical = val.periodical
         let minute = val.minute
 
@@ -398,19 +398,29 @@ export default {
           * "sum": 23664
           **/
 
-          this.chart.options.labels.push(key + '(median)')
-          Array.each(processed_data, function (row, i) {
-            let timestamp = row[0]
-            Array.each(minute[key], function (minute_row) {
-              let minute_row_timestamp = minute_row[0]
-              if (roundSeconds(minute_row_timestamp) <= roundSeconds(timestamp)) {
-                processed_data[i].push(minute_row[3]) // median
-              }
-            })
-          })
+          debug('MINUTE %o', minute)
+
+          if (minute && minute[key] && Array.isArray(minute[key]) && minute[key].length > 0) {
+            Array.each(processed_data, function (row, i) {
+              let timestamp = row[0]
+              Array.each(minute[key], function (minute_row) {
+                let minute_row_timestamp = minute_row[0]
+                // debug('TIMESTAMPs %s %s', new Date(roundSeconds(minute_row_timestamp)), new Date(roundSeconds(timestamp)))
+
+                if (roundSeconds(minute_row_timestamp) === roundSeconds(timestamp)) {
+                  if (!this.chart.options.labels.contains(key + '(median)')) {
+                    this.chart.options.labels.push(key + '(median)')
+                  }
+                  processed_data[i].push(minute_row[3]) // median
+                }
+              }.bind(this))
+            }.bind(this))
+          }
 
           index++
         }.bind(this))
+
+        // debug('data watch %s %o', this.id, JSON.parse(JSON.stringify(processed_data)))
 
         this.processed_data = processed_data
         // }
