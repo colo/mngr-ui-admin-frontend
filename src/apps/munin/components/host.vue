@@ -3,7 +3,7 @@
   <template v-for="(plugin, name) in plugins">
     <b-row :key="name">
       <b-col lg="12">
-        <munin-dygraph :id="name" :data="plugin"/>
+        <munin-dygraph :id="name" :data="plugin" :config="plugins_config[name]"/>
         <!-- :feed="(tables_feeds[`${table}`]) ? tables_feeds[`${table}`] : []" -->
       </b-col>
     </b-row>
@@ -40,6 +40,54 @@ export default {
   name: 'Host',
   // components: { GridView, Widget, StatsCard },
   components: { Widget, StatsCard },
+
+  config_component_req: {
+    params: {
+      path: 'all',
+      // range: 'posix ' + (Date.now() - (5 * MINUTE)) + '-' + Date.now() + '/*',
+      query: {
+        'from': 'munin',
+        'index': false,
+
+        'q': [
+          // 'id',
+          'config'
+        ],
+        'transformation': [
+          { 'orderBy': { 'index': 'r.desc(timestamp)' } },
+          'slice:0:1'
+        ],
+        'filter': [{ 'metadata': { 'host': undefined } }, { 'metadata': { 'path': undefined } }]
+      }
+
+    },
+    callback: function (data, metadata, key, vm) {
+      debug('CONFIG %o %o', data, metadata)
+      let host = metadata.filter[0].metadata.host
+      let name = metadata.filter[1].metadata.path
+      let config = (data && data.munin && data.munin[0] && data.munin[0].config) ? data.munin[0].config : undefined
+
+      vm.$set(vm.plugins_config, name, config)
+
+      // let components = {}
+      //
+      // Object.each(data.munin, function (group, index) {
+      //   components[group.metadata.host] = Object.clone(vm.$options.per_host_component)
+      //   components[group.metadata.host].source.requests.once[0].params.range = 'posix ' + (group.metadata.timestamp - MINUTE) + '-' + group.metadata.timestamp + '/*'
+      //   components[group.metadata.host].source.requests.once[0].params.query.filter.metadata.host = group.metadata.host
+      // })
+      // vm.components = components
+      // // Object.each(data.munin, function (group, index) {
+      // //   vm.$set(vm.groups, index, group)
+      // // })
+      //
+      // // vm.$set(vm.components.all[0].source.requests, 'periodical', [vm.$options.periodical_component])
+      // // debug('All callback COMPONENTS %o', vm.components, vm.$options.pipelines['input.munin'].get_input_by_id('input.munin'))
+      // vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
+      //
+      // vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].fireEvent('onOnceRequestsUpdated')
+    }
+  },
 
   range_component: {
     params: function (_key, vm) {
@@ -137,6 +185,26 @@ export default {
         Object.each(data.munin, function (plugin, name) {
           if (!vm.plugins[name]) vm.$set(vm.plugins, name, { periodical: undefined, minute: undefined })
           vm.$set(vm.plugins[name], 'periodical', plugin)
+
+          if (!vm.plugins_config[name]) {
+            let config_comp_req = Object.clone(vm.$options.config_component_req)
+
+            config_comp_req.params.query.filter[0].metadata.host = metadata.filter.metadata.host
+            config_comp_req.params.query.filter[1].metadata.path = name
+            debug('CONFIG_COMP %o', config_comp_req)
+            vm.$set(vm.components, name, {
+              source: {
+                requests: {
+                  once: [
+                    config_comp_req
+                  ]
+                }
+              }
+            })
+
+            vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].options.requests.once = vm.__components_sources_to_requests(vm.components).once
+            vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].fireEvent('onOnceRequestsUpdated')
+          }
         })
       } else if (data.munin_historical) {
         Object.each(data.munin_historical, function (plugin, name) {
@@ -164,6 +232,7 @@ export default {
 
       // munin: [],
       plugins: {},
+      plugins_config: {},
 
       components: {
         range: {

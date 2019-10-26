@@ -1,10 +1,11 @@
 <template>
   <Widget
     class="bg-transparent"
-    :title="'<h5>Table <span class=\'fw-semi-bold\'>&nbsp;'+id+'</span></h5>'"
+    :title="'<h5>Table <span class=\'fw-semi-bold\'>&nbsp;'+title+'</span></h5>'"
     settings refresh close customHeader
   >
-    <p>Status: <strong>Live</strong></p>
+    <!-- <p>Status: <strong>Live</strong></p> -->
+    <p>{{info}}</p>
     <p>
       <span class="circle bg-warning text-white"><i class="fa fa-hashtag" /></span> &nbsp;
       <!-- {{count}} -->
@@ -176,6 +177,10 @@ export default {
     data: {
       type: Object,
       default: function () { return {} }
+    },
+    config: {
+      type: Object,
+      default: function () { return {} }
     }
   },
 
@@ -187,273 +192,210 @@ export default {
       processed_data: [],
       eventbus: EventBus,
       chart: Object.clone(dygraph_line_chart)
-      // groups_chart_data: {
-      //   labels: [],
-      //   datasets: []
-      // },
-      // feed_pagination: { rowsPerPage: 0 },
-      // feed_data: [],
-      // feed_columns: [
-      //   {
-      //     name: 'Time',
-      //     required: true,
-      //     label: 'Document timestamp',
-      //     align: 'left',
-      //     field: row => moment(row.timestamp).format('dddd, MMMM Do YYYY, h:mm:ss a')
-      //     // format: val => new Date(`${val}`)
-      //     // sortable: true
-      //   },
-      //   { name: 'id', align: 'center', label: 'doc id', field: 'id' },
-      //   { name: 'host', label: 'Host', field: 'host' },
-      //   { name: 'path', label: 'Path', field: 'path' },
-      //   // { name: 'tag', label: 'Tags', field: 'tag' },
-      //   { name: 'type', label: 'Type', field: 'type' }
-      //   // { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-      //   // { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
-      // ],
 
-      // components: {
-      //   'feed': [{
-      //     source: {
-      //       requests: {
-      //         once: [
-      //           {
-      //             params: {
-      //               path: 'all',
-      //               query: {
-      //                 from: this.table,
-      //                 // register: 'changes',
-      //                 'q': [
-      //                   // { 'data': ['log'] },
-      //                   'metadata'
-      //                 ],
-      //                 'transformation': [
-      //                   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-      //                   'slice:0:10'
-      //                 ]
-      //               }
-      //
-      //             },
-      //             callback: function (val, metadata, key, vm) {
-      //               // const MAX_FEED_DATA = 10
-      //
-      //               debug('MyTable ONCE %o %o', val, metadata)
-      //
-      //               if (JSON.parse(JSON.stringify(vm.feed_data)).length === 0) {
-      //                 let table = vm.table
-      //                 val = JSON.parse(JSON.stringify(val))
-      //                 val = val[table]
-      //
-      //                 let feed = []
-      //                 Array.each(val, function (docs) {
-      //                   feed.combine(docs.map(function (item, index) {
-      //                     return item.metadata
-      //                   }))
-      //                 })
-      //
-      //                 feed.sort(function (a, b) {
-      //                   if (a.timestamp > b.timestamp) {
-      //                     return -1
-      //                   }
-      //                   if (a.timestamp < b.timestamp) {
-      //                     return 1
-      //                   }
-      //                   // a must be equal to b
-      //                   return 0
-      //                 })
-      //
-      //                 if (feed.length > MAX_FEED_DATA) {
-      //                   // let feed_data = JSON.parse(JSON.stringify(this.feed_data)).slice(Math.max(JSON.parse(JSON.stringify(this.feed_data)).length - MAX_FEED_DATA, 1))
-      //                   feed = feed.slice(0, MAX_FEED_DATA)
-      //                 }
-      //
-      //                 debug('MyTable ONCE2 %o %o', feed)
-      //                 vm.$set(vm, 'feed_data', feed)
-      //               }
-      //             }
-      //           },
-      //           {
-      //             params: {
-      //               path: 'all',
-      //               query: {
-      //                 from: this.table,
-      //                 register: 'changes',
-      //                 'q': [
-      //                   // { 'data': ['log'] },
-      //                   // 'id',
-      //                   'metadata'
-      //                 ]
-      //                 // 'transformation': [
-      //                 //   { 'orderBy': { 'index': 'r.desc(timestamp)' } },
-      //                 //   'slice:0:9'
-      //                 // ]
-      //               }
-      //
-      //             },
-      //             callback: function (val, metadata, key, vm) {
-      //               // debug('MyTable changes %o %o', val, metadata)
-      //
-      //               val = JSON.parse(JSON.stringify(val))
-      //               // let table = metadata.from
-      //               let new_feed = (vm.feed_data) ? JSON.parse(JSON.stringify(vm.feed_data)) : []
-      //               // let feed = []
-      //               // debug('MyTable changes %o %o', val, feed, metadata)
-      //
-      //               new_feed.combine(val.map(function (item, index) {
-      //                 return item.metadata
-      //               }))
-      //
-      //               // let ids = []
-      //               // ids.combine(new_feed.map(function (item) {
-      //               //   return item.id
-      //               // }))
-      //
-      //               // debug('MyTable changes %o %o', new_feed, ids)
-      //
-      //               let feed = {}
-      //               new_feed.each(function (item) {
-      //                 feed[item.id] = item
-      //               })
-      //               // Array.each(ids, function (id) {
-      //               //   Array.each(new_feed, function (item) {
-      //               //     if (item.id === id) { feed[id] = item }
-      //               //   })
-      //               // })
-      //
-      //               feed = Object.values(feed)
-      //
-      //               debug('MyTable changes %o %o %o', new_feed, feed)
-      //
-      //               feed.sort(function (a, b) {
-      //                 if (a.timestamp > b.timestamp) {
-      //                   return -1
-      //                 }
-      //                 if (a.timestamp < b.timestamp) {
-      //                   return 1
-      //                 }
-      //                 // a must be equal to b
-      //                 return 0
-      //               })
-      //
-      //               if (feed.length > MAX_FEED_DATA) {
-      //                 // let feed_data = JSON.parse(JSON.stringify(this.feed_data)).slice(Math.max(JSON.parse(JSON.stringify(this.feed_data)).length - MAX_FEED_DATA, 1))
-      //                 feed = feed.slice(0, MAX_FEED_DATA)
-      //               }
-      //
-      //               vm.$set(vm, 'feed_data', feed)
-      //             }
-      //           }
-      //         ]
-      //
-      //       }
-      //
-      //     }
-      //   }]
-      // }
     }
   },
   watch: {
     'data': {
       handler: function (val) {
-        val = JSON.parse(JSON.stringify(val))
+        if (this.config && Object.getLength(this.config) > 0) {
+          val = JSON.parse(JSON.stringify(val))
 
-        // debug('data watch %s %o', this.id, JSON.parse(JSON.stringify(val)))
-        let periodical = val.periodical
-        let minute = val.minute
+          // debug('data watch %s %o', this.id, JSON.parse(JSON.stringify(this.config)), JSON.parse(JSON.stringify(val.periodical)))
+          let periodical = val.periodical
+          let minute = val.minute
 
-        this.$set(this.chart.options, 'labels', ['Time'])
+          this.$set(this.chart.options, 'labels', ['Time'])
 
-        // if (Object.getLength(periodical) === 1) {
-        //   this.processed_data = periodical[Object.keys(periodical)[0]]
-        //   this.chart.options.labels.push(Object.keys(periodical)[0])
-        // } else {
-        let processed_data = []
+          // if (Object.getLength(periodical) === 1) {
+          //   this.processed_data = periodical[Object.keys(periodical)[0]]
+          //   this.chart.options.labels.push(Object.keys(periodical)[0])
+          // } else {
+          let processed_data = []
+          let negative_key
+          let cdefs = []
 
-        let index = 0
-        Object.each(periodical, function (arr, key) {
-          this.chart.options.labels.push(key)
+          let index = 0
+          Object.each(periodical, function (arr, key) {
+            let key_config = this.config[key]
+            let label = (key_config && key_config.label) ? key_config.label : key
+            this.chart.options.labels.push(label)
 
-          if (index === 0) {
-            processed_data = Array.clone(arr)
-          } else {
-            Array.each(processed_data, function (row, i) {
-              let timestamp = row[0]
-              if (arr[i][0] === timestamp) {
-                // arr[i][0] = undefined
-                // arr[i] = arr[i].clean()
-                // processed_data[i].combine(arr[i])
-                processed_data[i].push(arr[i][1])
+            if (key_config.negative) { negative_key = key_config.negative.replace('_', '') }
+
+            /**
+            * if at least one is STAKED, dygraph.options.stackedGraph === true
+            **/
+            this.$set(this.chart.options, 'stackedGraph', (this.chart.options.stackedGraph && this.chart.options.stackedGraph === true)
+              ? this.chart.options.stackedGraph
+              : !!((key_config && key_config.draw && key_config.draw === 'STACK'))
+            )
+
+            if (this.chart.options.stackedGraph === true) {
+              this.$set(this.chart.options, 'fillGraph', true)
+              this.$set(this.chart.options, 'fillAlpha', 0.5)
+            }
+            if (key_config.min) {
+              if (!this.chart.options.valueRange) this.$set(this.chart.options, 'valueRange', [])
+              this.$set(this.chart.options.valueRange, 0, (this.chart.options.valueRange && this.chart.options.valueRange[0] && this.chart.options.valueRange[0] < key_config.min) ? this.chart.options.valueRange[0] : key_config.min)
+            }
+
+            if (key_config.max) {
+              if (!this.chart.options.valueRange) this.$set(this.chart.options, 'valueRange', [])
+              this.$set(this.chart.options.valueRange, 1, (this.chart.options.valueRange && this.chart.options.valueRange[1] && this.chart.options.valueRange[1] > key_config.max) ? this.chart.options.valueRange[1] : key_config.max)
+            }
+
+            debug('data watch STAKED %s %o', this.id, this.chart, key_config.draw)
+
+            if (key_config.cdef) { cdefs.push(key_config.cdef) }
+
+            if (index === 0) {
+              processed_data = Array.clone(arr)
+            } else {
+              Array.each(processed_data, function (row, i) {
+                let timestamp = row[0]
+                if (arr[i][0] === timestamp) {
+                  // arr[i][0] = undefined
+                  // arr[i] = arr[i].clean()
+                  // processed_data[i].combine(arr[i])
+                  processed_data[i].push(arr[i][1])
+                }
+                // else {
+                //   processed_data[i].combine([timestamp, 0])
+                // }
+              })
+            }
+
+            /**
+            * 'munin_historical tabular' order
+            * "timestamp": 0,
+            * "max": 3966 ,
+            * "mean": 3944 ,
+            * "median": 3945 ,
+            * "min": 3919 ,
+            * "mode": 3919 ,
+            * "range": 47 ,
+            * "sum": 23664
+            **/
+
+            // debug('MINUTE %o', minute)
+
+            if (minute && minute[key] && Array.isArray(minute[key]) && minute[key].length > 0) {
+              if (!this.chart.options.labels.contains(label + '(median)')) {
+                this.chart.options.labels.push(label + '(median)')
               }
-              // else {
-              //   processed_data[i].combine([timestamp, 0])
-              // }
-            })
+
+              let index = this.chart.options.labels.indexOf(label + '(median)')
+              let last
+
+              Array.each(processed_data, function (row, i) {
+                let timestamp = row[0]
+                let added_minute = false
+
+                Array.each(minute[key], function (minute_row) {
+                  let minute_row_timestamp = minute_row[0]
+                  // debug('TIMESTAMPs %s %s', new Date(roundSeconds(minute_row_timestamp)), new Date(roundSeconds(timestamp)))
+
+                  if (roundSeconds(minute_row_timestamp) === roundSeconds(timestamp) - MINUTE) {
+                    processed_data[i][index] = minute_row[3] // median
+                    added_minute = true
+                  }
+
+                  last = minute_row[3]
+                })
+
+                if (added_minute === false) { processed_data[i][index] = last }
+              })
+            }
+
+            index++
+          }.bind(this))
+
+          /**
+          * now that we now if there is a negative key, find it and make values negative
+          **/
+          if (negative_key) {
+            // index = 0
+            // Object.each(periodical, function (arr, key) {
+            // if (negative_key === key) {
+            let key_config = this.config[negative_key]
+            let label = (key_config && key_config.label) ? key_config.label : negative_key
+
+            let index = this.chart.options.labels.indexOf(label)
+
+            if (index > -1) {
+              Array.each(processed_data, function (row, i) {
+                processed_data[i][index] = row[index] * -1
+              })
+            }
+
+            let median_index = this.chart.options.labels.indexOf(label + '(median)')
+
+            if (median_index > -1) {
+              Array.each(processed_data, function (row, i) {
+                processed_data[i][median_index] = row[median_index] * -1
+              })
+            }
+            // }
+            // }.bind(this))
           }
 
           /**
-          * 'munin_historical tabular' order
-          * "max": 3966 ,
-          * "mean": 3944 ,
-          * "median": 3945 ,
-          * "min": 3919 ,
-          * "mode": 3919 ,
-          * "range": 47 ,
-          * "sum": 23664
+          * process cdefs
           **/
-
-          // debug('MINUTE %o', minute)
-
-          if (minute && minute[key] && Array.isArray(minute[key]) && minute[key].length > 0) {
-            if (!this.chart.options.labels.contains(key + '(median)')) {
-              this.chart.options.labels.push(key + '(median)')
+          let cdef_data = function (cdef, value) {
+            let num = cdef.split(',')[1]
+            let op = cdef.split(',')[2]
+            switch (op) {
+              case '/': return value / num
+              case '*':return value * num
             }
-
-            let index = this.chart.options.labels.indexOf(key + '(median)')
-            let last
-
-            Array.each(processed_data, function (row, i) {
-              let timestamp = row[0]
-              let added_minute = false
-
-              Array.each(minute[key], function (minute_row) {
-                let minute_row_timestamp = minute_row[0]
-                // debug('TIMESTAMPs %s %s', new Date(roundSeconds(minute_row_timestamp)), new Date(roundSeconds(timestamp)))
-
-                if (roundSeconds(minute_row_timestamp) === roundSeconds(timestamp) - MINUTE) {
-                  processed_data[i][index] = minute_row[3] // median
-                  added_minute = true
-                }
-
-                last = minute_row[3]
-              })
-
-              if (added_minute === false) { processed_data[i][index] = last }
-            })
           }
 
-          index++
-        }.bind(this))
+          Array.each(cdefs, function (cdef) {
+            if (cdef.split(',').length === 3) {
+              let cdef_key = cdef.split(',')[0]
 
-        debug('data watch %s %o', this.id, JSON.parse(JSON.stringify(processed_data)))
+              let key_config = this.config[cdef_key]
+              let label = (key_config && key_config.label) ? key_config.label : negative_key
 
-        this.processed_data = processed_data
-        // }
+              let index = this.chart.options.labels.indexOf(label)
 
-        // // Object.each(plugin, function (pl_data, prop) {
-        // //       if (data.munin_historical[name]) {
-        // //         let historical_data = data.munin_historical[name][prop]
-        // //         debug('PERIODICAL HOST CALLBACK median %s %s %o %o', name, prop, historical_data, pl_data)
-        // Array.each(pl_data, function (pl_data_row, index) {
-        //   let timestamp = pl_data_row[0]
-        //   Array.each(historical_data, function (historical_data_row) {
-        //     let historical_data_timestamp = historical_data_row[0]
-        //     if (roundSeconds(historical_data_timestamp) === historical_data_timestamp(timestamp)) {
-        //
-        //     }
-        //   })
-        // })
-        // //       }
-        // //     })
+              if (index > -1) {
+                Array.each(processed_data, function (row, i) {
+                  processed_data[i][index] = cdef_data(cdef, row[index])
+                })
+              }
+
+              let median_index = this.chart.options.labels.indexOf(label + '(median)')
+
+              if (median_index > -1) {
+                Array.each(processed_data, function (row, i) {
+                  processed_data[i][median_index] = cdef_data(cdef, row[median_index])
+                })
+              }
+            }
+          })
+
+          this.processed_data = processed_data
+          // }
+
+          // // Object.each(plugin, function (pl_data, prop) {
+          // //       if (data.munin_historical[name]) {
+          // //         let historical_data = data.munin_historical[name][prop]
+          // //         debug('PERIODICAL HOST CALLBACK median %s %s %o %o', name, prop, historical_data, pl_data)
+          // Array.each(pl_data, function (pl_data_row, index) {
+          //   let timestamp = pl_data_row[0]
+          //   Array.each(historical_data, function (historical_data_row) {
+          //     let historical_data_timestamp = historical_data_row[0]
+          //     if (roundSeconds(historical_data_timestamp) === historical_data_timestamp(timestamp)) {
+          //
+          //     }
+          //   })
+          // })
+          // //       }
+          // //     })
+        }
       },
       deep: true
     }
@@ -550,16 +492,14 @@ export default {
   //   **/
   //
   // },
-  // computed: {
-  //   count: function () {
-  //     let result = 0
-  //     Array.each(this.groups, function (group) {
-  //       result += group.count
-  //     })
-  //
-  //     return result
-  //   }
-  // },
+  computed: {
+    title: function () {
+      return (this.config.graph && this.config.graph.title) ? this.config.graph.title : this.name
+    },
+    info: function () {
+      return (this.config.graph && this.config.graph.info) ? this.config.graph.info : ''
+    }
+  },
   mounted: function () {
     debug('mounted')
   }
