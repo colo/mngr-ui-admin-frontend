@@ -201,16 +201,19 @@ export default {
         if (this.config && Object.getLength(this.config) > 0) {
           val = JSON.parse(JSON.stringify(val))
 
-          // debug('data watch %s %o', this.id, JSON.parse(JSON.stringify(this.config)), JSON.parse(JSON.stringify(val.periodical)))
+          debug('data watch %s %o', this.id, JSON.parse(JSON.stringify(this.config)), JSON.parse(JSON.stringify(val.periodical)))
           let periodical = val.periodical
           let minute = val.minute
 
           this.$set(this.chart.options, 'labels', ['Time'])
 
-          // if (Object.getLength(periodical) === 1) {
-          //   this.processed_data = periodical[Object.keys(periodical)[0]]
-          //   this.chart.options.labels.push(Object.keys(periodical)[0])
-          // } else {
+          if (this.config.graph && this.config.graph.args) {
+            let args = this.config.graph.args.split(' ')
+            Array.each(args, function (arg) {
+              if (arg === '--logarithmic') { this.$set(this.chart.options, 'logscale', true) }
+            }.bind(this))
+          }
+
           let processed_data = []
           let negative_key
           let cdefs = []
@@ -222,6 +225,8 @@ export default {
             this.chart.options.labels.push(label)
 
             if (key_config.negative) { negative_key = key_config.negative.replace('_', '') }
+
+            if (key_config.cdef) { cdefs.push(key_config.cdef) }
 
             /**
             * if at least one is STAKED, dygraph.options.stackedGraph === true
@@ -245,9 +250,7 @@ export default {
               this.$set(this.chart.options.valueRange, 1, (this.chart.options.valueRange && this.chart.options.valueRange[1] && this.chart.options.valueRange[1] > key_config.max) ? this.chart.options.valueRange[1] : key_config.max)
             }
 
-            debug('data watch STAKED %s %o', this.id, this.chart, key_config.draw)
-
-            if (key_config.cdef) { cdefs.push(key_config.cdef) }
+            // debug('data watch STAKED %s %o', this.id, this.chart, key_config.draw)
 
             if (index === 0) {
               processed_data = Array.clone(arr)
@@ -311,6 +314,49 @@ export default {
             index++
           }.bind(this))
 
+          Object.each(periodical, function (arr, key) {
+            let key_config = this.config[key]
+            if (key_config.type && (key_config.type === 'DERIVE')) {
+              let label = (key_config && key_config.label) ? key_config.label : key
+
+              let index = this.chart.options.labels.indexOf(label)
+
+              if (index > -1) {
+                let prev = 0
+                // Array.each(processed_data, function (row, i) {
+                for (let i = 0; i < processed_data.length; i++) {
+                  let row = processed_data[i]
+
+                  if (i === processed_data.length - 1) {
+                    processed_data[i][index] = 0
+                  } else {
+                    processed_data[i][index] = row[index] - processed_data[i + 1][index]
+                  }
+
+                // })
+                }
+              }
+
+              let median_index = this.chart.options.labels.indexOf(label + '(median)')
+
+              if (median_index > -1) {
+                let prev = 0
+                // Array.each(processed_data, function (row, i) {
+                for (let i = 0; i < processed_data.length; i++) {
+                  let row = processed_data[i]
+
+                  if (i === processed_data.length - 1) {
+                    processed_data[i][median_index] = 0
+                  } else {
+                    processed_data[i][median_index] = row[median_index] - processed_data[i + 1][median_index]
+                  }
+
+                // })
+                }
+              }
+            }
+          }.bind(this))
+
           /**
           * now that we now if there is a negative key, find it and make values negative
           **/
@@ -319,6 +365,11 @@ export default {
             // Object.each(periodical, function (arr, key) {
             // if (negative_key === key) {
             let key_config = this.config[negative_key]
+            if (key_config.max) {
+              if (!this.chart.options.valueRange) this.$set(this.chart.options, 'valueRange', [])
+              this.$set(this.chart.options.valueRange, 0, (this.chart.options.valueRange && this.chart.options.valueRange[0] && this.chart.options.valueRange[0] < (key_config.max * -1)) ? this.chart.options.valueRange[0] : (key_config.max * -1))
+            }
+
             let label = (key_config && key_config.label) ? key_config.label : negative_key
 
             let index = this.chart.options.labels.indexOf(label)
@@ -346,9 +397,11 @@ export default {
           let cdef_data = function (cdef, value) {
             let num = cdef.split(',')[1]
             let op = cdef.split(',')[2]
+            // debug('cdef VALUE OP NUM %s %s %s', value, op, num)
             switch (op) {
               case '/': return value / num
-              case '*':return value * num
+              case '*': return value * num
+              default: return value
             }
           }
 
@@ -364,6 +417,7 @@ export default {
               if (index > -1) {
                 Array.each(processed_data, function (row, i) {
                   processed_data[i][index] = cdef_data(cdef, row[index])
+                  // debug('cdef data %d %d', processed_data[i][index], row[index])
                 })
               }
 
@@ -375,7 +429,7 @@ export default {
                 })
               }
             }
-          })
+          }.bind(this))
 
           this.processed_data = processed_data
           // }

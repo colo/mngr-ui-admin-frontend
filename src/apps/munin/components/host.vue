@@ -62,7 +62,7 @@ export default {
 
     },
     callback: function (data, metadata, key, vm) {
-      debug('CONFIG %o %o', data, metadata)
+      // debug('CONFIG %o %o', data, metadata)
       let host = metadata.filter[0].metadata.host
       let name = metadata.filter[1].metadata.path
       let config = (data && data.munin && data.munin[0] && data.munin[0].config) ? data.munin[0].config : undefined
@@ -316,7 +316,7 @@ export default {
     // this.$options.feed_component.source.requests.periodical[0].params.query.filter.metadata.host = this.host
     // this.$set(this.components, 'range', this.$options.range_component)
     // this.$set(this.components, 'feed', this.$options.feed_component)
-    this.components.range.source.requests.once.push(this.$options.range_component)
+    // this.components.range.source.requests.once.push(this.$options.range_component)
     this.components.range.source.requests.periodical.push(this.$options.range_component)
   }
 
