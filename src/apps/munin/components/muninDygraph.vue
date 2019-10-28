@@ -357,30 +357,30 @@ export default {
                   if (i === processed_data.length - 1) {
                     processed_data[i][index] = 0
                   } else {
-                    processed_data[i][index] = row[index] - processed_data[i + 1][index]
+                    processed_data[i][index] = (row[index] - processed_data[i + 1][index]) / 5 // 5 seconds messure
                   }
 
                 // })
                 }
               }
 
-              let median_index = this.chart.options.labels.indexOf(label + '(median)')
-
-              if (median_index > -1) {
-                let prev = 0
-                // Array.each(processed_data, function (row, i) {
-                for (let i = 0; i < processed_data.length; i++) {
-                  let row = processed_data[i]
-
-                  if (i === processed_data.length - 1) {
-                    processed_data[i][median_index] = 0
-                  } else {
-                    processed_data[i][median_index] = row[median_index] - processed_data[i + 1][median_index]
-                  }
-
-                // })
-                }
-              }
+              // let median_index = this.chart.options.labels.indexOf(label + '(median)')
+              //
+              // if (median_index > -1) {
+              //   let prev = 0
+              //   // Array.each(processed_data, function (row, i) {
+              //   for (let i = 0; i < processed_data.length; i++) {
+              //     let row = processed_data[i]
+              //
+              //     if (i === processed_data.length - 1) {
+              //       processed_data[i][median_index] = 0
+              //     } else {
+              //       processed_data[i][median_index] = row[median_index] - processed_data[i + 1][median_index]
+              //     }
+              //
+              //   // })
+              //   }
+              // }
             }
           }.bind(this))
         }
