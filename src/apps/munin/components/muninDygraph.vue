@@ -1,16 +1,18 @@
 <template>
   <Widget
+    v-if="config && processed_data"
     class="bg-transparent"
-    :title="'<h5>Table <span class=\'fw-semi-bold\'>&nbsp;'+title+'</span></h5>'"
+    :title="'<h5>Plugin <span class=\'fw-semi-bold\'>&nbsp;'+title+'</span></h5>'"
     settings refresh close customHeader
   >
     <!-- <p>Status: <strong>Live</strong></p> -->
     <p>{{info}}</p>
+
     <p>
-      <span class="circle bg-warning text-white"><i class="fa fa-hashtag" /></span> &nbsp;
+      <q-checkbox :disable="!data.minute" v-model="view.minute" label="Minute" />
+      <!-- <span class="circle bg-warning text-white"><i class="fa fa-hashtag" /></span> &nbsp; -->
       <!-- {{count}} -->
     </p>
-
     <component
       :is="tabular === false ? 'chart' : 'chart-tabular'"
       :wrapper="{
@@ -19,6 +21,7 @@
       :always_update="true"
       :ref="id"
       :id="id"
+      :key="view.minute"
       :EventBus="eventbus"
       :stat="{
         length: 300,
@@ -27,60 +30,6 @@
       :chart="chart"
     >
     </component>
-    <!-- :dashboard="host" -->
-    <!-- :wrapper="chart.wrapper" -->
-    <!-- :always_update="graph_always_update" -->
-    <!-- :chart="chart.chart"
-    :stat="{
-      range: range,
-      length: chart.stat.length,
-      merged: chart.stat.merged,
-      data: chart.stat.sources ? chart.stat.sources.map(function(source){ return $store.state[source.type+'_sources'][source.path]}) : chart.stat.data
-    }" -->
-
-    <!-- <q-list class="rounded-borders col-12">
-      <q-expansion-item
-        expand-separator
-        icon="add_circle_outlined"
-        label="Data"
-        caption="live"
-        default-opened
-      >
-        <q-table
-          :pagination.sync="feed_pagination"
-          flat
-          dense
-          hide-bottom
-          :data="feed_data"
-          :columns="feed_columns"
-          row-key="name"
-          card-class="transparent"
-        />
-
-        <q-separator />
-        <q-card class="transparent">
-          <q-card-section>
-            <input-table-groups-chart :id="table" :data="groups_chart_data"/>
-          </q-card-section>
-        </q-card>
-
-      </q-expansion-item>
-
-    </q-list> -->
-
-    <!-- <q-list bordered class="rounded-borders col-12" >
-
-      <q-expansion-item
-        expand-separator
-        icon="add_circle_outlined"
-        label="Groups"
-      >
-      <template v-for="(group, index) in groups">
-          <input-table-group :key="index" :group="group"/>
-      </template>
-    </q-expansion-item>
-
-    </q-list> -->
 
   </Widget>
 </template>
@@ -180,7 +129,7 @@ export default {
     },
     config: {
       type: Object,
-      default: function () { return {} }
+      default: function () { return undefined }
     }
   },
 
@@ -189,6 +138,9 @@ export default {
       // id: 'all',
       path: 'all',
 
+      view: {
+        minute: false
+      },
       processed_data: [],
       eventbus: EventBus,
       chart: Object.clone(dygraph_line_chart)
@@ -196,260 +148,17 @@ export default {
     }
   },
   watch: {
+    'view.minute': function (val) {
+      debug('VIEW MINUTE %o', val, this.id)
+      // let options = JSON.parse(JSON.stringify(this.chart.options))
+      let data = JSON.parse(JSON.stringify(this.data))
+      this.__process_data(data)
+      // this.processed_data = data
+      // this.chart.options = options
+    },
     'data': {
       handler: function (val) {
-        if (this.config && Object.getLength(this.config) > 0) {
-          val = JSON.parse(JSON.stringify(val))
-
-          debug('data watch %s %o', this.id, JSON.parse(JSON.stringify(this.config)), JSON.parse(JSON.stringify(val.periodical)))
-          let periodical = val.periodical
-          let minute = val.minute
-
-          this.$set(this.chart.options, 'labels', ['Time'])
-
-          if (this.config.graph && this.config.graph.args) {
-            let args = this.config.graph.args.split(' ')
-            Array.each(args, function (arg) {
-              if (arg === '--logarithmic') { this.$set(this.chart.options, 'logscale', true) }
-            }.bind(this))
-          }
-
-          let processed_data = []
-          let negative_key
-          let cdefs = []
-
-          let index = 0
-          Object.each(periodical, function (arr, key) {
-            let key_config = this.config[key]
-            let label = (key_config && key_config.label) ? key_config.label : key
-            this.chart.options.labels.push(label)
-
-            if (key_config.negative) { negative_key = key_config.negative.replace('_', '') }
-
-            if (key_config.cdef) { cdefs.push(key_config.cdef) }
-
-            /**
-            * if at least one is STAKED, dygraph.options.stackedGraph === true
-            **/
-            this.$set(this.chart.options, 'stackedGraph', (this.chart.options.stackedGraph && this.chart.options.stackedGraph === true)
-              ? this.chart.options.stackedGraph
-              : !!((key_config && key_config.draw && key_config.draw === 'STACK'))
-            )
-
-            if (this.chart.options.stackedGraph === true) {
-              this.$set(this.chart.options, 'fillGraph', true)
-              this.$set(this.chart.options, 'fillAlpha', 0.5)
-            }
-            if (key_config.min) {
-              if (!this.chart.options.valueRange) this.$set(this.chart.options, 'valueRange', [])
-              this.$set(this.chart.options.valueRange, 0, (this.chart.options.valueRange && this.chart.options.valueRange[0] && this.chart.options.valueRange[0] < key_config.min) ? this.chart.options.valueRange[0] : key_config.min)
-            }
-
-            if (key_config.max) {
-              if (!this.chart.options.valueRange) this.$set(this.chart.options, 'valueRange', [])
-              this.$set(this.chart.options.valueRange, 1, (this.chart.options.valueRange && this.chart.options.valueRange[1] && this.chart.options.valueRange[1] > key_config.max) ? this.chart.options.valueRange[1] : key_config.max)
-            }
-
-            // debug('data watch STAKED %s %o', this.id, this.chart, key_config.draw)
-
-            if (index === 0) {
-              processed_data = Array.clone(arr)
-            } else {
-              Array.each(processed_data, function (row, i) {
-                let timestamp = row[0]
-                if (arr[i][0] === timestamp) {
-                  // arr[i][0] = undefined
-                  // arr[i] = arr[i].clean()
-                  // processed_data[i].combine(arr[i])
-                  processed_data[i].push(arr[i][1])
-                }
-                // else {
-                //   processed_data[i].combine([timestamp, 0])
-                // }
-              })
-            }
-
-            /**
-            * 'munin_historical tabular' order
-            * "timestamp": 0,
-            * "max": 3966 ,
-            * "mean": 3944 ,
-            * "median": 3945 ,
-            * "min": 3919 ,
-            * "mode": 3919 ,
-            * "range": 47 ,
-            * "sum": 23664
-            **/
-
-            // debug('MINUTE %o', minute)
-
-            if (minute && minute[key] && Array.isArray(minute[key]) && minute[key].length > 0) {
-              if (!this.chart.options.labels.contains(label + '(median)')) {
-                this.chart.options.labels.push(label + '(median)')
-              }
-
-              let index = this.chart.options.labels.indexOf(label + '(median)')
-              let last
-
-              Array.each(processed_data, function (row, i) {
-                let timestamp = row[0]
-                let added_minute = false
-
-                Array.each(minute[key], function (minute_row) {
-                  let minute_row_timestamp = minute_row[0]
-                  // debug('TIMESTAMPs %s %s', new Date(roundSeconds(minute_row_timestamp)), new Date(roundSeconds(timestamp)))
-
-                  if (roundSeconds(minute_row_timestamp) === roundSeconds(timestamp) - MINUTE) {
-                    processed_data[i][index] = minute_row[3] // median
-                    added_minute = true
-                  }
-
-                  last = minute_row[3]
-                })
-
-                if (added_minute === false) { processed_data[i][index] = last }
-              })
-            }
-
-            index++
-          }.bind(this))
-
-          Object.each(periodical, function (arr, key) {
-            let key_config = this.config[key]
-            if (key_config.type && (key_config.type === 'DERIVE')) {
-              let label = (key_config && key_config.label) ? key_config.label : key
-
-              let index = this.chart.options.labels.indexOf(label)
-
-              if (index > -1) {
-                let prev = 0
-                // Array.each(processed_data, function (row, i) {
-                for (let i = 0; i < processed_data.length; i++) {
-                  let row = processed_data[i]
-
-                  if (i === processed_data.length - 1) {
-                    processed_data[i][index] = 0
-                  } else {
-                    processed_data[i][index] = row[index] - processed_data[i + 1][index]
-                  }
-
-                // })
-                }
-              }
-
-              let median_index = this.chart.options.labels.indexOf(label + '(median)')
-
-              if (median_index > -1) {
-                let prev = 0
-                // Array.each(processed_data, function (row, i) {
-                for (let i = 0; i < processed_data.length; i++) {
-                  let row = processed_data[i]
-
-                  if (i === processed_data.length - 1) {
-                    processed_data[i][median_index] = 0
-                  } else {
-                    processed_data[i][median_index] = row[median_index] - processed_data[i + 1][median_index]
-                  }
-
-                // })
-                }
-              }
-            }
-          }.bind(this))
-
-          /**
-          * now that we now if there is a negative key, find it and make values negative
-          **/
-          if (negative_key) {
-            // index = 0
-            // Object.each(periodical, function (arr, key) {
-            // if (negative_key === key) {
-            let key_config = this.config[negative_key]
-            if (key_config.max) {
-              if (!this.chart.options.valueRange) this.$set(this.chart.options, 'valueRange', [])
-              this.$set(this.chart.options.valueRange, 0, (this.chart.options.valueRange && this.chart.options.valueRange[0] && this.chart.options.valueRange[0] < (key_config.max * -1)) ? this.chart.options.valueRange[0] : (key_config.max * -1))
-            }
-
-            let label = (key_config && key_config.label) ? key_config.label : negative_key
-
-            let index = this.chart.options.labels.indexOf(label)
-
-            if (index > -1) {
-              Array.each(processed_data, function (row, i) {
-                processed_data[i][index] = row[index] * -1
-              })
-            }
-
-            let median_index = this.chart.options.labels.indexOf(label + '(median)')
-
-            if (median_index > -1) {
-              Array.each(processed_data, function (row, i) {
-                processed_data[i][median_index] = row[median_index] * -1
-              })
-            }
-            // }
-            // }.bind(this))
-          }
-
-          /**
-          * process cdefs
-          **/
-          let cdef_data = function (cdef, value) {
-            let num = cdef.split(',')[1]
-            let op = cdef.split(',')[2]
-            // debug('cdef VALUE OP NUM %s %s %s', value, op, num)
-            switch (op) {
-              case '/': return value / num
-              case '*': return value * num
-              default: return value
-            }
-          }
-
-          Array.each(cdefs, function (cdef) {
-            if (cdef.split(',').length === 3) {
-              let cdef_key = cdef.split(',')[0]
-
-              let key_config = this.config[cdef_key]
-              let label = (key_config && key_config.label) ? key_config.label : negative_key
-
-              let index = this.chart.options.labels.indexOf(label)
-
-              if (index > -1) {
-                Array.each(processed_data, function (row, i) {
-                  processed_data[i][index] = cdef_data(cdef, row[index])
-                  // debug('cdef data %d %d', processed_data[i][index], row[index])
-                })
-              }
-
-              let median_index = this.chart.options.labels.indexOf(label + '(median)')
-
-              if (median_index > -1) {
-                Array.each(processed_data, function (row, i) {
-                  processed_data[i][median_index] = cdef_data(cdef, row[median_index])
-                })
-              }
-            }
-          }.bind(this))
-
-          this.processed_data = processed_data
-          // }
-
-          // // Object.each(plugin, function (pl_data, prop) {
-          // //       if (data.munin_historical[name]) {
-          // //         let historical_data = data.munin_historical[name][prop]
-          // //         debug('PERIODICAL HOST CALLBACK median %s %s %o %o', name, prop, historical_data, pl_data)
-          // Array.each(pl_data, function (pl_data_row, index) {
-          //   let timestamp = pl_data_row[0]
-          //   Array.each(historical_data, function (historical_data_row) {
-          //     let historical_data_timestamp = historical_data_row[0]
-          //     if (roundSeconds(historical_data_timestamp) === historical_data_timestamp(timestamp)) {
-          //
-          //     }
-          //   })
-          // })
-          // //       }
-          // //     })
-        }
+        this.__process_data(val)
       },
       deep: true
     }
@@ -505,7 +214,271 @@ export default {
   //   }
   //
   // },
-  // methods: {
+  methods: {
+    __process_data: function (val) {
+      if (this.config && Object.getLength(this.config) > 0) {
+        val = JSON.parse(JSON.stringify(val))
+
+        // debug('data watch %s %o', this.id, JSON.parse(JSON.stringify(this.config)), JSON.parse(JSON.stringify(val.periodical)))
+        let periodical = val.periodical
+        let minute = val.minute
+
+        this.$set(this.chart.options, 'labels', ['Time'])
+
+        if (this.view.minute === false && this.config.graph && this.config.graph.args) {
+          let args = this.config.graph.args.split(' ')
+          Array.each(args, function (arg) {
+            if (arg === '--logarithmic') { this.$set(this.chart.options, 'logscale', true) }
+          }.bind(this))
+        }
+
+        let processed_data = []
+        let negative_key
+        let cdefs = []
+
+        let index = 0
+        Object.each(periodical, function (arr, key) {
+          let key_config = this.config[key]
+          let label = (key_config && key_config.label) ? key_config.label : key
+          this.chart.options.labels.push(label)
+
+          if (key_config.negative) { negative_key = key_config.negative.replace('_', '') }
+
+          if (key_config.cdef) { cdefs.push(key_config.cdef) }
+
+          /**
+          * if at least one is STAKED, dygraph.options.stackedGraph === true
+          **/
+          if (this.view.minute === false) {
+            this.$set(this.chart.options, 'stackedGraph', (this.chart.options.stackedGraph && this.chart.options.stackedGraph === true)
+              ? this.chart.options.stackedGraph
+              : !!((key_config && key_config.draw && key_config.draw === 'STACK'))
+            )
+
+            if (this.chart.options.stackedGraph === true) {
+              this.$set(this.chart.options, 'fillGraph', true)
+              this.$set(this.chart.options, 'fillAlpha', 0.5)
+            }
+
+            if (key_config.min) {
+              if (!this.chart.options.valueRange) this.$set(this.chart.options, 'valueRange', [])
+              this.$set(this.chart.options.valueRange, 0, (this.chart.options.valueRange && this.chart.options.valueRange[0] && this.chart.options.valueRange[0] < key_config.min) ? this.chart.options.valueRange[0] : key_config.min)
+            }
+
+            if (key_config.max) {
+              if (!this.chart.options.valueRange) this.$set(this.chart.options, 'valueRange', [])
+              this.$set(this.chart.options.valueRange, 1, (this.chart.options.valueRange && this.chart.options.valueRange[1] && this.chart.options.valueRange[1] > key_config.max) ? this.chart.options.valueRange[1] : key_config.max)
+            }
+          } else {
+            this.$set(this.chart.options, 'stackedGraph', false)
+            this.$set(this.chart.options, 'fillGraph', false)
+
+            this.$set(this.chart.options, 'valueRange', [])
+          }
+
+          // debug('data watch STAKED %s %o', this.id, this.chart, key_config.draw)
+
+          if (index === 0) {
+            processed_data = Array.clone(arr)
+          } else {
+            Array.each(processed_data, function (row, i) {
+              let timestamp = row[0]
+              if (arr[i][0] === timestamp) {
+                // arr[i][0] = undefined
+                // arr[i] = arr[i].clean()
+                // processed_data[i].combine(arr[i])
+                processed_data[i].push(arr[i][1])
+              }
+              // else {
+              //   processed_data[i].combine([timestamp, 0])
+              // }
+            })
+          }
+
+          /**
+          * 'munin_historical tabular' order
+          * "timestamp": 0,
+          * "max": 3966 ,
+          * "mean": 3944 ,
+          * "median": 3945 ,
+          * "min": 3919 ,
+          * "mode": 3919 ,
+          * "range": 47 ,
+          * "sum": 23664
+          **/
+
+          // debug('MINUTE %o', minute)
+
+          if (this.view.minute === true && minute && minute[key] && Array.isArray(minute[key]) && minute[key].length > 0) {
+            if (!this.chart.options.labels.contains(label + '(median)')) {
+              this.chart.options.labels.push(label + '(median)')
+            }
+
+            let index = this.chart.options.labels.indexOf(label + '(median)')
+            let last
+
+            Array.each(processed_data, function (row, i) {
+              let timestamp = row[0]
+              let added_minute = false
+
+              Array.each(minute[key], function (minute_row) {
+                let minute_row_timestamp = minute_row[0]
+                // debug('TIMESTAMPs %s %s', new Date(roundSeconds(minute_row_timestamp)), new Date(roundSeconds(timestamp)))
+
+                if (roundSeconds(minute_row_timestamp) === roundSeconds(timestamp) - MINUTE) {
+                  processed_data[i][index] = minute_row[3] // median
+                  added_minute = true
+                }
+
+                last = minute_row[3]
+              })
+
+              if (added_minute === false) { processed_data[i][index] = last }
+            })
+          }
+
+          index++
+        }.bind(this))
+
+        if (this.view.minute === false) {
+          Object.each(periodical, function (arr, key) {
+            let key_config = this.config[key]
+            if (key_config.type && (key_config.type === 'DERIVE')) {
+              let label = (key_config && key_config.label) ? key_config.label : key
+
+              let index = this.chart.options.labels.indexOf(label)
+
+              if (index > -1) {
+                let prev = 0
+                // Array.each(processed_data, function (row, i) {
+                for (let i = 0; i < processed_data.length; i++) {
+                  let row = processed_data[i]
+
+                  if (i === processed_data.length - 1) {
+                    processed_data[i][index] = 0
+                  } else {
+                    processed_data[i][index] = row[index] - processed_data[i + 1][index]
+                  }
+
+                // })
+                }
+              }
+
+              let median_index = this.chart.options.labels.indexOf(label + '(median)')
+
+              if (median_index > -1) {
+                let prev = 0
+                // Array.each(processed_data, function (row, i) {
+                for (let i = 0; i < processed_data.length; i++) {
+                  let row = processed_data[i]
+
+                  if (i === processed_data.length - 1) {
+                    processed_data[i][median_index] = 0
+                  } else {
+                    processed_data[i][median_index] = row[median_index] - processed_data[i + 1][median_index]
+                  }
+
+                // })
+                }
+              }
+            }
+          }.bind(this))
+        }
+        /**
+        * now that we now if there is a negative key, find it and make values negative
+        **/
+        if (negative_key) {
+          // index = 0
+          // Object.each(periodical, function (arr, key) {
+          // if (negative_key === key) {
+          let key_config = this.config[negative_key]
+          if (key_config.max) {
+            if (!this.chart.options.valueRange) this.$set(this.chart.options, 'valueRange', [])
+            this.$set(this.chart.options.valueRange, 0, (this.chart.options.valueRange && this.chart.options.valueRange[0] && this.chart.options.valueRange[0] < (key_config.max * -1)) ? this.chart.options.valueRange[0] : (key_config.max * -1))
+          }
+
+          let label = (key_config && key_config.label) ? key_config.label : negative_key
+
+          let index = this.chart.options.labels.indexOf(label)
+
+          if (index > -1) {
+            Array.each(processed_data, function (row, i) {
+              processed_data[i][index] = row[index] * -1
+            })
+          }
+
+          let median_index = this.chart.options.labels.indexOf(label + '(median)')
+
+          if (median_index > -1) {
+            Array.each(processed_data, function (row, i) {
+              processed_data[i][median_index] = row[median_index] * -1
+            })
+          }
+          // }
+          // }.bind(this))
+        }
+
+        /**
+        * process cdefs
+        **/
+        if (this.view.minute === false) {
+          let cdef_data = function (cdef, value) {
+            let num = cdef.split(',')[1]
+            let op = cdef.split(',')[2]
+            // debug('cdef VALUE OP NUM %s %s %s', value, op, num)
+            switch (op) {
+              case '/': return value / num
+              case '*': return value * num
+              default: return value
+            }
+          }
+
+          Array.each(cdefs, function (cdef) {
+            if (cdef.split(',').length === 3) {
+              let cdef_key = cdef.split(',')[0]
+
+              let key_config = this.config[cdef_key]
+              let label = (key_config && key_config.label) ? key_config.label : negative_key
+
+              let index = this.chart.options.labels.indexOf(label)
+
+              if (index > -1) {
+                Array.each(processed_data, function (row, i) {
+                  processed_data[i][index] = cdef_data(cdef, row[index])
+                  // debug('cdef data %d %d', processed_data[i][index], row[index])
+                })
+              }
+
+              let median_index = this.chart.options.labels.indexOf(label + '(median)')
+
+              if (median_index > -1) {
+                Array.each(processed_data, function (row, i) {
+                  processed_data[i][median_index] = cdef_data(cdef, row[median_index])
+                })
+              }
+            }
+          }.bind(this))
+        }
+        this.processed_data = processed_data
+        // }
+
+        // // Object.each(plugin, function (pl_data, prop) {
+        // //       if (data.munin_historical[name]) {
+        // //         let historical_data = data.munin_historical[name][prop]
+        // //         debug('PERIODICAL HOST CALLBACK median %s %s %o %o', name, prop, historical_data, pl_data)
+        // Array.each(pl_data, function (pl_data_row, index) {
+        //   let timestamp = pl_data_row[0]
+        //   Array.each(historical_data, function (historical_data_row) {
+        //     let historical_data_timestamp = historical_data_row[0]
+        //     if (roundSeconds(historical_data_timestamp) === historical_data_timestamp(timestamp)) {
+        //
+        //     }
+        //   })
+        // })
+        // //       }
+        // //     })
+      }
+    }
   //
   //   /**
   //   * @start pipelines
@@ -545,10 +518,10 @@ export default {
   //   * @end pipelines
   //   **/
   //
-  // },
+  },
   computed: {
     title: function () {
-      return (this.config.graph && this.config.graph.title) ? this.config.graph.title : this.name
+      return (this.config.graph && this.config.graph.title) ? this.config.graph.title : this.id
     },
     info: function () {
       return (this.config.graph && this.config.graph.info) ? this.config.graph.info : ''
