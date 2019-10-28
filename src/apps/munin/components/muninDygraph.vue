@@ -357,7 +357,11 @@ export default {
                   if (i === processed_data.length - 1) {
                     processed_data[i][index] = 0
                   } else {
-                    processed_data[i][index] = (row[index] - processed_data[i + 1][index]) / 5 // 5 seconds messure
+                    /**
+                    * ( (row[0] - processed_data[i + 1][0]) / 1000 )
+                    * timestamp of row - timestamp of next row (decreasing timestamps) / 1000 = seconds between rows
+                    **/
+                    processed_data[i][index] = (row[index] - processed_data[i + 1][index]) / ((row[0] - processed_data[i + 1][0]) / 1000)
                   }
 
                 // })
@@ -449,13 +453,13 @@ export default {
                 })
               }
 
-              let median_index = this.chart.options.labels.indexOf(label + '(median)')
-
-              if (median_index > -1) {
-                Array.each(processed_data, function (row, i) {
-                  processed_data[i][median_index] = cdef_data(cdef, row[median_index])
-                })
-              }
+              // let median_index = this.chart.options.labels.indexOf(label + '(median)')
+              //
+              // if (median_index > -1) {
+              //   Array.each(processed_data, function (row, i) {
+              //     processed_data[i][median_index] = cdef_data(cdef, row[median_index])
+              //   })
+              // }
             }
           }.bind(this))
         }
