@@ -125,8 +125,10 @@ export default {
                       })
 
                       vm.$set(vm.components.all[0].source.requests, 'periodical', [vm.$options.periodical_component])
-                      vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
-                      vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
+                      vm.destroy_pipelines()
+                      vm.create_pipelines()
+                      // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
+                      // vm.$options.pipelines['input.root'].get_input_by_id('input.root').conn_pollers[0].fireEvent('onPeriodicalRequestsUpdated')
                     }
                   }
                 ],

@@ -189,8 +189,17 @@ export default {
         let index = 0
         Object.each(periodical, function (arr, key) {
           let key_config = this.config[key]
+          if (!key_config) {
+            Object.each(this.config, function (conf, conf_key) {
+              if (conf_key.replace('_', '').replace('.', '') === key) {
+                key_config = conf
+              }
+            })
+          }
           let label = (key_config && key_config.label) ? key_config.label : key
           this.chart.options.labels.push(label)
+
+          debug('KEY %s %o', key, this.config)
 
           if (key_config.negative) { negative_key = key_config.negative.replace('_', '') }
 
@@ -293,6 +302,15 @@ export default {
         if (this.view.minute === false) {
           Object.each(periodical, function (arr, key) {
             let key_config = this.config[key]
+
+            if (!key_config) {
+              Object.each(this.config, function (conf, conf_key) {
+                if (conf_key.replace('_', '').replace('.', '') === key) {
+                  key_config = conf
+                }
+              })
+            }
+
             if (key_config.type && (key_config.type === 'DERIVE')) {
               let label = (key_config && key_config.label) ? key_config.label : key
 
@@ -346,6 +364,15 @@ export default {
           // Object.each(periodical, function (arr, key) {
           // if (negative_key === key) {
           let key_config = this.config[negative_key]
+
+          if (!key_config) {
+            Object.each(this.config, function (conf, conf_key) {
+              if (conf_key.replace('_', '').replace('.', '') === negative_key) {
+                key_config = conf
+              }
+            })
+          }
+
           if (key_config.max) {
             if (!this.chart.options.valueRange) this.$set(this.chart.options, 'valueRange', [])
             this.$set(this.chart.options.valueRange, 0, (this.chart.options.valueRange && this.chart.options.valueRange[0] && this.chart.options.valueRange[0] < (key_config.max * -1)) ? this.chart.options.valueRange[0] : (key_config.max * -1))

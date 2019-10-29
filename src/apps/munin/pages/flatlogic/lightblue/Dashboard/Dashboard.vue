@@ -75,15 +75,21 @@ export default {
                     components[group.metadata.host].source.requests.once[0].params.range = 'posix ' + (group.metadata.timestamp - MINUTE) + '-' + group.metadata.timestamp + '/*'
                     components[group.metadata.host].source.requests.once[0].params.query.filter.metadata.host = group.metadata.host
                   })
+
                   vm.components = components
+                  // vm.components = Object.merge(Object.clone(vm.components), components)
+
                   // Object.each(data.munin, function (group, index) {
                   //   vm.$set(vm.groups, index, group)
                   // })
 
                   // vm.$set(vm.components.all[0].source.requests, 'periodical', [vm.$options.periodical_component])
                   // debug('All callback COMPONENTS %o', vm.components, vm.$options.pipelines['input.munin'].get_input_by_id('input.munin'))
-                  vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
 
+                  // vm.destroy_pipelines()
+                  // vm.create_pipelines()
+
+                  vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].options.requests = vm.__components_sources_to_requests(vm.components)
                   vm.$options.pipelines['input.munin'].get_input_by_id('input.munin').conn_pollers[0].fireEvent('onOnceRequestsUpdated')
                 }
               }
