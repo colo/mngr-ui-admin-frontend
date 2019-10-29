@@ -163,57 +163,7 @@ export default {
       deep: true
     }
   },
-  // watch: {
-  //   // this.$store.state[this.id + '_sources']['logs?register=periodical&transformation=limit%3A30000']
-  //   groups: function (groups) {
-  //     debug('watch groups', groups)
-  //     let label = moment(Date.now()).format('DD/MM/YYYY, h:mm:ss a')
-  //
-  //     if (!this.groups_chart_data.labels.contains(label)) { this.groups_chart_data.labels.push(label) }
-  //
-  //     let index_of_value = this.groups_chart_data.labels.indexOf(label)
-  //
-  //     Array.each(groups, function (val) {
-  //       // Array.each(data, function (val) {
-  //       debug('MyChart cb ', val, label)
-  //
-  //       let name = val.path
-  //       // if (name.indexOf(metadata.from) > -1) {
-  //       //   name = name.substring(name.indexOf(metadata.from + '.') + metadata.from.length + 1)
-  //       //   name = (name === '') ? metadata.from : name
-  //       // }
-  //
-  //       let dataset = { name: name, chartType: 'bar', values: [], _key: val.path }
-  //       for (let index = 0; index < this.groups_chart_data.datasets.length; index++) {
-  //         if (this.groups_chart_data.datasets[index].name === dataset.name) { dataset = this.groups_chart_data.datasets[index] }
-  //       }
-  //       Array.each(this.groups_chart_data.datasets, function (_dataset, index) {
-  //         if (_dataset.name === dataset.name) { dataset = _dataset }
-  //       })
-  //
-  //       dataset.values[index_of_value] = val.count * 1
-  //
-  //       let found = false
-  //       Array.each(this.groups_chart_data.datasets, function (_dataset, index) {
-  //         for (let index = 0; index < this.groups_chart_data.datasets.length; index++) {
-  //           let _dataset = this.groups_chart_data.datasets[index]
-  //           if (_dataset.name === dataset.name) {
-  //             found = true
-  //
-  //             this.groups_chart_data.datasets[index] = dataset
-  //           }
-  //         }
-  //       }.bind(this))
-  //
-  //       if (!found) {
-  //         this.groups_chart_data.datasets.push(dataset)
-  //         debug('MyChart cb NOT FOUND', dataset.name)
-  //       }
-  //       // }.bind(this))
-  //     }.bind(this))
-  //   }
-  //
-  // },
+
   methods: {
     __process_data: function (val) {
       if (this.config && Object.getLength(this.config) > 0) {
@@ -463,6 +413,13 @@ export default {
             }
           }.bind(this))
         }
+
+        if (this.chart.options.labels.length > 10) {
+          let extra_rows = this.chart.options.labels.length - 10
+          let height = 154 + (15 * extra_rows)
+          this.chart.style = 'width:100%; height:' + height + 'px;'
+        }
+
         this.processed_data = processed_data
         // }
 
