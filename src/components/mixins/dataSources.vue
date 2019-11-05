@@ -49,16 +49,18 @@ export default {
     EventBus.$on(this.path, this.__process_data.bind(this))
 
     if (this.store) this.__register_store_module(this.path, sourceStore)
+    this.__bind_components_to_sources(this.components)
+    this.create_pipelines()
   },
 
   mounted: function () {
     debug('mounted')
-    this.__bind_components_to_sources(this.components)
-    this.create_pipelines()
+    this.resume_pipelines()
   },
   // updated: function () {
   // },
   destroy: function () {
+    debug('destroy')
     this.destroy_pipelines()
     this.__unregister_store_module(this.path)
   },
@@ -67,7 +69,7 @@ export default {
     // called when the route that renders this component is about to
     // be navigated away from.
     // has access to `this` component instance.
-    this.destroy_pipelines()
+    this.suspend_pipelines()
     this.__unregister_store_module(this.path)
     next()
   },
@@ -425,6 +427,32 @@ export default {
       // })
     },
 
+    suspend_pipelines: function () {
+      debug('suspend_pipelines')
+
+      Object.each(this.$options.pipelines, function (pipe, id) { // destroy old ones
+        pipe.fireEvent('onSuspend')
+        // pipe.fireEvent('onExit')
+        // pipe.removeEvents()
+        //
+        // delete this.$options.pipelines[id]
+      })
+
+      debug('suspend_pipelines', this.$options.pipelines)
+    },
+    resume_pipelines: function () {
+      debug('resume_pipelines')
+
+      Object.each(this.$options.pipelines, function (pipe, id) { // destroy old ones
+        pipe.fireEvent('onResume')
+        // pipe.fireEvent('onExit')
+        // pipe.removeEvents()
+        //
+        // delete this.$options.pipelines[id]
+      })
+
+      debug('resume_pipelines', this.$options.pipelines)
+    },
     destroy_pipelines: function () {
       debug('destroy_pipelines')
 
